@@ -1,230 +1,166 @@
 @extends('layouts.app')
 
 @section('content')
-@section('page-title', 'Verifikasi Barang')
-
-<div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-12 gap-3 my-8">
-    <div class="bg-white col-span-4 p-4 rounded-xl overflow-x-auto">
-        <div class="flex flex-col">
-            <div class="-m-1.5 overflow-x-auto">
-                <div class="p-1.5 min-w-full inline-block align-middle">
-                    <div class="border border-gray-200 rounded-lg divide-y divide-gray-200">
-                        <div class="py-3 px-4">
-                            <div class="relative max-w-xs">
-                                <label class="sr-only">Search</label>
-                                <input type="text" name="hs-table-with-pagination-search" id="hs-table-with-pagination-search" class="py-1.5 sm:py-2 px-3 ps-9 block w-full border-gray-200 shadow-2xs rounded-lg sm:text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none " placeholder="Cari Surat PO">
-                                <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-3">
-                                    <svg class="size-4 text-gray-400 dark:text-neutral-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="11" cy="11" r="8"></circle>
-                                        <path d="m21 21-4.3-4.3"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="overflow-hidden">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50 ">
-                                    <tr>
-                                        <th scope="col" class="py-3 px-4 pe-0">
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium ">Pilih Salah Satu Surat PO</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200">
-                                    <tr>
-                                        <td class="py-3 ps-4">
-                                            <div class="flex items-center h-5">
-                                                <input id="hs-table-pagination-checkbox-1" type="checkbox" class="border-gray-200 rounded-sm text-blue-600 focus:ring-blue-500 ">
-                                                <label for="hs-table-pagination-checkbox-1" class="sr-only">Checkbox</label>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 ">632</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="py-1 px-4">
-                            <nav class="flex items-center space-x-1" aria-label="Pagination">
-                                <button type="button" class="p-2.5 min-w-10 inline-flex justify-center items-center gap-x-2 text-sm rounded-full text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none " aria-label="Previous">
-                                    <span aria-hidden="true">«</span>
-                                    <span class="sr-only">Previous</span>
-                                </button>
-                                <button type="button" class="min-w-10 flex justify-center items-center text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 py-2.5 text-sm rounded-full disabled:opacity-50 disabled:pointer-events-none " aria-current="page">1</button>
-                                <button type="button" class="min-w-10 flex justify-center items-center text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 py-2.5 text-sm rounded-full disabled:opacity-50 disabled:pointer-events-none ">2</button>
-                                <button type="button" class="min-w-10 flex justify-center items-center text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 py-2.5 text-sm rounded-full disabled:opacity-50 disabled:pointer-events-none ">3</button>
-                                <button type="button" class="p-2.5 min-w-10 inline-flex justify-center items-center gap-x-2 text-sm rounded-full text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none " aria-label="Next">
-                                    <span class="sr-only">Next</span>
-                                    <span aria-hidden="true">»</span>
-                                </button>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="grid grid-cols-6 gap-4">
-            <button type="button" class=" col-span-2 focus:outline-none text-gray-700 bg-gray-200 hover:bg-gray-300 focus:ring-4 focus:ring-gray-500 font-medium rounded-lg text-sm my-5 px-5 py-1 ml-4">Clear</button>
-            <button type="button" class=" col-span-2 col-start-5 focus:outline-none text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm my-5 px-5 py-1 ml-4">Pilih</button>
-        </div>
-    </div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4">
     
-    <div class="bg-white col-span-8 p-4 rounded-xl overflow-x-auto">
-        <h2 class="text-lg rounded-lg font-semibold text-gray-900 mb-4">Daftar Barang</h2>
-
-        <div class="flex flex-col">
-            <div class="-m-1.5 overflow-x-auto">
-                <div class="p-1.5 min-w-full inline-block align-middle">
-                    <div class="border border-gray-200 rounded-lg divide-y divide-gray-200">
-                        <div class="py-3 px-4">
-                            <div class="relative max-w-xs">
-                                <label class="sr-only">Search</label>
-                                <input type="text" name="hs-table-with-pagination-search" id="hs-table-with-pagination-search" class="py-1.5 sm:py-2 px-3 ps-9 block w-full border-gray-200 shadow-2xs rounded-lg sm:text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none " placeholder="Search for items">
-                                <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-3">
-                                    <svg class="size-4 text-gray-400 dark:text-neutral-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="11" cy="11" r="8"></circle>
-                                        <path d="m21 21-4.3-4.3"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="overflow-hidden">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50 ">
-                                    <tr>
-                                        <th scope="col" class="py-3 px-4 pe-0">
-                                            <div class="flex items-center h-5">
-                                                <input id="hs-table-pagination-checkbox-all" type="checkbox" class="border-gray-200 rounded-sm text-blue-600 focus:ring-blue-500 ">
-                                                <label for="hs-table-pagination-checkbox-all" class="sr-only">Checkbox</label>
-                                            </div>
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium ">ID Barang</th>
-                                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium ">Nama Barang</th>
-                                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium ">Satuan</th>
-                                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium ">Quantity</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200">
-                                    <tr>
-                                        <td class="py-3 ps-4">
-                                            <div class="flex items-center h-5">
-                                                <input id="hs-table-pagination-checkbox-1" type="checkbox" class="border-gray-200 rounded-sm text-blue-600 focus:ring-blue-500 ">
-                                                <label for="hs-table-pagination-checkbox-1" class="sr-only">Checkbox</label>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 ">632</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">Dummy Product</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">Pcs</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">15</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="py-1 px-4">
-                            <nav class="flex items-center space-x-1" aria-label="Pagination">
-                                <button type="button" class="p-2.5 min-w-10 inline-flex justify-center items-center gap-x-2 text-sm rounded-full text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none " aria-label="Previous">
-                                    <span aria-hidden="true">«</span>
-                                    <span class="sr-only">Previous</span>
-                                </button>
-                                <button type="button" class="min-w-10 flex justify-center items-center text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 py-2.5 text-sm rounded-full disabled:opacity-50 disabled:pointer-events-none " aria-current="page">1</button>
-                                <button type="button" class="min-w-10 flex justify-center items-center text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 py-2.5 text-sm rounded-full disabled:opacity-50 disabled:pointer-events-none ">2</button>
-                                <button type="button" class="min-w-10 flex justify-center items-center text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 py-2.5 text-sm rounded-full disabled:opacity-50 disabled:pointer-events-none ">3</button>
-                                <button type="button" class="p-2.5 min-w-10 inline-flex justify-center items-center gap-x-2 text-sm rounded-full text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none " aria-label="Next">
-                                    <span class="sr-only">Next</span>
-                                    <span aria-hidden="true">»</span>
-                                </button>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-6">
-            <button type="button" class=" col-start-4 focus:outline-none text-gray-100 bg-green-600 hover:bg-green-800 focus:ring-4 focus:ring-green-800 font-medium rounded-lg text-sm my-5 px-5 py-1 ml-4">Konfirmasi Sesuai</button>
-            <button type="button" class=" col-span-2 col-start-5 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm my-5 px-5 py-1 ml-4">Tambah ke Daftar Retur</button>
+    <!-- Pilih PO -->
+    <div class="col-span-4 bg-white rounded-xl shadow p-5">
+        <h2 class="text-lg font-semibold mb-3">1. Pilih Surat PO</h2>
+        <div class="space-y-2">
+            @foreach($po_letters as $po)
+                <label class="flex items-center space-x-2 p-2 border rounded hover:bg-gray-50 cursor-pointer">
+                    <input type="radio" name="selected_po" value="{{ $po->id }}" class="po-radio">
+                    <span>{{ $po->number }} - <span class="text-gray-600">{{ $po->supplier }}</span></span>
+                </label>
+            @endforeach
         </div>
     </div>
 
-    <div class="bg-white col-span-12 p-4 rounded-xl overflow-x-auto">
-        <h2 class="text-lg rounded-lg font-semibold text-gray-900 mb-4">Daftar Barang Akan Diretur</h2>
+    <!-- Daftar Barang -->
+    <div class="col-span-8 bg-white rounded-xl shadow p-5">
+        <h2 class="text-lg font-semibold mb-3">2. Daftar Barang (Dari PO)</h2>
 
-        <div class="flex flex-col">
-            <div class="-m-1.5 overflow-x-auto">
-                <div class="p-1.5 min-w-full inline-block align-middle">
-                    <div class="border border-gray-200 rounded-lg divide-y divide-gray-200">
-                        <div class="py-3 px-4">
-                            <div class="relative max-w-xs">
-                                <label class="sr-only">Search</label>
-                                <input type="text" name="hs-table-with-pagination-search" id="hs-table-with-pagination-search" class="py-1.5 sm:py-2 px-3 ps-9 block w-full border-gray-200 shadow-2xs rounded-lg sm:text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none " placeholder="Search for items">
-                                <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-3">
-                                    <svg class="size-4 text-gray-400 dark:text-neutral-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="11" cy="11" r="8"></circle>
-                                        <path d="m21 21-4.3-4.3"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="overflow-hidden">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50 ">
-                                    <tr>
-                                        <th scope="col" class="py-3 px-4 pe-0">
-                                            <div class="flex items-center h-5">
-                                                <input id="hs-table-pagination-checkbox-all" type="checkbox" class="border-gray-200 rounded-sm text-blue-600 focus:ring-blue-500 ">
-                                                <label for="hs-table-pagination-checkbox-all" class="sr-only">Checkbox</label>
-                                            </div>
-                                        </th>
-                                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium ">ID Barang</th>
-                                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium ">Nama Barang</th>
-                                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium ">Satuan</th>
-                                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium ">Quantity</th>
-                                        <th scope="col" class="px-6 py-3 text-end text-xs font-medium ">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200">
-                                    <tr>
-                                        <td class="py-3 ps-4">
-                                            <div class="flex items-center h-5">
-                                                <input id="hs-table-pagination-checkbox-1" type="checkbox" class="border-gray-200 rounded-sm text-blue-600 focus:ring-blue-500 ">
-                                                <label for="hs-table-pagination-checkbox-1" class="sr-only">Checkbox</label>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 ">632</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">Dummy Product</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">Pcs</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">15</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                                            <button type="button" class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 focus:outline-hidden focus:text-red-800 disabled:opacity-50 disabled:pointer-events-none ">Hapus</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="py-1 px-4">
-                            <nav class="flex items-center space-x-1" aria-label="Pagination">
-                                <button type="button" class="p-2.5 min-w-10 inline-flex justify-center items-center gap-x-2 text-sm rounded-full text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none " aria-label="Previous">
-                                    <span aria-hidden="true">«</span>
-                                    <span class="sr-only">Previous</span>
-                                </button>
-                                <button type="button" class="min-w-10 flex justify-center items-center text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 py-2.5 text-sm rounded-full disabled:opacity-50 disabled:pointer-events-none " aria-current="page">1</button>
-                                <button type="button" class="min-w-10 flex justify-center items-center text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 py-2.5 text-sm rounded-full disabled:opacity-50 disabled:pointer-events-none ">2</button>
-                                <button type="button" class="min-w-10 flex justify-center items-center text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 py-2.5 text-sm rounded-full disabled:opacity-50 disabled:pointer-events-none ">3</button>
-                                <button type="button" class="p-2.5 min-w-10 inline-flex justify-center items-center gap-x-2 text-sm rounded-full text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none " aria-label="Next">
-                                    <span class="sr-only">Next</span>
-                                    <span aria-hidden="true">»</span>
-                                </button>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm border rounded" id="items-table">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="p-2"><input type="checkbox" id="select-all-items"></th>
+                        <th class="p-2">ID</th>
+                        <th class="p-2">Nama Barang</th>
+                        <th class="p-2">Satuan</th>
+                        <th class="p-2">Qty PO</th>
+                        <th class="p-2">Diterima</th>
+                    </tr>
+                </thead>
+                <tbody id="items-body">
+                    <tr>
+                        <td colspan="6" class="text-center text-gray-500 py-3">Pilih PO terlebih dahulu</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
-        <div class="grid grid-cols-6">
-            <button type="button" class=" col-start-4 focus:outline-none text-gray-700 bg-gray-200 hover:bg-gray-300 focus:ring-4 focus:ring-gray-500 font-medium rounded-lg text-sm my-5 px-5 py-1 ml-4">Clear</button>
-            <button type="button" class=" col-span-2 col-start-5 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm my-5 px-5 py-1 ml-4">Konfirmasi Retur</button>
+        <div class="flex justify-end mt-4 space-x-3">
+            <button type="button" id="add-to-return" class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">
+                Tambah ke Retur
+            </button>
+            <button type="button" class="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700">
+                Konfirmasi Sesuai
+            </button>
         </div>
     </div>
 </div>
 
+<!-- Barang Retur -->
+<div class="bg-white rounded-xl shadow p-5 mt-5">
+    <h2 class="text-lg font-semibold mb-3">3. Daftar Barang Retur</h2>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm border rounded" id="return-table">
+            <thead class="bg-red-50">
+                <tr>
+                    <th class="p-2">ID</th>
+                    <th class="p-2">Nama Barang</th>
+                    <th class="p-2">Satuan</th>
+                    <th class="p-2">Qty Retur</th>
+                    <th class="p-2">Alasan</th>
+                    <th class="p-2">Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="return-body">
+                <tr>
+                    <td colspan="6" class="text-center text-gray-500 py-3 italic">Belum ada barang retur</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Script -->
+<script>
+document.querySelectorAll('.po-radio').forEach(radio => {
+    radio.addEventListener('change', function() {
+        let poId = this.value;
+
+        fetch(`/get-items/${poId}`)
+            .then(res => res.json())
+            .then(items => {
+                let tbody = document.getElementById('items-body');
+                tbody.innerHTML = "";
+
+                if (items.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-gray-500 py-3">Tidak ada barang untuk PO ini</td></tr>`;
+                } else {
+                    items.forEach(item => {
+                        tbody.innerHTML += `
+                            <tr>
+                                <td class="text-center"><input type="checkbox" class="item-checkbox" data-id="${item.id}" data-name="${item.name}" data-unit="${item.unit}" data-qty="${item.qty}"></td>
+                                <td>${item.id}</td>
+                                <td>${item.name}</td>
+                                <td>${item.unit}</td>
+                                <td class="font-bold">${item.qty}</td>
+                                <td><input type="number" min="0" max="${item.qty}" value="${item.qty}" class="received-input w-20 border rounded text-center"></td>
+                            </tr>
+                        `;
+                    });
+                }
+            })
+            .catch(err => console.error(err));
+    });
+});
+
+// Tambah ke retur
+document.getElementById('add-to-return').addEventListener('click', () => {
+    let selectedItems = document.querySelectorAll('.item-checkbox:checked');
+    let returnBody = document.getElementById('return-body');
+
+    if (selectedItems.length === 0) {
+        alert("Pilih barang terlebih dahulu!");
+        return;
+    }
+
+    if (returnBody.querySelector('td') && returnBody.querySelector('td').colSpan === 6) {
+        returnBody.innerHTML = "";
+    }
+
+    selectedItems.forEach(cb => {
+        let id = cb.dataset.id;
+        let name = cb.dataset.name;
+        let unit = cb.dataset.unit;
+        let qty = cb.dataset.qty;
+        let receivedInput = cb.closest('tr').querySelector('.received-input');
+        let returQty = receivedInput.value;
+
+        returnBody.innerHTML += `
+            <tr>
+                <td>${id}</td>
+                <td>${name}</td>
+                <td>${unit}</td>
+                <td class="text-red-600 font-bold">${returQty}</td>
+                <td><input type="text" placeholder="Alasan retur" class="w-full border rounded px-2 py-1"></td>
+                <td><button type="button" class="remove-row text-red-600 hover:text-red-800">Hapus</button></td>
+            </tr>
+        `;
+    });
+
+    selectedItems.forEach(cb => cb.checked = false);
+});
+
+// Hapus retur
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('remove-row')) {
+        e.target.closest('tr').remove();
+
+        let returnBody = document.getElementById('return-body');
+        if (returnBody.children.length === 0) {
+            returnBody.innerHTML = `<tr><td colspan="6" class="text-center text-gray-500 py-3 italic">Belum ada barang retur</td></tr>`;
+        }
+    }
+});
+
+// Select all
+document.getElementById('select-all-items').addEventListener('change', function() {
+    let checkboxes = document.querySelectorAll('.item-checkbox');
+    checkboxes.forEach(cb => cb.checked = this.checked);
+});
+</script>
 @endsection
