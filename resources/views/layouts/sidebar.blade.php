@@ -56,7 +56,7 @@
             x-transition:leave-end="opacity-0 transform scale-y-0"
             class="origin-top ml-4 border-l border-red-400" {{-- Slight indent and separator --}}
             style="display: none;" {{-- Initial hide for Alpine --}}>
-            <a href="/master_dataBarang" class=" text-sm font-medium text-gray-200 block my-1 py-1.5 pl-8 pr-4 rounded transition duration-200 hover:bg-red-600 hover:text-neutral-100">
+            <a href="/barangs" class=" text-sm font-medium text-gray-200 block my-1 py-1.5 pl-8 pr-4 rounded transition duration-200 hover:bg-red-600 hover:text-neutral-100">
                 Data Barang
             </a>
             <a href="#" class=" text-sm font-medium text-gray-200 block my-1 py-1.5 pl-8 pr-4 rounded transition duration-200 hover:bg-red-600 hover:text-neutral-100">

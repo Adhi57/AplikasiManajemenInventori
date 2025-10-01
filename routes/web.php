@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BarangController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\VerifikasiBarangController; 
@@ -8,8 +9,8 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 });
 
-Route::get('/master_dataBarang', function () {
-    return view('master_dataBarang');
+Route::get('/barangs', function () {
+    return view('barangs.index');
 });
 
 Route::get('/suppliers', function () {
@@ -37,3 +38,5 @@ Route::get('/get-items/{poId}', [VerifikasiBarangController::class, 'getItemsByP
 
 
 Route::resource('suppliers', SupplierController::class);
+Route::resource('barangs', barangController::class);
+Route::resource('kategoriBarangs', KategoriBarangController::class);
