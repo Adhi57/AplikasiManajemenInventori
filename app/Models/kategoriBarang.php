@@ -8,9 +8,9 @@ class KategoriBarang extends Model
 {
     protected $table = 'kategori_barangs';
     protected $primaryKey = 'kategori_barang_id';
-    public $incrementing = false; // karena PK bukan auto-increment
-    public $timestamps = false;   // tidak ada created_at & updated_at
-    protected $keyType = 'string'; // karena PK varchar
+    public $incrementing = false; 
+    public $timestamps = false;  
+    protected $keyType = 'string'; 
 
     protected $fillable = [
         'kategori_barang_id',

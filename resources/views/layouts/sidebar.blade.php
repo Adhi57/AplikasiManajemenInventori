@@ -1,10 +1,4 @@
-{{--
-    Sidebar Container: 
-    - Fixed position on mobile (z-40)
-    - Full height (h-screen)
-    - Hidden by default on mobile (-translate-x-full)
-    - Visible and part of flow on desktop (md:translate-x-0)
---}}
+
 <div
     class=" bg-linear-to-t from-red-500 to-red-700 border-gray-400 text-white w-68 space-y-6 py-7 px-4 fixed inset-y-0 left-0 z-40 h-full 
   transform transition duration-300 ease-in-out md:relative md:translate-x-0 overflow-y-scroll"
@@ -59,8 +53,11 @@
             <a href="/barangs" class=" text-sm font-medium text-gray-200 block my-1 py-1.5 pl-8 pr-4 rounded transition duration-200 hover:bg-red-600 hover:text-neutral-100">
                 Data Barang
             </a>
-            <a href="#" class=" text-sm font-medium text-gray-200 block my-1 py-1.5 pl-8 pr-4 rounded transition duration-200 hover:bg-red-600 hover:text-neutral-100">
+            <a href="/pelanggans" class=" text-sm font-medium text-gray-200 block my-1 py-1.5 pl-8 pr-4 rounded transition duration-200 hover:bg-red-600 hover:text-neutral-100">
                 Data Pelanggan
+            </a>
+            <a href="#" class=" text-sm font-medium text-gray-200 block my-1 py-1.5 pl-8 pr-4 rounded transition duration-200 hover:bg-red-600 hover:text-neutral-100">
+                Kategori Pelanggan
             </a>
             <a href="/suppliers" class=" text-sm font-medium text-gray-200 block my-1 py-1.5 pl-8 pr-4 rounded transition duration-200 hover:bg-red-600 hover:text-neutral-100">
                 Data Supplier

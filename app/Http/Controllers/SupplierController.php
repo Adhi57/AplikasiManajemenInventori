@@ -13,8 +13,8 @@ class SupplierController extends Controller
     public function index()
     {
         // Mengambil semua data supplier
-        $suppliers = Supplier::all(); 
-        
+        $suppliers = Supplier::all();
+
         // Mengirim data ke view
         return view('suppliers.index', compact('suppliers'));
     }
@@ -30,7 +30,7 @@ class SupplierController extends Controller
     /**
      * Menyimpan data supplier baru ke database.
      */
-    public function store(Request $request)
+    public function store(Request $request, $id)
     {
         // 1. Validasi data
         $validatedData = $request->validate([
@@ -45,36 +45,42 @@ class SupplierController extends Controller
         Supplier::create($validatedData);
 
         return redirect()->route('suppliers.index')
-                         ->with('success', 'Data Supplier berhasil ditambahkan.');
+            ->with('success', 'Data Supplier berhasil ditambahkan.');
     }
 
     /**
      * Menampilkan detail satu supplier tertentu.
      */
-    public function show(Supplier $supplier)
+    public function show($id)
     {
+        $supplier = Supplier::findOrFail($id);
         return view('suppliers.show', compact('supplier'));
     }
+
 
     /**
      * Update data supplier di database.
      */
-    public function update(Request $request, Supplier $supplier)
+    public function edit($id)
     {
-        // 1. Validasi data
-        $validatedData = $request->validate([
-            'namaSupplier' => 'required|string|max:40',
-            'alamatSupplier' => 'required|string|max:100',
-            'Kota' => 'required|string|max:30',
-            'noTelepon' => 'required|string|max:12',
-            'waktuPengiriman' => 'required|integer|min:0',
+        $supplier = Supplier::findOrFail($id);
+        return view('suppliers.edit', compact('supplier'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'namaSupplier' => 'required|string|max:255',
+            'alamatSupplier' => 'required|string',
+            'Kota' => 'required|string|max:100',
+            'noTelepon' => 'required|string|max:20',
+            'waktuPengiriman' => 'required|integer|min:1',
         ]);
 
-        // 2. Update data
-        $supplier->update($validatedData);
+        $supplier = Supplier::findOrFail($id);
+        $supplier->update($validated);
 
-        return redirect()->route('suppliers.index')
-                         ->with('success', 'Data Supplier berhasil diperbarui.');
+        return redirect()->route('suppliers.index')->with('success', 'Data supplier berhasil diperbarui.');
     }
 
     /**
@@ -85,6 +91,6 @@ class SupplierController extends Controller
         $supplier->delete();
 
         return redirect()->route('suppliers.index')
-                         ->with('success', 'Data Supplier berhasil dihapus.');
+            ->with('success', 'Data Supplier berhasil dihapus.');
     }
 }
