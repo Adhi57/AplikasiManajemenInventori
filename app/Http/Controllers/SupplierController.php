@@ -24,14 +24,16 @@ class SupplierController extends Controller
      */
     public function create()
     {
-        return view('suppliers.create');
+        $supplier = new Supplier();
+        return view('suppliers.form', compact('supplier'));
     }
 
     /**
      * Menyimpan data supplier baru ke database.
      */
-    public function store(Request $request, $id)
+    public function store(Request $request)
     {
+        
         // 1. Validasi data
         $validatedData = $request->validate([
             'namaSupplier' => 'required|string|max:40',
@@ -40,10 +42,9 @@ class SupplierController extends Controller
             'noTelepon' => 'required|string|max:12',
             'waktuPengiriman' => 'required|integer|min:0',
         ]);
-
+        
         // 2. Simpan data 
         Supplier::create($validatedData);
-
         return redirect()->route('suppliers.index')
             ->with('success', 'Data Supplier berhasil ditambahkan.');
     }
@@ -64,7 +65,7 @@ class SupplierController extends Controller
     public function edit($id)
     {
         $supplier = Supplier::findOrFail($id);
-        return view('suppliers.edit', compact('supplier'));
+        return view('suppliers.form', compact('supplier'));
     }
 
     public function update(Request $request, $id)

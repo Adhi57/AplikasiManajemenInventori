@@ -1,168 +1,138 @@
-
 <div
-    class=" bg-linear-to-t from-red-500 to-red-700 border-gray-400 text-white w-68 space-y-6 py-7 px-4 fixed inset-y-0 left-0 z-40 h-full 
-  transform transition duration-300 ease-in-out md:relative md:translate-x-0 overflow-y-scroll"
+    class="bg-gradient-to-t from-red-500 to-red-700 border-gray-400 text-white w-68 space-y-6 py-7 px-4 fixed inset-y-0 left-0 z-40 h-full 
+        transform transition duration-300 ease-in-out md:relative md:translate-x-0 overflow-y-scroll"
     :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}"
     @click.away="sidebarOpen = false"
-    x-data="{ dataMasterOpen: false }">
+    x-data="{ dataMasterOpen: false, inventoriGudangOpen: false }"
+>
 
     {{-- Logo / Branding --}}
-    <img src="{{asset('assets/images/logo.png')}}">
+    <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="w-36 mx-auto mb-6">
 
-    {{-- Navigation --}}
-
-    <a href="/dashboard" class="  text-sm font-medium text-neutral-100 block my-8 pb-1 px-2 pt-1 rounded transition duration-200 hover:bg-red-700 hover:text-neutral-100 @if(request()->is('dashboard')) bg-red-800 text-neutral-100 @endif">
-        <i class="fa-regular fa-chart-bar my-1 mx-2 text-xl text-center"></i>Dashboard
+    {{-- Dashboard --}}
+    <a href="/dashboard"
+        class="text-sm font-medium text-neutral-100 block my-8 pb-1 px-2 pt-1 rounded transition duration-200 hover:bg-red-700 hover:text-neutral-100 {{ request()->is('dashboard') ? 'bg-red-800 text-neutral-100' : '' }}">
+        <i class="fa-regular fa-chart-bar my-1 mx-2 text-xl"></i>Dashboard
     </a>
 
     <nav>
         <h3 class="text-gray-200 uppercase tracking-wider text-sm mb-2">Inventory</h3>
 
-        {{-- Data Master Dropdown Toggle --}}
-        <div class=" flex">
+        {{-- Data Master --}}
+        <div class="flex">
             <button
                 @click="dataMasterOpen = !dataMasterOpen"
-                class="w-full text-left flex items-center justify-between text-sm font-medium text-gray-200 block my-1 pb-1 px-2 pt-1 rounded transition duration-200 hover:bg-red-700 hover:text-neutral-100 focus:outline-none"
+                class="w-full text-left flex items-center justify-between text-sm font-medium text-gray-100 block my-1 pb-1 px-2 pt-1 rounded transition duration-200 hover:bg-red-700 focus:outline-none"
                 :class="{'bg-red-700': dataMasterOpen}">
-                <span>
-                    <div class=" flex ml-3">
-                        <div class="w-8">
-                            <i class="fa-solid fa-database max-w-5 text-xl"></i>
-                        </div>
-                        <div>
-                            <p class="my-0">Data Master</p>
-                        </div>
-                    </div>
+                <span class="flex ml-3 items-center gap-2">
+                    <i class="fa-solid fa-database text-xl w-6"></i>
+                    <p>Data Master</p>
                 </span>
-                {{-- Dropdown Arrow Icon --}}
                 <i class="fa-solid fa-chevron-down transform transition-transform duration-200 text-xs"
-                    :class="{'rotate-180': dataMasterOpen, 'rotate-0': !dataMasterOpen}"></i>
+                    :class="{'rotate-180': dataMasterOpen}"></i>
             </button>
         </div>
-        {{-- Data Master Dropdown Content (using x-show to toggle) --}}
+
         <div
             x-show="dataMasterOpen"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 transform scale-y-0"
-            x-transition:enter-end="opacity-100 transform scale-y-100"
-            x-transition:leave="transition ease-in duration-200"
-            x-transition:leave-start="opacity-100 transform scale-y-100"
-            x-transition:leave-end="opacity-0 transform scale-y-0"
-            class="origin-top ml-4 border-l border-red-400" {{-- Slight indent and separator --}}
-            style="display: none;" {{-- Initial hide for Alpine --}}>
-            <a href="/barangs" class=" text-sm font-medium text-gray-200 block my-1 py-1.5 pl-8 pr-4 rounded transition duration-200 hover:bg-red-600 hover:text-neutral-100">
-                Data Barang
-            </a>
-            <a href="/pelanggans" class=" text-sm font-medium text-gray-200 block my-1 py-1.5 pl-8 pr-4 rounded transition duration-200 hover:bg-red-600 hover:text-neutral-100">
-                Data Pelanggan
-            </a>
-            <a href="#" class=" text-sm font-medium text-gray-200 block my-1 py-1.5 pl-8 pr-4 rounded transition duration-200 hover:bg-red-600 hover:text-neutral-100">
-                Kategori Pelanggan
-            </a>
-            <a href="/suppliers" class=" text-sm font-medium text-gray-200 block my-1 py-1.5 pl-8 pr-4 rounded transition duration-200 hover:bg-red-600 hover:text-neutral-100">
-                Data Supplier
-            </a>
-            <a href="#" class=" text-sm font-medium text-gray-200 block my-1 py-1.5 pl-8 pr-4 rounded transition duration-200 hover:bg-red-600 hover:text-neutral-100">
-                Kategori Barang
+            x-transition
+            class="origin-top ml-4 border-l border-red-400 pl-2 space-y-1"
+            style="display: none;"
+        >
+            <a href="/barangs" class="text-sm font-medium block py-1.5 pl-6 rounded hover:bg-red-600">Data Barang</a>
+            <a href="/pelanggans" class="text-sm font-medium block py-1.5 pl-6 rounded hover:bg-red-600">Data Pelanggan</a>
+            <a href="/kategori_pelanggan" class="text-sm font-medium block py-1.5 pl-6 rounded hover:bg-red-600">Kategori Pelanggan</a>
+            <a href="/suppliers" class="text-sm font-medium block py-1.5 pl-6 rounded hover:bg-red-600">Data Supplier</a>
+            <a href="/kategori_barang" class="text-sm font-medium block py-1.5 pl-6 rounded hover:bg-red-600">Kategori Barang</a>
+        </div>
+
+        {{-- Inventori Gudang --}}
+        <div class="flex">
+            <button
+                @click="inventoriGudangOpen = !inventoriGudangOpen"
+                class="w-full text-left flex items-center justify-between text-sm font-medium text-gray-100 block my-1 pb-1 px-2 pt-1 rounded transition duration-200 hover:bg-red-700 focus:outline-none"
+                :class="{'bg-red-700': inventoriGudangOpen}">
+                <span class="flex ml-3 items-center gap-2">
+                    <i class="fa-solid fa-boxes-stacked text-xl w-6 "></i>
+                    <p>Inventori Gudang</p>
+                </span>
+                <i class="fa-solid fa-chevron-down transform transition-transform duration-200 text-xs"
+                    :class="{'rotate-180': inventoriGudangOpen}"></i>
+            </button>
+        </div>
+
+        <div
+            x-show="inventoriGudangOpen"
+            x-transition
+            class="origin-top ml-4 border-l border-red-400 pl-2 space-y-1"
+            style="display: none;"
+        >
+            <a href="/stock_opname" class="text-sm font-medium block py-1.5 pl-6 rounded hover:bg-red-600">
+                Stock Opname
             </a>
         </div>
-        {{-- End Data Master Dropdown --}}
 
-        <a href="#" class=" text-sm font-medium text-gray-200 block my-1 pb-1 px-2 pt-1 rounded transition duration-200 hover:bg-red-700 hover:text-neutral-100 @if(request()->is('dashboard')) @endif">
-            <div class=" flex ml-3 ">
-                <div class="w-8">
-                    <i class="fa-solid fa-boxes-stacked text-xl max-w-5"></i>
-                </div>
-                <div>
-                    <p class="my-0">Inventory Gudang</p>
-                </div>
-            </div>
+        {{-- Verifikasi Barang --}}
+        <a href="/verifBarang"
+            class="text-sm font-medium block my-1 pb-1 px-2 pt-1 rounded hover:bg-red-700 transition duration-200">
+            <span class="flex ml-3 items-center gap-2">
+                <i class="fa-solid fa-clipboard-check text-xl w-6"></i>
+                <p>Verifikasi & Retur Barang</p>
+            </span>
         </a>
 
-        <a href="/verifBarang" class=" text-sm font-medium text-gray-200 block my-1 pb-1 px-2 pt-1 rounded transition duration-200 hover:bg-red-700 hover:text-neutral-100 @if(request()->is('dashboard')) @endif">
-            <div class=" flex ml-3 ">
-                <div class="w-8">
-                    <i class="fa-solid fa-clipboard-check text-xl max-w-5"></i>
-                </div>
-                <div>
-                    <p class="my-0">Verifikasi & Retur Barang</p>
-                </div>
-            </div>
+        {{-- Permintaan Pembelian --}}
+        <a href="#"
+            class="text-sm font-medium block my-1 pb-1 px-2 pt-1 rounded hover:bg-red-700 transition duration-200">
+            <span class="flex ml-3 items-center gap-2">
+                <i class="fa-solid fa-money-check-dollar text-xl w-6"></i>
+                <p>Permintaan Pembelian</p>
+            </span>
         </a>
 
-        <a href="#" class="text-sm font-medium text-gray-200 block my-1 pb-1 px-2 pt-1 rounded transition duration-200 hover:bg-red-700 hover:text-neutral-100">
-            <div class=" flex ml-3">
-                <div class="w-8">
-                    <i class="fa-solid fa-money-check-dollar text-xl"></i>
-                </div>
-                <div>
-                    <p class="">Permintaan Pembelian</p>
-                </div>
-            </div>
+        {{-- Transaksi Penjualan --}}
+        <a href="#"
+            class="text-sm font-medium block my-1 pb-1 px-2 pt-1 rounded hover:bg-red-700 transition duration-200">
+            <span class="flex ml-3 items-center gap-2">
+                <i class="fa-solid fa-file-invoice-dollar text-xl w-6"></i>
+                <p>Transaksi Penjualan</p>
+            </span>
         </a>
 
-        <a href="#" class="text-sm font-medium text-gray-200 block my-1 pb-1 px-2 pt-1 rounded transition duration-200 hover:bg-red-700 hover:text-neutral-100">
-            <div class=" flex ml-3 ">
-                <div class="w-8">
-                    <i class="fa-solid fa-file-invoice-dollar text-xl max-w-5"></i>
-                </div>
-                <div>
-                    <p class="my-0">Transaksi Penjualan</p>
-                </div>
-            </div>
+        {{-- Approval Section --}}
+        <h3 class="uppercase tracking-wider text-sm text-gray-200 mt-6 mb-2">Approval</h3>
+        <a href="#" class="text-sm font-medium block my-1 py-1.5 px-2 rounded hover:bg-red-700 transition duration-200">
+            <span class="flex ml-3 items-center gap-2">
+                <i class="fa-solid fa-file text-xl w-6"></i>
+                <p>Approval PO</p>
+            </span>
+        </a>
+        <a href="#" class="text-sm font-medium block my-1 py-1.5 px-2 rounded hover:bg-red-700 transition duration-200">
+            <span class="flex ml-3 items-center gap-2">
+                <i class="fa-solid fa-file text-xl w-6"></i>
+                <p>Approval Surat Jalan</p>
+            </span>
         </a>
 
-        <h3 class=" uppercase tracking-wider text-sm text-gray-200 mt-6 mb-2">Approval</h3>
-
-        <a href="#" class="text-sm font-medium text-gray-200 block my-1 pb-1 px-2 pt-1 rounded transition duration-200 hover:bg-red-700 hover:text-neutral-100">
-            <div class=" flex ml-3 ">
-                <div class="w-8">
-                    <i class="fa-solid fa-file text-xl max-w-5"></i>
-                </div>
-                <div>
-                    <p class="my-0">Aprroval PO</p>
-                </div>
-            </div>
+        {{-- Laporan Section --}}
+        <h3 class="uppercase tracking-wider text-sm text-gray-200 mt-6 mb-2">Laporan</h3>
+        <a href="#" class="text-sm font-medium block my-1 py-1.5 px-2 rounded hover:bg-red-700 transition duration-200">
+            <span class="flex ml-3 items-center gap-2">
+                <i class="fa-solid fa-file-export text-xl w-6"></i>
+                <p>Laporan Pembelian</p>
+            </span>
+        </a>
+        <a href="#" class="text-sm font-medium block my-1 py-1.5 px-2 rounded hover:bg-red-700 transition duration-200">
+            <span class="flex ml-3 items-center gap-2">
+                <i class="fa-solid fa-file-export text-xl w-6"></i>
+                <p>Laporan Barang Keluar</p>
+            </span>
         </a>
 
-        <a href="#" class="text-sm font-medium text-gray-200 block my-1 pb-1 px-2 pt-1 rounded transition duration-200 hover:bg-red-700 hover:text-neutral-100">
-            <div class=" flex ml-3 ">
-                <div class="w-8">
-                    <i class="fa-solid fa-file text-xl max-w-5"></i>
-                </div>
-                <div>
-                    <p class="my-0">Aprroval Surat Jalan</p>
-                </div>
-            </div>
-        </a>
-
-        <h3 class=" uppercase tracking-wider text-sm text-gray-200 mt-6 mb-2">Laporan</h3>
-
-        <a href="#" class="text-sm font-medium text-gray-200 block my-1 pb-1 px-2 pt-1 rounded transition duration-200 hover:bg-red-700 hover:text-neutral-100">
-            <div class=" flex ml-3 ">
-                <div class="w-8">
-                    <i class="fa-solid fa-file-export text-xl max-w-5"></i>
-                </div>
-                <div>
-                    <p class="my-0">Laporan Pembelian</p>
-                </div>
-            </div>
-        </a>
-        <a href="#" class="text-sm font-medium text-gray-200 block my-1 pb-1 px-2 pt-1 rounded transition duration-200 hover:bg-red-700 hover:text-neutral-100">
-            <div class=" flex ml-3 ">
-                <div class="w-8">
-                    <i class="fa-solid fa-file-export text-xl max-w-5"></i>
-                </div>
-                <div>
-                    <p class="my-0">Laporan Barang Keluar</p>
-                </div>
-            </div>
-        </a>
-
-        <h3 class=" uppercase tracking-wider text-sm text-gray-200 mt-6 mb-2">Settings</h3>
+        {{-- Settings --}}
+        <h3 class="uppercase tracking-wider text-sm text-gray-200 mt-6 mb-2">Settings</h3>
         <a href="#" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 text-gray-100">
             Users & Roles
         </a>
-
     </nav>
 </div>

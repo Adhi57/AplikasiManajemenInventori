@@ -21,7 +21,8 @@ class Pelanggan extends Model
     ];
 
     // Relasi ke tabel kategori pelanggan
-    public function kategori_pelanggan(): BelongsTo {
-        return $this->belongsTo (Kategori_Pelanggan::class, );
-    }
+    public function Kategori_Pelanggan()
+{
+    return $this->belongsTo(Kategori_Pelanggan::class, 'kategori_pelanggan_id', 'kategori_pelanggan_id');
+}
 }

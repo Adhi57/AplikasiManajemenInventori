@@ -63,11 +63,14 @@
             <td scope="row" class="px-6 py-2">{{ $supplier->noTelepon }}</td>
             <td scope="row" class="px-6 py-2">{{ $supplier->waktuPengiriman }} hari</td>
 
+            <!-- View -->
             <td class="text-center mx-2 my-2 flex justify-around items-center">
               <a href="{{ route('suppliers.show', $supplier->id_supplier) }}"
                 class="text-indigo-600 hover:text-indigo-900">
                 <i class="fa-solid fa-eye cursor-pointer text-blue-700 mx-1"></i>
               </a>
+
+            <!-- EDIT -->
 
               <a href="{{ route('suppliers.edit', $supplier->id_supplier) }}"
                 class="text-indigo-600 hover:text-indigo-900">

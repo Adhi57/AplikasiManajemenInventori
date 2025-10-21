@@ -23,7 +23,7 @@ return new class extends Migration
 
             // Relasi Foreign Key
             $table->foreign('kategori_pelanggan_id')
-                  ->references('id')
+                  ->references('kategori_pelanggan_id') // CORRECTED LINE
                   ->on('kategori_pelanggans')
                   ->onDelete('cascade');
         });
@@ -35,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('pelanggans');
     }
 };

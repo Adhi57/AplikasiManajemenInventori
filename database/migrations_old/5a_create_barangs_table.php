@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('nama_barang', 255)->nullable(false);
             $table->enum('nama_satuan', ['pcs', 'renteng', 'pack', 'karton'])->nullable(false);
             // Foreign Keys
-            $table->string('kategori_barang_id');
+            $table->unsignedBigInteger('kategori_barang_id');
             $table->unsignedBigInteger('id_supplier');
             $table->unsignedInteger('harga_barang_id');
 
@@ -31,13 +31,6 @@ return new class extends Migration
             $table->foreign('id_supplier')
                   ->references('id_supplier')
                   ->on('suppliers')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade');
-
-            // Relasi ke tabel harga_barangs
-            $table->foreign('harga_barang_id')
-                  ->references('harga_barang_id')
-                  ->on('harga_barangs')
                   ->onDelete('cascade')
                   ->onUpdate('cascade');
         });
