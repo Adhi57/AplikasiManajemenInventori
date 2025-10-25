@@ -67,8 +67,14 @@
             class="origin-top ml-4 border-l border-red-400 pl-2 space-y-1"
             style="display: none;"
         >
+            <a href="/katalog_barang" class="text-sm font-medium block py-1.5 pl-6 rounded hover:bg-red-600">
+                Katalog Barang
+            </a>
             <a href="/stock_opname" class="text-sm font-medium block py-1.5 pl-6 rounded hover:bg-red-600">
                 Stock Opname
+            </a>
+            <a href="/stock_opname" class="text-sm font-medium block py-1.5 pl-6 rounded hover:bg-red-600">
+                Batch & Tracking Kadaluarsa
             </a>
         </div>
 

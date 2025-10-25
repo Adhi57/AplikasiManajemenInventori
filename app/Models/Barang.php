@@ -4,22 +4,29 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+
 class Barang extends Model
 {
     protected $table = 'barangs';
     protected $primaryKey = 'kode_barang';
     public $incrementing = false; // karena PK bukan auto-increment
-    public $timestamps = false;   // tidak ada created_at & updated_at
+    public $timestamps = false;   
 
     protected $keyType = 'string'; // karena PK varchar
 
     protected $fillable = [
         'kode_barang',
         'nama_barang',
-        'nama_satuan',
+        'satuan_terkecil',
         'kategori_barang_id',
         'id_supplier',
-        'harga_barang_id',
+        'jml_barang_per_karton',
+        'foto_produk',
+        'tipe_harga_barang',
+        'harga_jual',
+        'harga_beli',
+        'berlaku_mulai',
+        'berlaku_sampai',
     ];
 
 
@@ -34,12 +41,12 @@ class Barang extends Model
             
             // Format ID
             $prefix = 'K' . str_pad($kategoriId, 2, '0', STR_PAD_LEFT) . 
-                      'S' . str_pad($supplierId, 2, '0', STR_PAD_LEFT);
+                     'S' . str_pad($supplierId, 2, '0', STR_PAD_LEFT);
 
             // 2. Mencari Nomer Selanjutnya
             $lastBarang = static::where('kode_barang', 'like', $prefix . '%')
-                                ->orderBy('kode_barang', 'desc')
-                                ->first();
+                                 ->orderBy('kode_barang', 'desc')
+                                 ->first();
 
             $nextNumber = 1;
 
@@ -68,11 +75,6 @@ class Barang extends Model
         return $this->belongsTo(Supplier::class, 'id_supplier', 'id_supplier');
     }
 
-    // Relasi ke harga barang (satu barang bisa punya satu harga aktif di field ini)
-    public function hargaBarang()
-    {
-        return $this->belongsTo(hargaBarang::class, 'harga_barang_id', 'harga_barang_id');
-    }
 
     // Relasi ke stok barang
     public function stok()
@@ -80,9 +82,4 @@ class Barang extends Model
         return $this->hasOne(stokBarang::class, 'kode_barang', 'kode_barang');
     }
 
-    // Relasi ke semua riwayat harga
-    public function daftarHarga()
-    {
-        return $this->hasMany(HargaBarang::class, 'kode_barang', 'kode_barang');
-    }
 }
