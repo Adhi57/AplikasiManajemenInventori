@@ -26,7 +26,11 @@
 
 
 <!-- TABEL -->
-
+@if(session('success'))
+<div class="bg-green-100 text-green-700 p-3 rounded mb-4">
+  {{ session('success') }}
+</div>
+@endif
 <div class="my-3">
 
   <div class="bg-white rounded-lg grid-cols-10">
@@ -75,20 +79,20 @@
                 class="text-indigo-600 hover:text-indigo-900">
                 <i class="fa-solid fa-pen cursor-pointer text-amber-300 mx-1"></i>
               </a>
-              
+
               <!-- Delete -->
-               <a>
-               <form action="{{ route('suppliers.destroy', $supplier->id_supplier) }}" 
-                    class=" w-0"
-                    method="POST" 
-                    onsubmit="return confirm('Yakin ingin menghapus supplier ini?');">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="text-red-600 hover:text-red-700" title="Hapus">
-                  <i class="fa-solid fa-trash"></i>
-                </button>
-              </form>
-               </a>
+              <a>
+                <form action="{{ route('suppliers.destroy', $supplier->id_supplier) }}"
+                  class=" w-0"
+                  method="POST"
+                  onsubmit="return confirm('Yakin ingin menghapus supplier ini?');">
+                  @csrf
+                  @method('DELETE')
+                  <button type="submit" class="text-red-600 hover:text-red-700" title="Hapus">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </form>
+              </a>
             </td>
           </tr>
           @endforeach

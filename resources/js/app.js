@@ -1,6 +1,7 @@
 import './bootstrap';
 
+import Alpine from 'alpinejs';
 
-import 'preline'
-import 'apexcharts/dist/apexcharts.css';
-import './vendor/hs-apexcharts-helpers.js'; 
+window.Alpine = Alpine;
+
+Alpine.start();

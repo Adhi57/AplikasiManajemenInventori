@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -13,26 +14,28 @@ class User extends Authenticatable
 
     protected $primaryKey = 'user_id';
     public $incrementing = false;
-    
-    // Sesuaikan fillable dengan kolom di tabel Anda
+    protected $keyType = 'string';
+
     protected $fillable = [
         'user_id',
-        'username',
         'nama_lengkap',
+        'username',
+        'email',
         'password',
         'role',
     ];
 
-    // ... (hidden, casts)
-    
-    // Agar otentikasi menggunakan kolom 'username'
-    public function findForPassport($username)
-    {
-        return $this->where('username', $username)->first();
-    }
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
-    public function getAuthIdentifierName()
+    protected static function boot()
     {
-        return 'user_id'; // Laravel menggunakan user_id untuk session
+        parent::boot();
+    
+        static::creating(function ($model) {
+            $model->user_id = 'USR-' . strtoupper(\Illuminate\Support\Str::random(6));
+        });
     }
 }

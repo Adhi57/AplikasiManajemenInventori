@@ -3,19 +3,19 @@
 @section('content')
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-    <div class=" bg-linear-65 from-red-700 to-red-500 p-3 pl-6 rounded-lg shadow-md">
+    <div class=" bg-gradient-to-t from-red-500 to-red-700 p-3 pl-6 rounded-lg shadow-md">
         <h2 class="text-sm font-medium text-gray-200 mb-2">Total Products</h2>
         <p class="text-4xl font-semibold text-gray-200">450</p>
     </div>
-    <div class=" bg-linear-65 from-red-700 to-red-500 p-3 pl-6 rounded-lg shadow-md">
+    <div class=" bg-gradient-to-t from-red-500 to-red-700 p-3 pl-6 rounded-lg shadow-md">
         <h2 class="text-sm font-medium text-gray-200 mb-2">Total Products</h2>
         <p class="text-3xl font-semibold text-gray-200">450</p>
     </div>
-    <div class=" bg-linear-65 from-red-700 to-red-500 p-3 pl-6 rounded-lg shadow-md">
+    <div class=" bg-gradient-to-t from-red-500 to-red-700 p-3 pl-6 rounded-lg shadow-md">
         <h2 class="text-sm font-medium text-gray-200 mb-2">Total Products</h2>
         <p class="text-3xl font-semibold text-gray-200">450</p>
     </div>
-    <div class=" bg-linear-65 from-red-700 to-red-500 p-3 pl-6 rounded-lg shadow-md">
+    <div class=" bg-gradient-to-t from-red-500 to-red-700 p-3 pl-6 rounded-lg shadow-md">
         <h2 class="text-sm font-medium text-gray-200 mb-2">Total Products</h2>
         <p class="text-3xl font-semibold text-gray-200">450</p>
     </div>

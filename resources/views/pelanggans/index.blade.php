@@ -42,7 +42,7 @@
       </div>
 
       <table class="w-full text-sm text-left rtl:text-right text-gray-900 rounded-lg">
-        <thead class="text-xs text-gray-900 border-b-1 rounded-lg bg-neutral-">
+        <thead class="text-xs text-gray-900 border-b-1 rounded-lg bg-neutral">
           <tr>
             <th scope="col" class="px-6 py-2 text-center">Kode Pelanggan</th>
             <th scope="col" class="px-6 py-2">Nama Pelanggan</th>

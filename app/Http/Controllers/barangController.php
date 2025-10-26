@@ -48,7 +48,7 @@ class BarangController extends Controller
             'id_supplier' => 'required|exists:suppliers,id_supplier',
             'harga_beli' => 'required|numeric|min:0',
             'harga_jual' => 'required|numeric|min:0',
-            'tipe_harga_barang' => 'required|in:Eceran,Grosir,Diskon', // Perbaiki spasi
+            'tipe_harga_barang' => 'required|in:Eceran,Grosir,Diskon', 
             'satuan_terkecil' => 'required|string|max:50',
             'jml_barang_per_karton' => 'required|integer|min:1',
             'berlaku_mulai' => 'required|date',
@@ -76,7 +76,7 @@ class BarangController extends Controller
             $barang = Barang::create([
                 'kode_barang' => $kode_barang,
                 'nama_barang' => $validated['nama_barang'],
-                'foto_produk' => $foto_path, // Path relatif terhadap disk 'public'
+                'foto_produk' => $foto_path, 
                 'kategori_barang_id' => $validated['kategori_barang_id'],
                 'id_supplier' => $validated['id_supplier'],
                 'harga_beli' => $validated['harga_beli'],
@@ -114,7 +114,7 @@ class BarangController extends Controller
      */
     public function edit($kode_barang)
     {
-        $barang = Barang::where('kode_barang', $kode_barang)->firstOrFail();
+        $barang = Barang::with(['kategori', 'supplier', 'stok'])->where('kode_barang', $kode_barang)->firstOrFail();
         $kategoriBarangs = KategoriBarang::all();
         $suppliers = Supplier::all();
 
@@ -139,7 +139,6 @@ class BarangController extends Controller
             'satuan_terkecil' => 'required|string|max:50',
             'jml_barang_per_karton' => 'required|integer|min:1',
             'berlaku_mulai' => 'required|date',
-            // Di mode UPDATE, jumlah_stok diabaikan, hanya tgl_kadaluarsa yang bisa di-update
             'tgl_kadaluarsa' => 'nullable|date',
         ]);
 
