@@ -146,31 +146,6 @@
                 </select>
             </div>
 
-            {{-- Stok --}}
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                    <label for="jumlah_stok" class="block text-sm font-medium text-gray-700 mb-1">
-                        Jumlah Stok Awal
-                        @if ($isEdit) <span class="text-xs text-indigo-500">(Tidak dapat diubah)</span> @endif
-                    </label>
-                    {{-- Input Stok Awal hanya bisa diisi saat mode CREATE --}}
-                    <input type="number" name="jumlah_stok" id="jumlah_stok"
-                        value="{{ old('jumlah_stok', $barang->stok->jumlah_stok ?? 0) }}"
-                        class="py-2.5 sm:py-3 px-4 block w-full border border-gray-300 rounded-lg sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 
-                        {{ $isEdit ? 'bg-gray-100 cursor-not-allowed' : '' }}"
-                        {{ $isEdit ? 'disabled' : 'required' }}>
-                    @if ($isEdit)
-                    <p class="text-xs text-gray-500 mt-1">Stok diperbarui melalui transaksi (Masuk/Keluar) bukan form ini.</p>
-                    @endif
-                </div>
-                <div>
-                    <label for="jumlah_stok_rusak" class="block text-sm font-medium text-gray-700 mb-1">Stok Rusak (Jika Ada)</label>
-                    <input type="number" name="jumlah_stok_rusak" id="jumlah_stok_rusak"
-                        value="{{ old('jumlah_stok_rusak', $barang->stok->jumlah_stok_rusak ?? 0) }}"
-                        class="py-2.5 sm:py-3 px-4 block w-full border border-gray-300 rounded-lg sm:text-sm focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-            </div>
-
             {{-- Satuan & Jml/Karton --}}
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div>
@@ -205,15 +180,6 @@
                         value="{{ old('berlaku_mulai', $barang->berlaku_mulai ? \Carbon\Carbon::parse($barang->berlaku_mulai)->format('Y-m-d') : date('Y-m-d')) }}"
                         class="py-2.5 sm:py-3 px-4 block w-full border border-gray-300 rounded-lg sm:text-sm focus:ring-indigo-500 focus:border-indigo-500"
                         required>
-                </div>
-                <div>
-                    @php
-                    $tglKadaluarsa = old('tgl_kadaluarsa', optional($barang->stok)->tgl_kadaluarsa);
-                    @endphp
-                    <input type="date" name="tgl_kadaluarsa" id="tgl_kadaluarsa"
-                        value="{{ $tglKadaluarsa ? \Carbon\Carbon::parse($tglKadaluarsa)->format('Y-m-d') : '' }}"
-                        class="py-2.5 sm:py-3 px-4 block w-full border border-gray-300 rounded-lg sm:text-sm focus:ring-indigo-500 focus:border-indigo-500">
-                    <p class="text-xs text-gray-500 mt-1">Opsional, jika barang memiliki kadaluarsa.</p>
                 </div>
             </div>
 

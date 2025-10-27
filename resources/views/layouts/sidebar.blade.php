@@ -88,7 +88,7 @@
         </a>
 
         {{-- Permintaan Pembelian --}}
-        <a href="#"
+        <a href="{{ route('purchase_orders.buat_permintaan') }}"
             class="text-sm font-medium block my-1 pb-1 px-2 pt-1 rounded hover:bg-red-700 transition duration-200">
             <span class="flex ml-3 items-center gap-2">
                 <i class="fa-solid fa-money-check-dollar text-xl w-6"></i>
@@ -107,7 +107,7 @@
 
         {{-- Approval Section --}}
         <h3 class="uppercase tracking-wider text-sm text-gray-200 mt-6 mb-2">Approval</h3>
-        <a href="#" class="text-sm font-medium block my-1 py-1.5 px-2 rounded hover:bg-red-700 transition duration-200">
+        <a href="{{ route('approval.approval_po') }}" class="text-sm font-medium block my-1 py-1.5 px-2 rounded hover:bg-red-700 transition duration-200">
             <span class="flex ml-3 items-center gap-2">
                 <i class="fa-solid fa-file text-xl w-6"></i>
                 <p>Approval PO</p>

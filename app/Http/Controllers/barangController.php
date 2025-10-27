@@ -53,9 +53,6 @@ class BarangController extends Controller
             'jml_barang_per_karton' => 'required|integer|min:1',
             'berlaku_mulai' => 'required|date',
             
-            // Stok awal hanya diperlukan saat membuat barang baru
-            'jumlah_stok' => 'required|integer|min:0',
-            'tgl_kadaluarsa' => 'nullable|date',
         ]);
 
         DB::beginTransaction();
@@ -66,7 +63,6 @@ class BarangController extends Controller
             if ($request->hasFile('foto_produk')) {
                 // Simpan file ke folder 'images/foto_produk' di dalam disk 'public'
                 $foto_path = $request->file('foto_produk')->store('images/foto_produk', 'public');
-                // $foto_path sekarang berisi path relatif (misal: images/foto_produk/hash.jpg)
             }
 
             // 2. Buat Kode Barang Otomatis (contoh sederhana: B-Timestamp)
@@ -85,13 +81,6 @@ class BarangController extends Controller
                 'satuan_terkecil' => $validated['satuan_terkecil'],
                 'jml_barang_per_karton' => $validated['jml_barang_per_karton'],
                 'berlaku_mulai' => $validated['berlaku_mulai'],
-            ]);
-
-            // 4. Simpan data Stok
-            $barang->stok()->create([
-                'jumlah_stok' => $validated['jumlah_stok'], 
-                'jumlah_stok_rusak' => 0, 
-                'tgl_kadaluarsa' => $validated['tgl_kadaluarsa'],
             ]);
 
             DB::commit();
@@ -173,13 +162,6 @@ class BarangController extends Controller
                 'berlaku_mulai' => $validated['berlaku_mulai'],
             ]);
 
-            // 3. Update data Stok (hanya tgl_kadaluarsa yang diizinkan)
-            // Asumsi relasi stok selalu ada di mode edit
-            if ($barang->stok) {
-                $barang->stok->update([
-                    'tgl_kadaluarsa' => $validated['tgl_kadaluarsa'],
-                ]);
-            }
 
             DB::commit();
 

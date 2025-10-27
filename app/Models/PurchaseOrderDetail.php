@@ -26,7 +26,7 @@ class PurchaseOrderDetail extends Model
         'harga_satuan',
         'satuan', // ENUM
         'subtotal',
-        'status_verifikasi', // Tambahan: 'Pending', 'Verified', 'Returned'
+        'status_verifikasi', 
     ];
     
     protected $casts = [

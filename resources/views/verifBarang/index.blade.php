@@ -7,12 +7,17 @@
     <div class="col-span-4 bg-white rounded-xl shadow p-5">
         <h2 class="text-lg font-semibold mb-3">1. Pilih Surat PO</h2>
         <div class="space-y-2">
-            @foreach($po_letters as $po)
-                <label class="flex items-center space-x-2 p-2 border rounded hover:bg-gray-50 cursor-pointer">
-                    <input type="radio" name="selected_po" value="{{ $po->id }}" class="po-radio">
-                    <span>{{ $po->number }} - <span class="text-gray-600">{{ $po->supplier }}</span></span>
+            @forelse($po_list as $po)
+                <label class="flex flex-col space-y-1 p-3 border border-gray-200 rounded-lg hover:bg-blue-50 cursor-pointer transition duration-150 ease-in-out has-[:checked]:border-blue-500 has-[:checked]:bg-blue-100">
+                    <div class="flex items-center space-x-2">
+                        <input type="radio" name="selected_po" value="{{ $po['id'] }}" class="po-radio text-blue-600 focus:ring-blue-500" required>
+                        <span class="font-medium text-gray-800">{{ $po['number'] }}</span>
+                    </div>
+                    <span class="text-xs text-gray-500 ml-6">Supplier: {{ $po['supplier'] }}</span>
                 </label>
-            @endforeach
+            @empty
+                <p class="text-gray-500 italic text-center py-5">Tidak ada PO yang siap diterima saat ini.</p>
+            @endforelse
         </div>
     </div>
 
@@ -21,20 +26,22 @@
         <h2 class="text-lg font-semibold mb-3">2. Daftar Barang (Dari PO)</h2>
 
         <div class="overflow-x-auto">
-            <table class="w-full text-sm border rounded" id="items-table">
-                <thead class="bg-gray-100">
+            <table class="w-full text-sm border-collapse rounded-lg overflow-hidden" id="items-table">
+                <thead class="bg-gray-100 border-b-2 border-gray-200">
                     <tr>
-                        <th class="p-2"><input type="checkbox" id="select-all-items"></th>
-                        <th class="p-2">ID</th>
-                        <th class="p-2">Nama Barang</th>
-                        <th class="p-2">Satuan</th>
-                        <th class="p-2">Qty PO</th>
-                        <th class="p-2">Diterima</th>
+                        <th class="p-3 text-center w-10">
+                            <input type="checkbox" id="select-all-items" class="rounded text-blue-600">
+                        </th>
+                        <th class="p-3 text-left">Kode Barang</th>
+                        <th class="p-3 text-left">Nama Barang</th>
+                        <th class="p-3 text-center">Qty PO</th>
+                        <th class="p-3 text-center">Qty Diterima</th>
+                        <th class="p-3 text-center text-red-600">Qty Retur</th>
                     </tr>
                 </thead>
-                <tbody id="items-body">
+                <tbody id="items-body" class="divide-y divide-gray-100">
                     <tr>
-                        <td colspan="6" class="text-center text-gray-500 py-3">Pilih PO terlebih dahulu</td>
+                        <td colspan="6" class="text-center text-gray-500 py-6 italic">Pilih PO terlebih dahulu untuk memuat detail barang.</td>
                     </tr>
                 </tbody>
             </table>
@@ -77,34 +84,62 @@
 
 <!-- Script -->
 <script>
+function updateItemsEmptyState(message) {
+    document.getElementById('items-body').innerHTML = `
+        <tr><td colspan="6" class="text-center text-gray-500 py-6 italic">${message}</td></tr>`;
+}
+
+function renderItemsTable(items) {
+    let tbody = document.getElementById('items-body');
+    tbody.innerHTML = '';
+
+    if (!items.length) {
+        updateItemsEmptyState("Tidak ada barang pada PO ini.");
+        return;
+    }
+
+    items.forEach(item => {
+        tbody.innerHTML += `
+            <tr>
+                <td class="text-center">
+                    <input type="checkbox" class="item-checkbox" 
+                        data-id="${item.id}" 
+                        data-name="${item.name}" 
+                        data-unit="${item.unit}" 
+                        data-qty="${item.qty_po}">
+                </td>
+                <td class="p-2">${item.kode_barang}</td>
+                <td class="p-2">${item.name}</td>
+                <td class="p-2 text-center">${item.qty_po}</td>
+                <td class="p-2 text-center">
+                    <input type="number" class="received-input border rounded w-20 text-center" 
+                        value="${item.qty_po}" min="0" max="${item.qty_po}">
+                </td>
+                <td class="p-2 text-center text-red-600 font-bold">0</td>
+            </tr>
+        `;
+    });
+}
+
+// Event ketika PO dipilih
 document.querySelectorAll('.po-radio').forEach(radio => {
     radio.addEventListener('change', function() {
         let poId = this.value;
+        updateItemsEmptyState("Memuat detail barang...");
 
-        fetch(`/get-items/${poId}`)
-            .then(res => res.json())
-            .then(items => {
-                let tbody = document.getElementById('items-body');
-                tbody.innerHTML = "";
 
-                if (items.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-gray-500 py-3">Tidak ada barang untuk PO ini</td></tr>`;
-                } else {
-                    items.forEach(item => {
-                        tbody.innerHTML += `
-                            <tr>
-                                <td class="text-center"><input type="checkbox" class="item-checkbox" data-id="${item.id}" data-name="${item.name}" data-unit="${item.unit}" data-qty="${item.qty}"></td>
-                                <td>${item.id}</td>
-                                <td>${item.name}</td>
-                                <td>${item.unit}</td>
-                                <td class="font-bold">${item.qty}</td>
-                                <td><input type="number" min="0" max="${item.qty}" value="${item.qty}" class="received-input w-20 border rounded text-center"></td>
-                            </tr>
-                        `;
-                    });
-                }
+        fetch(url)
+            .then(res => {
+                if (!res.ok) throw new Error('Gagal memuat data PO.');
+                return res.json();
             })
-            .catch(err => console.error(err));
+            .then(items => {
+                renderItemsTable(items);
+            })
+            .catch(err => {
+                console.error(err);
+                updateItemsEmptyState("Gagal memuat detail barang. Silakan coba lagi.");
+            });
     });
 });
 

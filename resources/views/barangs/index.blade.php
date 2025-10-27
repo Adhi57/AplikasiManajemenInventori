@@ -54,7 +54,6 @@
                         <th scope="col" class="px-6 py-3">Kategori</th>
                         <th scope="col" class="px-6 py-3">Supplier</th>
                         <th scope="col" class="px-3 py-3 text-center">Jml/Karton</th>
-                        <!-- KOLOM HARGA BARU -->
                         <th scope="col" class="px-3 py-3 text-center">Tipe Harga</th>
                         <th scope="col" class="px-6 py-3 text-right">H. Beli</th>
                         <th scope="col" class="px-6 py-3 text-right">H. Jual</th>

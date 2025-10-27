@@ -4,23 +4,40 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+use App\Models\PurchaseOrder; 
+use App\Models\Barang; 
+
 class stokBarang extends Model
 {
     protected $table = 'stok_barangs';
-    protected $primaryKey = 'stok_id';
-    public $timestamps = false;
+    
+    public $incrementing = false; 
+
+    protected $keyType = 'string';
+
+    public $timestamps = false; 
 
     protected $fillable = [
+        'po_id', 
         'kode_barang',
         'jumlah_stok',
         'jumlah_stok_rusak',
         'tgl_kadaluarsa',
+    ];
+    
+    // Field yang akan diperlakukan sebagai tanggal
+    protected $dates = [
+        'tgl_kadaluarsa',
         'updated_at',
     ];
 
-    // Relasi ke tabel barang
     public function barang()
     {
         return $this->belongsTo(Barang::class, 'kode_barang', 'kode_barang');
+    }
+
+    public function purchaseOrder()
+    {
+        return $this->belongsTo(PurchaseOrder::class, 'po_id', 'po_id');
     }
 }
