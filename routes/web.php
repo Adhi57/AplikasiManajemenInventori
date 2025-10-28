@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\barangController;
+use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\KatalogController;
 use App\Http\Controllers\KategoriBarangController;
 use App\Http\Controllers\PelangganController;
@@ -49,14 +50,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/purchase-orders/fetch-barangs', [PurchaseOrdersController::class, 'fetchBarangs'])->name('purchase_orders.fetch_barangs'); // Untuk AJAX
     Route::post('/purchase_orders/buat_permintaan', [PurchaseOrdersController::class, 'store'])->name('purchase_orders.buat_permintaan');
     
-    Route::get('verifBarang', [VerifikasiBarangController::class, 'index'])->name('verifBarang.index');
+    Route::get('verifBarang', [PurchaseOrdersController::class, 'index'])->name('verifBarang.index');
+    Route::get('/verifBarang/get-items/{po_id}', [PurchaseOrdersController::class, 'getItems']);
+    Route::post('/verifBarang/store', [BarangMasukController::class, 'store'])->name('verifBarang.store');    
     
-    // Rute untuk memproses pengiriman formulir penerimaan (POST /penerimaan/store)
-    Route::post('/store', [VerifikasiBarangController::class, 'store'])->name('penerimaan.store');
-    
-    Route::get('/purchase_orders/get-items/{poId}', [VerifikasiBarangController::class, 'getItems'])
-    ->name('get-items');
-
     // Rute Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

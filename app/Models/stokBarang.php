@@ -31,6 +31,11 @@ class stokBarang extends Model
         'updated_at',
     ];
 
+    public function stoks()
+    {
+        return $this->hasMany(StokBarang::class, 'kode_barang', 'kode_barang');
+    }
+
     public function barang()
     {
         return $this->belongsTo(Barang::class, 'kode_barang', 'kode_barang');
@@ -39,5 +44,10 @@ class stokBarang extends Model
     public function purchaseOrder()
     {
         return $this->belongsTo(PurchaseOrder::class, 'po_id', 'po_id');
+    }
+
+    public function getTotalStokAttribute()
+    {
+        return $this->stoks()->sum('jumlah_stok');
     }
 }

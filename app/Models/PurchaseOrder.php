@@ -58,7 +58,7 @@ class PurchaseOrder extends Model
     public static function generatePoId()
     {
         // Format bulan dan tahun 
-        $prefix = 'PO/' . date('ym'); 
+        $prefix = 'PO_' . date('ym'); 
         $tanggalHariIni = date('Y-m-d');
 
         // Cari PO terakhir yang dibuat hari ini atau bulan ini
@@ -76,7 +76,7 @@ class PurchaseOrder extends Model
         }
 
         // Format nomor urut menjadi 4 digit 
-        $newPoId = $prefix . '/' . str_pad($nomorUrut, 4, '0', STR_PAD_LEFT);
+        $newPoId = $prefix . '_' . str_pad($nomorUrut, 4, '0', STR_PAD_LEFT);
 
         return $newPoId;
     }

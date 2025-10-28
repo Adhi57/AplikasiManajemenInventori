@@ -82,4 +82,19 @@ class Barang extends Model
         return $this->hasOne(stokBarang::class, 'kode_barang', 'kode_barang');
     }
 
+    public function stoks()
+    {
+        return $this->hasMany(StokBarang::class, 'kode_barang', 'kode_barang');
+    }
+
+    public function getTotalStokAttribute()
+    {
+        // Sum the 'jumlah_stok' column for this item across all related rows in stok_barangs
+        return $this->stoks()->sum('jumlah_stok');
+    }
+    public function getTotalStokRusakAttribute()
+    {
+        return $this->stoks()->sum('jumlah_stok_rusak');
+    }
+
 }

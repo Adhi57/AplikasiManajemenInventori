@@ -10,6 +10,7 @@ use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class PurchaseOrdersController extends Controller
 {
@@ -147,7 +148,30 @@ class PurchaseOrdersController extends Controller
 
             return redirect()->back()->withInput()->with('error', 'Gagal membuat Permintaan Pembelian. Silakan coba lagi. ' . $e->getMessage());
         }
+    }public function getItems($po_id)
+    {
+        $details = \App\Models\PurchaseOrderDetail::with('barang')
+            ->where('po_id', $po_id)
+            ->get()
+            ->map(function ($d) {
+                return [
+                    'kode_barang'   => $d->kode_barang,
+                    'nama_barang'   => $d->barang->nama_barang ?? '-',
+                    'qty_po'        => $d->quantity,
+                    'qty_diterima'  => 0, // default 0, bisa diubah nanti di UI
+                ];
+            });
+    
+        return response()->json($details);
     }
+    public function index()
+    {
+        $purchaseOrders = PurchaseOrder::with('supplier')
+            ->where('status_po', 'Disetujui')
+            ->latest()
+            ->get();
 
+        return view('verifBarang.index', compact('purchaseOrders'));
+    }
 
 }

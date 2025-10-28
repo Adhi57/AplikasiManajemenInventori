@@ -54,14 +54,19 @@
                     
                     <p>
                         <span class="font-medium">Stok Tersedia:</span> 
-                        <span class="font-bold {{ ($barang->stok->jumlah_stok ?? 0) > 5 ? 'text-green-600' : 'text-red-600' }}">
-                            {{ number_format($barang->stok->jumlah_stok ?? 0, 0, ',', '.') }} {{ $barang->satuan_terkecil }}
+                        <span class="font-bold {{ $barang->total_stok > 5 ? 'text-green-600' : 'text-red-600' }}">
+                            {{ number_format($barang->total_stok ?? 0, 0, ',', '.') }} Karton
+                        </span>
+                    </p>
+                        <span class="font-medium">Total per {{ $barang->satuan_terkecil }}:</span> 
+                        <span class="font-bold">
+                            {{ number_format( $barang->total_stok * $barang->jml_barang_per_karton  ?? 0, 0, ',', '.') }} {{ $barang->satuan_terkecil }}
                         </span>
                     </p>
                     <p>
                         <span class="font-medium">Stok Rusak:</span> 
                         <span class="font-bold text-red-500">
-                            {{ number_format($barang->stok->jumlah_stok_rusak ?? 0, 0, ',', '.') }} {{ $barang->satuan_terkecil }}
+                            {{ number_format($barang->total_stok_rusak ?? 0, 0, ',', '.') }} Karton
                         </span>
                     </p>
 
