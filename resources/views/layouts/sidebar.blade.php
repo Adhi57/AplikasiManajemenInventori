@@ -83,7 +83,16 @@
             class="text-sm font-medium block my-1 pb-1 px-2 pt-1 rounded hover:bg-red-700 transition duration-200">
             <span class="flex ml-3 items-center gap-2">
                 <i class="fa-solid fa-clipboard-check text-xl w-6"></i>
-                <p>Verifikasi & Retur Barang</p>
+                <p>Verifikasi Barang Masuk</p>
+            </span>
+        </a>
+
+        {{-- Retur Barang --}}
+        <a href="/verifBarang"
+            class="text-sm font-medium block my-1 pb-1 px-2 pt-1 rounded hover:bg-red-700 transition duration-200">
+            <span class="flex ml-3 items-center gap-2">
+                <i class="fa-solid fa-clipboard-check text-xl w-6"></i>
+                <p>Retur Barang</p>
             </span>
         </a>
 

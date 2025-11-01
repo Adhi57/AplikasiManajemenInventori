@@ -93,11 +93,9 @@
                     <div class="detail-row">
                         <p class="text-sm font-medium text-gray-500">Tanggal Kadaluarsa</p>
                         <p class="text-lg font-medium text-gray-900">
-                            @if ($barang->stok->tgl_kadaluarsa)
-                                {{ \Carbon\Carbon::parse($barang->stok->tgl_kadaluarsa)->format('d F Y') }}
-                            @else
-                                -
-                            @endif
+                            {{ optional($barang->stok)->tgl_kadaluarsa
+                                ? \Carbon\Carbon::parse($barang->stok->tgl_kadaluarsa)->translatedFormat('d F Y')
+                                : '-' }}
                         </p>
                     </div>
                 </div>
