@@ -138,19 +138,19 @@ class PurchaseOrdersController extends Controller
 
             // REDIRECT SUKSES
             // Mengembalikan po_id yang sudah digenerate
-            return redirect()->route('dashboard')->with('success', 'Permintaan Pembelian berhasil dibuat dengan nomor PO: ' . $poHeader->po_id);
+            return redirect()->back()->with('success', 'Permintaan Pembelian berhasil dibuat dan menunggu approval dengan nomor PO: ' . $poHeader->po_id);
 
         } catch (\Exception $e) {
             // 7. ROLLBACK JIKA ADA KEGAGALAN
             DB::rollBack();
             
-            \Log::error('Gagal Menyimpan Purchase Order:', ['error' => $e->getMessage(), 'request' => $request->all()]);
+            \log::error('Gagal Menyimpan Purchase Order:', ['error' => $e->getMessage(), 'request' => $request->all()]);
 
             return redirect()->back()->withInput()->with('error', 'Gagal membuat Permintaan Pembelian. Silakan coba lagi. ' . $e->getMessage());
         }
     }public function getItems($po_id)
     {
-        $details = \App\Models\PurchaseOrderDetail::with('barang')
+        $details = PurchaseOrderDetail::with('barang')
             ->where('po_id', $po_id)
             ->get()
             ->map(function ($d) {

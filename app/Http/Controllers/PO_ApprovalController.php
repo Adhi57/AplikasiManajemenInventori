@@ -3,15 +3,35 @@
 namespace App\Http\Controllers;
 
 use App\Models\PurchaseOrder;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\PurchaseOrderDetail;
+use Exception;
 
 class PO_ApprovalController extends Controller
 {
-    public function index(Request $request) {
-        $PO_List = PurchaseOrder::with(['details'])->get();
-        
+    public function index(Request $request)
+    {
+        $status = $request->get('status');
+
+        $PO_List = PurchaseOrder::with(['details'])
+            ->when($status, function ($query, $status) {
+                $query->where('status_po', $status);
+            })
+            ->orderByRaw("
+            CASE 
+                WHEN status_po = 'Pending' THEN 1
+                WHEN status_po = 'Disetujui' THEN 2
+                WHEN status_po = 'Diterima' THEN 3
+                WHEN status_po = 'Ditolak' THEN 4
+                ELSE 5
+            END
+        ")
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+
         return view('approval.approval_po', compact('PO_List'));
     }
 
@@ -20,7 +40,7 @@ class PO_ApprovalController extends Controller
         $purchaseOrder = PurchaseOrder::with(['details.barang', 'supplier', 'user'])
             ->where('po_id', $po_id)
             ->firstOrFail();
-    
+
         return view('approval.show_po', compact('purchaseOrder'));
     }
 
@@ -44,7 +64,6 @@ class PO_ApprovalController extends Controller
             DB::commit();
 
             return redirect()->route('approval.approval_po')->with('success', "Purchase Order {$po_id} berhasil disetujui dan stok barang telah ditambahkan!");
-
         } catch (Exception $e) {
             DB::rollBack();
             // Log error
@@ -74,11 +93,23 @@ class PO_ApprovalController extends Controller
             $purchaseOrder->save();
 
             return redirect()->route('approval.approval_po')->with('warning', "Purchase Order {$po_id} berhasil ditolak.");
-
         } catch (Exception $e) {
             // Log error
             return back()->with('error', 'Terjadi kesalahan saat menolak PO: ' . $e->getMessage());
         }
     }
-    }
 
+    public function print_po($po_id)
+    {
+        $purchaseOrder = PurchaseOrder::with(['user', 'supplier', 'details.barang'])
+            ->where('po_id', $po_id)
+            ->firstOrFail();
+    
+        return Pdf::loadView('approval.show_po', [
+            'purchaseOrder' => $purchaseOrder,
+            'pdf' => true
+        ])
+        ->setPaper('a4', 'portrait')
+        ->stream('PurchaseOrder_' . $po_id . '.pdf');
+    }
+}

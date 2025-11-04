@@ -11,7 +11,7 @@
                         kode_barang: '{{ $barang->kode_barang }}',
                         nama: '{{ $barang->nama_barang }}',
                         harga: {{ $barang->harga_beli }},
-                        satuan: '{{ $barang->satuan_terkecil }}'
+                        satuan: '{{ $barang->satuan_jual }}'
                     })" 
                     class="text-sm px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                 Pilih

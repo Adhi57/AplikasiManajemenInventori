@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('page-title', 'Data Master / Barang')
+
 @section('content')
 
 <div class="container mx-auto p-4">
@@ -116,14 +118,14 @@
             {{-- Harga Beli & Harga Jual --}}
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                    <label for="harga_beli" class="block text-sm font-medium text-gray-700 mb-1">Harga Beli</label>
+                    <label for="harga_beli" class="block text-sm font-medium text-gray-700 mb-1">Harga Beli per Karton</label>
                     <input type="number" step="0.01" name="harga_beli" id="harga_beli"
                         value="{{ old('harga_beli', $barang->harga_beli) }}"
                         class="py-2.5 sm:py-3 px-4 block w-full border border-gray-300 rounded-lg sm:text-sm focus:ring-indigo-500 focus:border-indigo-500"
                         required>
                 </div>
                 <div>
-                    <label for="harga_jual" class="block text-sm font-medium text-gray-700 mb-1">Harga Jual</label>
+                    <label for="harga_jual" class="block text-sm font-medium text-gray-700 mb-1">Harga Jual / tipe</label>
                     <input type="number" step="0.01" name="harga_jual" id="harga_jual"
                         value="{{ old('harga_jual', $barang->harga_jual) }}"
                         class="py-2.5 sm:py-3 px-4 block w-full border border-gray-300 rounded-lg sm:text-sm focus:ring-indigo-500 focus:border-indigo-500"
@@ -133,7 +135,7 @@
 
             {{-- Tipe Harga --}}
             <div class="mb-4">
-                <label for="tipe_harga_barang" class="block text-sm font-medium text-gray-700 mb-1">Tipe Harga</label>
+                <label for="tipe_harga_barang" class="block text-sm font-medium text-gray-700 mb-1">Tipe Harga Jual</label>
                 <select name="tipe_harga_barang" id="tipe_harga_barang"
                     class="py-2.5 sm:py-3 px-4 block w-full border border-gray-300 rounded-lg sm:text-sm focus:ring-indigo-500 focus:border-indigo-500"
                     required>

@@ -58,9 +58,9 @@
                             {{ number_format($barang->total_stok ?? 0, 0, ',', '.') }} Karton
                         </span>
                     </p>
-                        <span class="font-medium">Total per {{ $barang->satuan_terkecil }}:</span> 
+                        <span class="font-medium">Total per {{ $barang->satuan_jual }}:</span> 
                         <span class="font-bold">
-                            {{ number_format( $barang->total_stok * $barang->jml_barang_per_karton  ?? 0, 0, ',', '.') }} {{ $barang->satuan_terkecil }}
+                            {{ number_format( $barang->total_stok * $barang->jml_barang_per_karton  ?? 0, 0, ',', '.') }} {{ $barang->satuan_jual }}
                         </span>
                     </p>
                     <p>
@@ -72,7 +72,7 @@
 
                     <p class="pt-2 text-2xl font-extrabold text-indigo-700">
                         Rp{{ number_format($barang->harga_jual, 0, ',', '.') }} 
-                        <span class="text-xs font-normal text-gray-500">/ {{ $barang->satuan_terkecil }} ({{ $barang->tipe_harga_barang }})</span>
+                        <span class="text-xs font-normal text-gray-500">/ {{ $barang->satuan_jual }} ({{ $barang->tipe_harga_barang }})</span>
                     </p>
                 </div>
             </div>

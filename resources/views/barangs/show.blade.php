@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('page-title', 'Data Master / Barang')
 @section('content')
 
 <div class="container mx-auto p-4">
@@ -72,15 +72,19 @@
                 <div class="grid grid-cols-3 gap-4">
                     <div class="detail-row">
                         <p class="text-sm font-medium text-gray-500">Stok Tersedia</p>
-                        <p class="text-lg font-medium text-gray-900">{{ number_format($barang->stok->jumlah_stok ?? 0, 0, ',', '.') }}</p>
+                        <p class="text-lg font-medium text-gray-900">{{ number_format($barang->stok->jumlah_stok ?? 0, 0, ',', '.') }} Karton</p>
+                        Atau
+                        <p class="text-lg font-medium text-gray-900">{{ number_format($barang->stok->jumlah_stok  * $barang->jml_barang_per_karton ?? 0, 0, ',', '.') }} {{ $barang->satuan_jual }}</p>
                     </div>
                     <div class="detail-row">
                         <p class="text-sm font-medium text-gray-500">Stok Rusak</p>
-                        <p class="text-lg font-medium text-gray-900">{{ number_format($barang->stok->jumlah_stok_rusak ?? 0, 0, ',', '.') }}</p>
+                        <p class="text-lg font-medium text-gray-900">{{ number_format($barang->stok->jumlah_stok_rusak ?? 0, 0, ',', '.') }} Karton</p>
+                        Atau
+                        <p class="text-lg font-medium text-gray-900">{{ number_format( $barang->stok->jumlah_stok_rusak * $barang->jml_barang_per_karton  ?? 0, 0, ',', '.') }} {{ $barang->satuan_jual }}</p>
                     </div>
                     <div class="detail-row">
-                        <p class="text-sm font-medium text-gray-500">Satuan Terkecil</p>
-                        <p class="text-lg font-medium text-gray-900">{{ $barang->satuan_terkecil }}</p>
+                        <p class="text-sm font-medium text-gray-500">Satuan Jual</p>
+                        <p class="text-lg font-medium text-gray-900">{{ $barang->satuan_jual }}</p>
                     </div>
                 </div>
                 

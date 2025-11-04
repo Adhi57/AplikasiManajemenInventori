@@ -1,0 +1,84 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\SuratJalan;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use Exception;
+use Illuminate\Support\Facades\Log;
+
+class SJ_ApprovalController extends Controller
+{
+    public function index(Request $request)
+    {
+        $status = $request->get('status');
+
+        $suratJalans = SuratJalan::with(['details'])
+            ->when($status, function ($query, $status) {
+                $query->where('status', $status);
+            })
+            ->orderByRaw("
+            CASE 
+                WHEN status = 'Pending' THEN 1
+                WHEN status = 'Disetujui' THEN 2
+                WHEN status = 'Ditolak' THEN 3
+                WHEN status = 'Dikirim' THEN 4
+                WHEN status = 'Selesai' THEN 5
+                ELSE 6
+            END
+        ")
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+
+        return view('approval.approval_surat_jalan', compact('suratJalans'));
+    }
+
+    public function show($sj_id)
+    {
+        $suratJalan = SuratJalan::with(['details.barang', 'pelanggan', 'user'])
+            ->where('sj_id', $sj_id)
+            ->firstOrFail();
+
+        return view('approval.show_surat_jalan', compact('suratJalan'));
+    }
+
+
+    public function approve($sj_id)
+    {
+        DB::beginTransaction();
+        try {
+            $suratJalan = SuratJalan::findOrFail($sj_id);
+            $suratJalan->status = 'Disetujui';
+            $suratJalan->save();
+
+            DB::commit();
+            return redirect()
+                ->route('approval.approval_surat_jalan')
+                ->with('success', 'Surat Jalan berhasil disetujui.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal menyetujui surat jalan: ' . $e->getMessage());
+        }
+    }
+
+    public function reject($sj_id)
+    {
+        DB::beginTransaction();
+        try {
+            $suratJalan = SuratJalan::findOrFail($sj_id);
+            $suratJalan->status = 'Ditolak';
+            $suratJalan->save();
+
+            DB::commit();
+            return redirect()
+                ->route('approval.approval_surat_jalan')
+                ->with('success', 'Surat Jalan berhasil ditolak.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal menolak surat jalan: ' . $e->getMessage());
+        }
+    }
+
+}

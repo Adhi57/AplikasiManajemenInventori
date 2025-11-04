@@ -25,4 +25,10 @@ class Pelanggan extends Model
 {
     return $this->belongsTo(Kategori_Pelanggan::class, 'kategori_pelanggan_id', 'kategori_pelanggan_id');
 }
+
+public function suratJalans()
+{
+    return $this->hasMany(SuratJalan::class, 'pelanggan_id', 'pelanggan_id');
+}
+
 }

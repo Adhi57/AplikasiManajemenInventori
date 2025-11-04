@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('page-title', 'Approval PO')
+@section('page-title', 'Approval Surat Jalan')
 
 @section('content')
 <h1 class="text-3xl font-bold mb-6 text-gray-800">Daftar Surat Purchase Order</h1>
@@ -22,10 +22,10 @@
         </button>
     </form>
 
-    @if ($PO_List->count())
-    @foreach ($PO_List as $PO)
+    @if ($suratJalans->count())
+    @foreach ($suratJalans as $sj)
     @php
-    $statusColor = match($PO->status_po) {
+    $statusColor = match($sj->status) {
     'Disetujui' => 'bg-green-600 text-white',
     'Ditolak' => 'bg-red-600 text-white',
     'Pending' => 'bg-yellow-400 text-yellow-900',
@@ -38,19 +38,19 @@
         <div class="flex items-center space-x-5">
             <i class="fa-solid fa-file-invoice bg-red-700 p-4 text-2xl text-white rounded-md"></i>
             <div class="flex flex-col">
-                <p class="text-md font-semibold">{{ $PO->po_id }}</p>
-                <p class="text-sm text-gray-500">Dibuat Oleh: {{ $PO->user->nama_lengkap ?? '-' }}</p>
-                <p class="text-sm text-gray-500">Tanggal Surat: {{ \Carbon\Carbon::parse ($PO->tanggal_po ?? '-') ->format('d M Y')}}</p>
+                <p class="text-md font-semibold">{{ $sj->sj_id }}</p>
+                <p class="text-sm text-gray-500">Nama Pelanggan: {{ $sj->pelanggan->nama_pelanggan ?? '-' }}</p>
+                <p class="text-sm text-gray-500">Tanggal Surat: {{ \Carbon\Carbon::parse ($sj->tanggal_surat ?? '-') ->format('d M Y')}}</p>
             </div>
         </div>
 
         <div class="flex items-center space-x-4 ml-10">
             <div class="{{ $statusColor }} px-8 rounded-2xl text-center">
-                <p class="text-sm font-medium py-1">{{ $PO->status_po }}</p>
+                <p class="text-sm font-medium py-1">{{ $sj->status }}</p>
             </div>
 
             {{-- TOMBOL LIHAT --}}
-            <a href="{{ route('approval.show_po', $PO->po_id) }}"
+            <a href="{{ route('approval.show_surat_jalan', $sj->sj_id) }}"
                 class="text-sm text-white font-medium rounded-xl bg-red-700 px-6 py-2 transition duration-150 hover:bg-red-800">
                 Lihat Surat &rarr;
             </a>

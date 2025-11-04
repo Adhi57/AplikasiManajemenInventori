@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('page-title', 'Data Master / Kategori Barang')
 @section('content')
 
 <div class="flex gap-6">

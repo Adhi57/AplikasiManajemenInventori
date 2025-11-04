@@ -1,3 +1,4 @@
+<header id="main-navbar" class="h-16 flex items-center justify-between px-4">
 <div class="grid grid-cols-7 items-center mx-auto">
     <!-- Judul halaman -->
     <h1 class="col-span-2 text-2xl font-bold text-gray-800">
@@ -31,3 +32,4 @@
         </div>
     </div>
 </div>
+</header>

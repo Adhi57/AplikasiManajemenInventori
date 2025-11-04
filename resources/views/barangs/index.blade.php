@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('page-title', 'Data Master / Barang')
 @section('content')
 
 
@@ -50,13 +50,13 @@
                     <tr>
                         <th scope="col" class="px-3 py-3 text-center">Kode</th>
                         <th scope="col" class="px-6 py-3">Nama Barang</th>
-                        <th scope="col" class="px-3 py-3 text-center">Satuan</th>
+                        <th scope="col" class="px-3 py-3 text-center">Satuan Jual</th>
                         <th scope="col" class="px-6 py-3">Kategori</th>
                         <th scope="col" class="px-6 py-3">Supplier</th>
                         <th scope="col" class="px-3 py-3 text-center">Jml/Karton</th>
-                        <th scope="col" class="px-3 py-3 text-center">Tipe Harga</th>
-                        <th scope="col" class="px-6 py-3 text-right">H. Beli</th>
-                        <th scope="col" class="px-6 py-3 text-right">H. Jual</th>
+                        <th scope="col" class="px-3 py-3 text-center">Tipe Harga Jual</th>
+                        <th scope="col" class="px-6 py-3 text-left">H. Jual</th>
+                        <th scope="col" class="px-6 py-3 text-left">H. Beli (Karton)</th>
                         <th scope="col" class="px-6 py-3 text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -65,22 +65,22 @@
                     <tr class=" text-left text-xs even:bg-indigo-50 odd:bg-white border-b hover:bg-indigo-100 transition duration-100">
                         <td scope="row" class="px-3 py-2 font-medium text-center text-gray-900">{{ $barang->kode_barang }}</td>
                         <td class="px-6 py-2">{{ $barang->nama_barang }}</td>
-                        <td class="px-3 py-2 text-center">{{ $barang->satuan_terkecil }}</td>
+                        <td class="px-3 py-2 text-center">{{ $barang->satuan_jual }}</td>
                         <td class="px-6 py-2">{{ $barang->kategori->nama_kategori_barang ?? '-' }}</td>
                         <td class="px-6 py-2">{{ $barang->supplier->namaSupplier ?? '-'}}</td>
                         <td class="px-3 py-2 text-center">{{ $barang->jml_barang_per_karton }}</td>
                         
                         <!-- DATA KOLOM HARGA BARU -->
                         <td class="px-3 py-2 text-center">
-                            <span class="font-semibold px-2 py-0.5 rounded-full text-white 
+                            <span class="font-semibold px-2  py-0.5 rounded-full text-white 
                                 @if($barang->tipe_harga_barang == 'Eceran') bg-blue-500
                                 @elseif($barang->tipe_harga_barang == 'Grosir') bg-green-500
                                 @else bg-red-500 @endif">
                                 {{ $barang->tipe_harga_barang }}
                             </span>
                         </td>
-                        <td class="px-6 py-2 text-right">Rp{{ number_format($barang->harga_beli, 0, ',', '.') }}</td>
-                        <td class="px-6 py-2 text-right">Rp{{ number_format($barang->harga_jual, 0, ',', '.') }}</td>
+                        <td class="px-6 py-2 text-left">Rp{{ number_format($barang->harga_jual, 0, ',', '.')}} / {{ $barang->satuan_jual }}</td>
+                        <td class="px-6 py-2 text-left">Rp{{ number_format($barang->harga_beli, 0, ',', '.') }}</td>
                         
                         <td class="px-6 py-2 text-center whitespace-nowrap">
                         <a href="{{ route('barangs.show', $barang->kode_barang) }}"

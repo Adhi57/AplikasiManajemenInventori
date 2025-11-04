@@ -38,4 +38,10 @@ class User extends Authenticatable
             $model->user_id = 'USR-' . strtoupper(\Illuminate\Support\Str::random(6));
         });
     }
+
+    public function suratJalans()
+    {
+        return $this->hasMany(SuratJalan::class, 'user_id', 'user_id');
+    }
+    
 }

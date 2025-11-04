@@ -15,6 +15,9 @@
     
     {{-- CSS APEXCHARTS: PATH DIPERBAIKI --}}
     <link rel="stylesheet" href="{{ asset('assets/vendor/apexcharts/dist/apexcharts.css') }}">
+
+    {{-- SWEET ALERT --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-neutral-100" x-data="{ sidebarOpen: false }">
@@ -25,7 +28,7 @@
         @include('layouts.sidebar')
 
         {{-- 3. Main Content Area --}}
-        <main class="flex-1 overflow-y-auto">
+        <main class="flex-1 overflow-y-auto" id="app">
             <div class="p-4 md:p-8">
                 @include('layouts.topbar')
                 <div class="my-4">

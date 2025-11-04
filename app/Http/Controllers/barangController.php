@@ -78,7 +78,7 @@ class BarangController extends Controller
                 'harga_beli' => $validated['harga_beli'],
                 'harga_jual' => $validated['harga_jual'],
                 'tipe_harga_barang' => $validated['tipe_harga_barang'],
-                'satuan_terkecil' => $validated['satuan_terkecil'],
+                'satuan_jual' => $validated['satuan_jual'],
                 'jml_barang_per_karton' => $validated['jml_barang_per_karton'],
                 'berlaku_mulai' => $validated['berlaku_mulai'],
             ]);

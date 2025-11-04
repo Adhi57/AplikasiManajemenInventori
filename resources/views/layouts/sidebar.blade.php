@@ -1,5 +1,5 @@
 <div
-    class="bg-gradient-to-t from-red-500 to-red-700 border-gray-400 text-white w-68 space-y-6 py-7 px-4 fixed inset-y-0 left-0 z-40 h-full 
+    class="bg-gradient-to-t from-red-600 to-red-700 border-gray-400 text-white w-68 space-y-6 py-7 px-4 fixed inset-y-0 left-0 z-40 h-full 
         transform transition duration-300 ease-in-out md:relative md:translate-x-0 overflow-y-scroll"
     :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}"
     @click.away="sidebarOpen = false"
@@ -88,7 +88,7 @@
         </a>
 
         {{-- Retur Barang --}}
-        <a href="/verifBarang"
+        <a href="/returBarang"
             class="text-sm font-medium block my-1 pb-1 px-2 pt-1 rounded hover:bg-red-700 transition duration-200">
             <span class="flex ml-3 items-center gap-2">
                 <i class="fa-solid fa-clipboard-check text-xl w-6"></i>
@@ -105,12 +105,12 @@
             </span>
         </a>
 
-        {{-- Transaksi Penjualan --}}
-        <a href="#"
+        {{-- Surat Jalan dan Pengiriman --}}
+        <a href="{{ route('surat_jalan.index') }}"
             class="text-sm font-medium block my-1 pb-1 px-2 pt-1 rounded hover:bg-red-700 transition duration-200">
             <span class="flex ml-3 items-center gap-2">
                 <i class="fa-solid fa-file-invoice-dollar text-xl w-6"></i>
-                <p>Transaksi Penjualan</p>
+                <p>Surat Jalan dan Pengiriman</p>
             </span>
         </a>
 
@@ -122,7 +122,7 @@
                 <p>Approval PO</p>
             </span>
         </a>
-        <a href="#" class="text-sm font-medium block my-1 py-1.5 px-2 rounded hover:bg-red-700 transition duration-200">
+        <a href="{{ route('approval.approval_surat_jalan') }}" class="text-sm font-medium block my-1 py-1.5 px-2 rounded hover:bg-red-700 transition duration-200">
             <span class="flex ml-3 items-center gap-2">
                 <i class="fa-solid fa-file text-xl w-6"></i>
                 <p>Approval Surat Jalan</p>
@@ -131,7 +131,7 @@
 
         {{-- Laporan Section --}}
         <h3 class="uppercase tracking-wider text-sm text-gray-200 mt-6 mb-2">Laporan</h3>
-        <a href="#" class="text-sm font-medium block my-1 py-1.5 px-2 rounded hover:bg-red-700 transition duration-200">
+        <a href="/laporan/barang-masuk" class="text-sm font-medium block my-1 py-1.5 px-2 rounded hover:bg-red-700 transition duration-200">
             <span class="flex ml-3 items-center gap-2">
                 <i class="fa-solid fa-file-export text-xl w-6"></i>
                 <p>Laporan Pembelian</p>

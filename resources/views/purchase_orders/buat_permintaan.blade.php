@@ -1,6 +1,33 @@
 @extends('layouts.app') 
-
+@section('page-title',  'Purchase Orders')
 @section('content')
+
+@if (session('success'))
+<div 
+    x-data="{ show: true }" 
+    x-show="show"
+    x-init="setTimeout(() => show = false, 5000)"
+    x-transition.opacity
+    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50"
+>
+    <div class="bg-white rounded-xl shadow-2xl p-6 max-w-sm text-center">
+        <svg class="mx-auto mb-3 w-14 h-14 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2l4-4m5 2a9 9 0 11-18 0a9 9 0 0118 0z"/>
+        </svg>
+        <h2 class="text-xl font-semibold text-gray-800 mb-2">Berhasil!</h2>
+        <p class="text-gray-600">{{ session('success') }}</p>
+        <button 
+            @click="show = false"
+            class="mt-5 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+        >
+            Tutup
+        </button>
+    </div>
+</div>
+@endif
+
+
+
 <div class="container mx-auto p-4" x-data="purchaseRequest()" x-init="fetchBarangs()">
 
     <h1 class="text-3xl font-bold mb-6 text-gray-800">Form Permintaan Pembelian Baru</h1>

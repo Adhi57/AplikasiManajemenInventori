@@ -1,29 +1,29 @@
 @extends('layouts.app')
-
+@section('page-title',  'Verifikasi Barang Masuk')
 @section('content')
 
 @if ($errors->any())
-    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-        <strong class="font-bold">Ada Kesalahan Input!</strong>
-        <span class="block sm:inline">Periksa daftar barang Anda:</span>
-        <ul class="mt-2 list-disc list-inside">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
+<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+    <strong class="font-bold">Ada Kesalahan Input!</strong>
+    <span class="block sm:inline">Periksa daftar barang Anda:</span>
+    <ul class="mt-2 list-disc list-inside">
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
 @endif
 
 @if (session('success'))
-    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-        {{ session('success') }}
-    </div>
+<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+    {{ session('success') }}
+</div>
 @endif
 
 @if (session('error'))
-    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-        {{ session('error') }}
-    </div>
+<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+    {{ session('error') }}
+</div>
 @endif
 
 <div x-data="poRetur()" x-init="init()" class="grid grid-cols-1 md:grid-cols-12 gap-4">
@@ -59,75 +59,80 @@
             <input type="hidden" name="po_id" x-model="selectedPO">
 
             <div class="overflow-x-auto">
-    <table class="min-w-full border border-gray-300 text-sm text-left">
-        <thead class="bg-gray-100 text-gray-700 font-semibold">
-            <tr>
-                <th class="p-2 text-center w-10">Pilih</th>
-                <th class="p-2">Kode Barang</th>
-                <th class="p-2">Nama Barang</th>
-                <th class="p-2 text-center">Qty PO</th>
-                <th class="p-2 text-center">Qty Diterima</th>
-                <th class="p-2 text-center">Qty Retur</th>
-                <th class="p-2 text-center">Tgl Kadaluarsa</th>
-            </tr>
-        </thead>
+                <table class="min-w-full border border-gray-300 text-sm text-left">
+                    <thead class="bg-gray-100 text-gray-700 font-semibold">
+                        <tr>
+                            <th class="p-2 text-center w-10">Pilih</th>
+                            <th class="p-2">Kode Barang</th>
+                            <th class="p-2">Nama Barang</th>
+                            <th class="p-2 text-center">Qty PO (Karton) </th>
+                            <th class="p-2 text-center">Qty Diterima (Karton)</th>
+                            <th class="p-2 text-center">Qty Retur (Karton)</th>
+                            <th class="p-2 text-center">Tgl Kadaluarsa</th>
+                        </tr>
+                    </thead>
 
-        <tbody>
-            <template x-for="(item, index) in items" :key="item.kode_barang">
-                <tr class="border-b hover:bg-gray-50 transition">
-                    <!-- Checkbox -->
-                    <td class="p-2 text-center">
-                        <input type="hidden" :name="`items[${index}][selected]`" :value="item.selected ? 1 : 0">
+                    <tbody>
+                        <template x-for="(item, index) in items" :key="item.kode_barang">
+                            <tr class="border-b hover:bg-gray-50 transition">
+                                <!-- Checkbox -->
+                                <td class="p-2 text-center">
+                                    <input type="hidden" :name="`items[${index}][selected]`" :value="item.selected ? 1 : 0">
 
-                        <input type="checkbox"
-                            x-model="item.selected"
-                            value="1"
-                            class="accent-blue-600 w-4 h-4">
-                    </td>
+                                    <input type="checkbox"
+                                        x-model="item.selected"
+                                        value="1"
+                                        class="accent-blue-600 w-4 h-4">
+                                </td>
 
-                    <!-- Kode Barang -->
-                    <td class="p-2 font-medium text-gray-700" x-text="item.kode_barang"></td>
+                                <!-- Kode Barang -->
+                                <td class="p-2 font-medium text-gray-700" x-text="item.kode_barang"></td>
 
-                    <!-- Nama Barang -->
-                    <td class="p-2 text-gray-600" x-text="item.nama_barang"></td>
+                                <!-- Nama Barang -->
+                                <td class="p-2 text-gray-600" x-text="item.nama_barang"></td>
 
-                    <!-- Qty PO -->
-                    <td class="p-2 text-center text-gray-700" x-text="item.qty_po"></td>
+                                <!-- Qty PO -->
+                                <td class="p-2 text-center text-gray-700" x-text="item.qty_po"></td>
 
-                    <!-- Qty Diterima -->
-                    <td class="p-2 text-center">
-                        <input type="number"
-                            min="0"
-                            :max="item.qty_po"
-                            x-model.number="item.qty_diterima"
-                            :name="`items[${index}][qty_diterima]`"
-                            class="border rounded w-20 text-center focus:ring focus:ring-blue-200">
-                    </td>
+                                <!-- Qty Diterima -->
+                                <td class="p-2 text-center">
+                                    <input type="number"
+                                        min="0"
+                                        :max="item.qty_po"
+                                        x-model.number="item.qty_diterima"
+                                        :name="`items[${index}][qty_diterima]`"
+                                        class="border rounded w-20 text-center focus:ring focus:ring-blue-200">
+                                </td>
 
-                    <!-- Qty Retur otomatis -->
-                    <td class="p-2 text-center text-red-500 font-semibold">
-                        <span x-text="Math.max(item.qty_po - (item.qty_diterima || 0), 0)"></span>
-                    </td>
+                                <!-- Qty Retur otomatis -->
+                                <td class="p-2 text-center text-red-500 font-semibold">
+                                    <span x-text="Math.max(item.qty_po - (item.qty_diterima || 0), 0)"></span>
+                                </td>
 
-                    <!-- Tanggal Kadaluarsa -->
-                    <td class="p-2 text-center">
-                        <input type="date"
-                            x-model="item.tgl_kadaluarsa"
-                            :name="`items[${index}][tgl_kadaluarsa]`"
-                            class="border rounded px-2 py-1 w-40 text-sm focus:ring focus:ring-blue-200">
-                    </td>
+                                <!-- Tanggal Kadaluarsa -->
+                                <td class="p-2 text-center">
+                                    <input type="date"
+                                        x-model="item.tgl_kadaluarsa"
+                                        :name="`items[${index}][tgl_kadaluarsa]`"
+                                        class="border rounded px-2 py-1 w-40 text-sm focus:ring focus:ring-blue-200">
+                                </td>
 
-                    <!-- Hidden Inputs -->
-                    <input type="hidden" :name="`items[${index}][kode_barang]`" :value="item.kode_barang">
-                    <input type="hidden" :name="`items[${index}][qty_po]`" :value="item.qty_po">
-                </tr>
-            </template>
-        </tbody>
-    </table>
-</div>
+                                <!-- Hidden Inputs -->
+                                <input type="hidden" :name="`items[${index}][kode_barang]`" :value="item.kode_barang">
+                                <input type="hidden" :name="`items[${index}][qty_po]`" :value="item.qty_po">
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+            <button type="submit"
+                class="flex items-center gap-2 mt-5 px-4 py-2 bg-green-600 text-white font-semibold rounded-lg shadow hover:bg-green-700 transition-all duration-200 focus:ring-2 focus:ring-green-400 focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                Konfirmasi Sesuai
+            </button>
 
-
-            <button type="submit">Konfirmasi Sesuai</button>
         </form>
 
     </div>
