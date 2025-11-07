@@ -19,6 +19,9 @@ class SuratJalan extends Model
         'pelanggan_id',
         'tanggal_surat',
         'status',
+        'biaya_pengiriman',   
+        'diskon_pelanggan',   
+        'subtotal', 
     ];
 
     // Relasi ke User
@@ -38,4 +41,11 @@ class SuratJalan extends Model
     {
         return $this->hasMany(SuratJalanDetail::class, 'sj_id', 'sj_id');
     }
+
+    // Relasi ke Pengiriman
+    public function pengiriman()
+    {
+        return $this->hasOne(Pengiriman::class, 'sj_id', 'sj_id');
+    }
+
 }

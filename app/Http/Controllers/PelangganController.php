@@ -49,8 +49,26 @@ class PelangganController extends Controller
 // EDIT
     public function edit($id)
     {
-        $pelanggans = Pelanggan::findOrFail($id);
-        return view('pelanggans.create', compact('pelanggans'));
+        $pelanggan = Pelanggan::findOrFail($id);
+        $kategori_pelanggans = Kategori_Pelanggan::all();
+        return view('pelanggans.edit', compact('pelanggan', 'kategori_pelanggans'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'nama_pelanggan' => 'required|string|max:100',
+            'alamat' => 'required|string',
+            'NPWP' => 'nullable|string|max:20',
+            'PIC' => 'nullable|string|max:50',
+            'kategori_pelanggan_id' => 'required|exists:kategori_pelanggans,kategori_pelanggan_id',
+            'tipe_harga' => 'required|string',
+        ]);
+
+        $pelanggan = Pelanggan::findOrFail($id);
+        $pelanggan->update($validated);
+
+        return redirect()->route('pelanggans.index')->with('success', 'Data pelanggan berhasil diperbarui!');
     }
 
 // DELETE

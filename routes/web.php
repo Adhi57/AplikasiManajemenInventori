@@ -8,6 +8,7 @@ use App\Http\Controllers\KategoriBarangController;
 use App\Http\Controllers\KategoriPelangganController;
 use App\Http\Controllers\LaporanBarangMasukController;
 use App\Http\Controllers\PelangganController;
+use App\Http\Controllers\PengirimanController;
 use App\Http\Controllers\PO_ApprovalController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseOrdersController;
@@ -87,6 +88,9 @@ Route::middleware('auth')->group(function () {
     ->name('retur.updateAlasan');
     Route::patch('/retur-barang/{retur_id}/konfirmasi', [\App\Http\Controllers\ReturBarangController::class, 'konfirmasiSesuai'])
     ->name('retur.konfirmasi');
+
+    // Pengiriman Barang
+    Route::resource('pengiriman', PengirimanController::class);
 
     // Lap Barang Masuk
     Route::get('/laporan/barang-masuk', [LaporanBarangMasukController::class, 'index'])->name('laporan.barang-masuk.index');

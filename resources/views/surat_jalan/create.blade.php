@@ -18,10 +18,15 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
                 <label class="block text-sm font-medium text-gray-700">Pelanggan</label>
-                <select name="pelanggan_id" class="w-full border rounded-md py-2 px-3" required>
+                <select name="pelanggan_id" 
+                        class="w-full border rounded-md py-2 px-3" 
+                        required
+                        @change="setDiskonPelanggan($event)">
                     <option value="">-- Pilih Pelanggan --</option>
                     @foreach($pelanggans as $p)
-                        <option value="{{ $p->pelanggan_id }}">{{ $p->nama_pelanggan }}</option>
+                        <option value="{{ $p->pelanggan_id }}" data-diskon="{{ $p->jumlah_diskon }}">
+                            {{ $p->nama_pelanggan }}
+                        </option>
                     @endforeach
                 </select>
             </div>
@@ -164,12 +169,24 @@
                         <span>Biaya Pengiriman:</span>
                         <span x-text="formatRupiah(biayaPengiriman)">Rp 0</span>
                     </div>
+                    <div class="flex justify-between">
+                        <span>Diskon Pelanggan (<span x-text="diskonPelanggan"></span>%) :</span>
+                        <span x-text="formatRupiah((totalHarga * diskonPelanggan) / 100)">Rp 0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>PPN (11%):</span>
+                        <span x-text="formatRupiah(ppn)">Rp 0</span>
+                    </div>
                     <div class="flex justify-between text-lg mt-2 border-t pt-2">
                         <span>Total Keseluruhan:</span>
                         <span x-text="formatRupiah(totalKeseluruhan)">Rp 0</span>
                     </div>
                 </div>
 
+                <input type="hidden" name="subtotal" :value="totalHarga.toFixed(2)">
+                <input type="hidden" name="diskon_pelanggan" :value="diskonPelanggan">
+                <input type="hidden" name="biaya_pengiriman" :value="biayaPengiriman">
+                
                 <button type="submit"
                         :disabled="Object.keys(cart).length === 0"
                         class="w-full mt-4 py-3 px-4 text-white font-semibold rounded-lg shadow-md transition"
@@ -193,6 +210,7 @@ document.addEventListener('alpine:init', () => {
         paginationHtml: '',
         loading: false,
         biayaPengiriman: 0,
+        diskonPelanggan: 0,
 
         async fetchBarangs(page = 1) {
             this.loading = true;
@@ -249,8 +267,23 @@ document.addEventListener('alpine:init', () => {
             return Object.values(this.cart).reduce((sum, i) => sum + i.subtotal, 0);
         },
 
+        setDiskonPelanggan(event) {
+            const selected = event.target.options[event.target.selectedIndex];
+            const diskon = parseFloat(selected.dataset.diskon || 0);
+            this.diskonPelanggan = diskon;
+        },
+
+        //hitung PPN 11%
+        get ppn() {
+            const subtotalSetelahDiskon = this.totalHarga - (this.totalHarga * this.diskonPelanggan / 100);
+            return subtotalSetelahDiskon * 0.11;
+        },
+
+        //Total keseluruhan termasuk PPN
         get totalKeseluruhan() {
-            return this.totalHarga + this.biayaPengiriman;
+            const potongan = (this.totalHarga * this.diskonPelanggan) / 100;
+            const subtotal = this.totalHarga - potongan;
+            return subtotal + this.ppn + this.biayaPengiriman;
         },
 
         formatRupiah(num) {

@@ -105,15 +105,25 @@
             </span>
         </a>
 
-        {{-- Surat Jalan dan Pengiriman --}}
-        <a href="{{ route('surat_jalan.index') }}"
-            class="text-sm font-medium block my-1 pb-1 px-2 pt-1 rounded hover:bg-red-700 transition duration-200">
-            <span class="flex ml-3 items-center gap-2">
-                <i class="fa-solid fa-file-invoice-dollar text-xl w-6"></i>
-                <p>Surat Jalan dan Pengiriman</p>
-            </span>
-        </a>
+        <h3 class="text-gray-200 uppercase tracking-wider text-sm mb-2">Surat Jalan dan Pengiriman</h3>
 
+        {{-- Surat Jalan --}}
+        
+        <a href="{{ route('surat_jalan.index') }}"
+        class="text-sm font-medium block my-1 pb-1 px-2 pt-1 rounded hover:bg-red-700 transition duration-200">
+        <span class="flex ml-3 items-center gap-2">
+            <i class="fa-solid fa-file-invoice-dollar text-xl w-6"></i>
+            <p>Surat Jalan</p>
+        </span>
+    </a>
+    
+    <a href="/pengiriman"
+        class="text-sm font-medium block my-1 pb-1 px-2 pt-1 rounded hover:bg-red-700 transition duration-200">
+        <span class="flex ml-3 items-center gap-2">
+            <i class="fa-solid fa-file-invoice-dollar text-xl w-6"></i>
+            <p>Pengiriman Barang</p>
+        </span>
+    </a>
         {{-- Approval Section --}}
         <h3 class="uppercase tracking-wider text-sm text-gray-200 mt-6 mb-2">Approval</h3>
         <a href="{{ route('approval.approval_po') }}" class="text-sm font-medium block my-1 py-1.5 px-2 rounded hover:bg-red-700 transition duration-200">

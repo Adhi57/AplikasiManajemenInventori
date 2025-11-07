@@ -21,7 +21,6 @@ class SuratJalanDetail extends Model
         'quantity',
         'harga_satuan',
         'satuan',
-        'subtotal',
     ];
 
     // Relasi ke Surat Jalan
