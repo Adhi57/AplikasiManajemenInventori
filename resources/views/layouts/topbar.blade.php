@@ -1,12 +1,12 @@
-<header id="main-navbar" class="h-16 flex items-center justify-between px-4">
-<div class="grid grid-cols-7 items-center mx-auto">
+<header id="main-navbar" class=" mx-5">
+<div class="flex  justify-between items-center mx-auto">
     <!-- Judul halaman -->
-    <h1 class="col-span-2 text-2xl font-bold text-gray-800">
+    <h1 class="text-2xl font-bold text-gray-800">
         @yield('page-title', 'Dashboard')
     </h1>
 
     <!-- User Info Card -->
-    <div class="bg-red-700 rounded-2xl border-gray-200 col-span-3 col-end-8 p-3">
+    <div class="bg-red-700 rounded-2xl border-gray-200 p-3">
         <div class="flex items-center justify-between">
             <div class="flex items-center">
                 <i class="fa-solid fa-face-laugh text-5xl text-white mx-6"></i>

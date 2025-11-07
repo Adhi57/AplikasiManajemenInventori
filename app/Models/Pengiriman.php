@@ -18,6 +18,7 @@ class Pengiriman extends Model
         'pengiriman_id',
         'sj_id',
         'nama_driver',
+        'nama_kendaraan',
         'no_polisi',
         'tanggal_pengiriman',
         'tanggal_sampai',
@@ -28,4 +29,6 @@ class Pengiriman extends Model
     {
         return $this->belongsTo(SuratJalan::class, 'sj_id', 'sj_id');
     }
+
+
 }

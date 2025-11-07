@@ -18,6 +18,7 @@ use App\Http\Controllers\ReturBarangController;
 use App\Http\Controllers\SuratJalanController;
 use App\Http\Controllers\VerifikasiBarangController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StokBarangController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -37,6 +38,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('suppliers', SupplierController::class);
     Route::resource('kategori_barang', KategoriBarangController::class);
     Route::resource('katalog_barang', KatalogController::class);
+
+    // Stok Barang
+    
+
+    Route::get('/stok-barang', [StokBarangController::class, 'index'])->name('stok.index');
+
 
     // Approval PO
     Route::get('approval/approval_po', [PO_ApprovalController::class, 'index'])->name('approval.approval_po');
@@ -76,6 +83,7 @@ Route::middleware('auth')->group(function () {
     ->where('sj_id', '.*');
 
 
+
     // Verif Barang
     Route::get('verifBarang', [PurchaseOrdersController::class, 'index'])->name('verifBarang.index');
     Route::get('/verifBarang/get-items/{po_id}', [PurchaseOrdersController::class, 'getItems']);
@@ -91,6 +99,7 @@ Route::middleware('auth')->group(function () {
 
     // Pengiriman Barang
     Route::resource('pengiriman', PengirimanController::class);
+    Route::post('/update-status/{id}', [PengirimanController::class, 'updateStatus'])->name('pengiriman.updateStatus');
 
     // Lap Barang Masuk
     Route::get('/laporan/barang-masuk', [LaporanBarangMasukController::class, 'index'])->name('laporan.barang-masuk.index');

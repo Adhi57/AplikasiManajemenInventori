@@ -63,18 +63,6 @@
                             {{-- Tombol Detail --}}
                             <a href="{{ route('surat_jalan.show', $sj->sj_id) }}"
                                 class="text-indigo-600 hover:underline">Detail</a>
-
-                            {{-- Tombol Kirimkan Barang --}}
-                            @if ($sj->status === 'Disetujui')
-                            <form action="#" method="POST" class="inline">
-                                @csrf
-                                @method('PUT')
-                                <button type="submit"
-                                    class="text-white bg-green-500 hover:bg-green-700 px-3 py-1 rounded-md text-xs font-semibold transition">
-                                    Kirimkan Barang
-                                </button>
-                            </form>
-                            @endif
                         </td>
 
                     </tr>

@@ -70,6 +70,9 @@
             <a href="/katalog_barang" class="text-sm font-medium block py-1.5 pl-6 rounded hover:bg-red-600">
                 Katalog Barang
             </a>
+            <a href="/stok-barang" class="text-sm font-medium block py-1.5 pl-6 rounded hover:bg-red-600">
+                Stok Barang
+            </a>
             <a href="/stock_opname" class="text-sm font-medium block py-1.5 pl-6 rounded hover:bg-red-600">
                 Stock Opname
             </a>
@@ -105,7 +108,7 @@
             </span>
         </a>
 
-        <h3 class="text-gray-200 uppercase tracking-wider text-sm mb-2">Surat Jalan dan Pengiriman</h3>
+        <h3 class="uppercase tracking-wider text-sm text-gray-200 mt-6 mb-2">Surat Jalan dan Pengiriman</h3>
 
         {{-- Surat Jalan --}}
         
@@ -144,7 +147,7 @@
         <a href="/laporan/barang-masuk" class="text-sm font-medium block my-1 py-1.5 px-2 rounded hover:bg-red-700 transition duration-200">
             <span class="flex ml-3 items-center gap-2">
                 <i class="fa-solid fa-file-export text-xl w-6"></i>
-                <p>Laporan Pembelian</p>
+                <p>Laporan Barang Masuk</p>
             </span>
         </a>
         <a href="#" class="text-sm font-medium block my-1 py-1.5 px-2 rounded hover:bg-red-700 transition duration-200">

@@ -31,6 +31,7 @@ class stokBarang extends Model
         'updated_at',
     ];
 
+
     public function stoks()
     {
         return $this->hasMany(StokBarang::class, 'kode_barang', 'kode_barang');
