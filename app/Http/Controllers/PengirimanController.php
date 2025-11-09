@@ -4,43 +4,38 @@ namespace App\Http\Controllers;
 
 use App\Models\Pengiriman;
 use App\Models\SuratJalan;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\DB;
 use App\Models\SuratJalanDetail;
 use App\Models\Barang;
 use App\Models\StokBarang;
+use App\Models\LapBarangKeluar;
+use App\Models\DetailLapBarangKeluar;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 class PengirimanController extends Controller
 {
     public function index()
     {
-        $pengirimans = \App\Models\Pengiriman::with(['suratJalan.pelanggan'])
+        $pengirimans = Pengiriman::with(['suratJalan.pelanggan'])
             ->latest()
             ->paginate(10);
-    
         return view('pengiriman.index', compact('pengirimans'));
     }
-    
 
-    // CREATE
     public function create()
     {
-
-        $existing_sj_ids = \App\Models\Pengiriman::pluck('sj_id')->toArray();
-
+        $existing_sj_ids = Pengiriman::pluck('sj_id')->toArray();
         $surat_jalans = SuratJalan::with('pelanggan')->get();
-        return view('pengiriman.form', compact( 'surat_jalans', 'existing_sj_ids'));
+        return view('pengiriman.form', compact('surat_jalans', 'existing_sj_ids'));
     }
 
-    // EDIT
     public function edit($id)
     {
         $pengiriman = Pengiriman::findOrFail($id);
         $surat_jalans = SuratJalan::with('pelanggan')->get();
         return view('pengiriman.form', compact('pengiriman', 'surat_jalans'));
     }
-
 
     public function store(Request $request)
     {
@@ -53,23 +48,18 @@ class PengirimanController extends Controller
         ]);
 
         Pengiriman::create($request->all());
-
         return redirect()->route('pengiriman.index')->with('success', 'Data pengiriman berhasil disimpan!');
     }
 
     public function show(Pengiriman $pengiriman)
     {
-        // Mengambil relasi yang dibutuhkan untuk tampilan detail
         $pengiriman->load('suratJalan.pelanggan');
-        
         return view('pengiriman.show', compact('pengiriman'));
     }
 
     public function update(Request $request, Pengiriman $pengiriman)
     {
-        // 1. Validasi Input
         $request->validate([
-            // Abaikan no_polisi saat ini dari pengecekan unique
             'no_polisi' => [
                 'required',
                 'string',
@@ -84,7 +74,6 @@ class PengirimanController extends Controller
             'catatan' => 'nullable|string',
         ]);
 
-        // 2. Perbarui Data
         $pengiriman->update($request->only([
             'nama_kendaraan',
             'nama_driver',
@@ -97,101 +86,101 @@ class PengirimanController extends Controller
 
         return redirect()->route('pengiriman.index')->with('success', 'Data pengiriman berhasil diperbarui.');
     }
-    
+
     public function updateStatus(Request $request, $id)
     {
         \Log::info('Masuk updateStatus controller', ['id' => $id, 'input' => $request->all()]);
 
-        // Untuk pengecekan cepat, kamu bisa pakai dd() (akan stop proses dan tampil di browser)
-        // dd('updateStatus called', $id, $request->input('status_pengiriman'));
-
         DB::beginTransaction();
         try {
-            $pengiriman = Pengiriman::findOrFail($id);
+            $pengiriman = Pengiriman::with('suratJalan.details.barang')->findOrFail($id);
             $status = $request->input('status_pengiriman');
-
-            \Log::info('Update status ->', ['pengiriman_id' => $pengiriman->pengiriman_id, 'status' => $status]);
 
             $pengiriman->status_pengiriman = $status;
             $pengiriman->tanggal_sampai = now();
             $pengiriman->save();
 
             if ($status === 'Terkirim') {
-                \Log::info("Memanggil kurangiStokFEFO dari updateStatus...");
+                \Log::info("Memanggil kurangiStokFEFO...");
                 $this->kurangiStokFEFO($pengiriman);
+                $this->buatLaporanBarangKeluar($pengiriman);
             }
 
             DB::commit();
-            return back()->with('success', 'Status diperbarui');
+            return back()->with('success', 'Status diperbarui dan laporan keluar berhasil dibuat.');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Gagal updateStatus: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            \Log::error('Gagal updateStatus: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return back()->with('error', $e->getMessage());
         }
     }
 
-    public function kurangiStokFEFO(\App\Models\Pengiriman $pengiriman)
-{
-    \Log::info('=== FEFO DIJALANKAN ===', [
-        'pengiriman_id' => $pengiriman->pengiriman_id,
-        'sj_id' => $pengiriman->sj_id
-    ]);
-
-    $details = \App\Models\SuratJalanDetail::where('sj_id', $pengiriman->sj_id)->get();
-
-    foreach ($details as $detail) {
-        $barang = \App\Models\Barang::where('kode_barang', $detail->kode_barang)->first();
-        if (!$barang) {
-            \Log::warning('Barang tidak ditemukan', ['kode_barang' => $detail->kode_barang]);
-            continue;
-        }
-
-        // Hitung jumlah dalam satuan karton (stok disimpan dalam karton)
-        $jumlahKarton = $detail->quantity / max($barang->jml_barang_per_karton, 1);
-
-        \Log::info('Proses barang FEFO', [
-            'kode_barang' => $barang->kode_barang,
-            'nama_barang' => $barang->nama_barang,
-            'qty_surat_jalan' => $detail->quantity,
-            'konversi_karton' => $jumlahKarton,
+    // ================= FEFO (stok keluar berdasarkan expired paling cepat) =====================
+    public function kurangiStokFEFO(Pengiriman $pengiriman)
+    {
+        \Log::info('=== FEFO DIJALANKAN ===', [
+            'pengiriman_id' => $pengiriman->pengiriman_id,
+            'sj_id' => $pengiriman->sj_id
         ]);
 
-        // Ambil stok berdasarkan FEFO (First Expired First Out)
-        $stokList = \App\Models\StokBarang::where('kode_barang', $barang->kode_barang)
-            ->where('jumlah_stok', '>', 0)
-            ->orderBy('tgl_kadaluarsa', 'asc')
-            ->get();
+        $details = SuratJalanDetail::where('sj_id', $pengiriman->sj_id)->get();
 
-        if ($stokList->isEmpty()) {
-            throw new \Exception("Tidak ada stok untuk barang {$barang->nama_barang}");
+        foreach ($details as $detail) {
+            $barang = Barang::where('kode_barang', $detail->kode_barang)->first();
+            if (!$barang) continue;
+
+            $jumlahKarton = $detail->quantity / max($barang->jml_barang_per_karton, 1);
+
+            $stokList = StokBarang::where('kode_barang', $barang->kode_barang)
+                ->where('jumlah_stok', '>', 0)
+                ->orderBy('tgl_kadaluarsa', 'asc')
+                ->get();
+
+            if ($stokList->isEmpty()) {
+                throw new \Exception("Stok barang {$barang->nama_barang} kosong!");
+            }
+
+            $sisa = $jumlahKarton;
+            foreach ($stokList as $stok) {
+                if ($sisa <= 0) break;
+
+                $ambil = min($stok->jumlah_stok, $sisa);
+                $stok->jumlah_stok -= $ambil;
+                $stok->save();
+                $sisa -= $ambil;
+            }
+
+            if ($sisa > 0) {
+                throw new \Exception("Stok barang {$barang->nama_barang} tidak mencukupi untuk pengiriman!");
+            }
+        }
+    }
+
+    // ================= Buat laporan otomatis setelah terkirim =====================
+    protected function buatLaporanBarangKeluar(Pengiriman $pengiriman)
+    {
+        if (LapBarangKeluar::where('pengiriman_id', $pengiriman->pengiriman_id)->exists()) {
+            \Log::info("Laporan keluar sudah ada untuk pengiriman {$pengiriman->pengiriman_id}");
+            return;
         }
 
-        $sisa = $jumlahKarton;
+        $lap = LapBarangKeluar::create([
+            'pengiriman_id' => $pengiriman->pengiriman_id,
+            'sj_id' => $pengiriman->sj_id,
+            'tanggal_keluar' => now(),
+        ]);
 
-        foreach ($stokList as $stok) {
-            if ($sisa <= 0) break;
-
-            $ambil = min($stok->jumlah_stok, $sisa);
-            $stok->jumlah_stok -= $ambil;
-            $stok->save();
-
-            $sisa -= $ambil;
-
-            \Log::info('Kurangi stok batch FEFO', [
-                'barang' => $barang->nama_barang,
-                'stok_id' => $stok->id,
-                'ambil' => $ambil,
-                'stok_sisa' => $stok->jumlah_stok,
-                'tgl_kadaluarsa' => $stok->tgl_kadaluarsa,
+        foreach ($pengiriman->suratJalan->details as $detail) {
+            DetailLapBarangKeluar::create([
+                'lap_keluar_id' => $lap->lap_keluar_id,
+                'kode_barang' => $detail->kode_barang,
+                'jumlah_keluar' => $detail->quantity,
+                'harga_jual' => $detail->barang->harga_jual ?? 0,
+                'subtotal' => $detail->quantity * ($detail->barang->harga_jual ?? 0),
             ]);
         }
 
-        // Periksa kalau stok total masih kurang setelah looping semua batch
-        if ($sisa > 0) {
-            throw new \Exception("Stok barang {$barang->nama_barang} tidak mencukupi untuk pengiriman!");
-        }
+        \Log::info("Laporan barang keluar dibuat otomatis untuk pengiriman {$pengiriman->pengiriman_id}");
     }
-}
-
 }

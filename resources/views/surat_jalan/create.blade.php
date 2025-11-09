@@ -170,12 +170,13 @@
                         <span x-text="formatRupiah(biayaPengiriman)">Rp 0</span>
                     </div>
                     <div class="flex justify-between">
-                        <span>Diskon Pelanggan (<span x-text="diskonPelanggan"></span>%) :</span>
-                        <span x-text="formatRupiah((totalHarga * diskonPelanggan) / 100)">Rp 0</span>
-                    </div>
-                    <div class="flex justify-between">
                         <span>PPN (11%):</span>
                         <span x-text="formatRupiah(ppn)">Rp 0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Diskon Pelanggan (<span x-text="diskonPelanggan"></span>%) :</span>
+                        <span>-</span>
+                        <span x-text="formatRupiah((totalHarga * diskonPelanggan) / 100)">Rp 0</span>
                     </div>
                     <div class="flex justify-between text-lg mt-2 border-t pt-2">
                         <span>Total Keseluruhan:</span>
@@ -275,7 +276,7 @@ document.addEventListener('alpine:init', () => {
 
         //hitung PPN 11%
         get ppn() {
-            const subtotalSetelahDiskon = this.totalHarga - (this.totalHarga * this.diskonPelanggan / 100);
+            const subtotalSetelahDiskon = this.totalHarga;
             return subtotalSetelahDiskon * 0.11;
         },
 

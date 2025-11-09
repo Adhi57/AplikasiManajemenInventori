@@ -125,7 +125,7 @@
                         required>
                 </div>
                 <div>
-                    <label for="harga_jual" class="block text-sm font-medium text-gray-700 mb-1">Harga Jual / tipe</label>
+                    <label for="harga_jual" class="block text-sm font-medium text-gray-700 mb-1">Harga Jual per Satuan</label>
                     <input type="number" step="0.01" name="harga_jual" id="harga_jual"
                         value="{{ old('harga_jual', $barang->harga_jual) }}"
                         class="py-2.5 sm:py-3 px-4 block w-full border border-gray-300 rounded-lg sm:text-sm focus:ring-indigo-500 focus:border-indigo-500"
@@ -151,7 +151,7 @@
             {{-- Satuan & Jml/Karton --}}
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                    <label for="satuan_terkecil" class="block text-sm font-medium text-gray-700 mb-1">Satuan Terkecil</label>
+                    <label for="satuan_terkecil" class="block text-sm font-medium text-gray-700 mb-1">Satuan Jual</label>
                     <select name="satuan_terkecil" id="satuan_terkecil"
                         class="py-2.5 sm:py-3 px-4 block w-full border border-gray-300 rounded-lg sm:text-sm focus:ring-indigo-500 focus:border-indigo-500"
                         required>
@@ -183,6 +183,13 @@
                         class="py-2.5 sm:py-3 px-4 block w-full border border-gray-300 rounded-lg sm:text-sm focus:ring-indigo-500 focus:border-indigo-500"
                         required>
                 </div>
+                <div>
+                    <label for="berlaku_sampai" class="block text-sm font-medium text-gray-700 mb-1">Harga Berlaku Sampai</label>
+                    <input type="date" name="berlaku_mulai" id="berlaku_sampai"
+                        value="{{ old('berlaku_mulai', $barang->berlaku_sampai ? \Carbon\Carbon::parse($barang->berlaku_sampai)->format('Y-m-d') : date('Y-m-d')) }}"
+                        class="py-2.5 sm:py-3 px-4 block w-full border border-gray-300 rounded-lg sm:text-sm focus:ring-indigo-500 focus:border-indigo-500"
+                        required>
+                </div>
             </div>
 
             {{-- Tombol --}}
@@ -201,3 +208,4 @@
 </div>
 
 @endsection
+

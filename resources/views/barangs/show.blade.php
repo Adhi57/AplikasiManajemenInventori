@@ -62,9 +62,15 @@
                         <p class="text-lg font-medium text-gray-900">{{ $barang->tipe_harga_barang }}</p>
                     </div>
                 </div>
-                <div class="detail-row">
-                    <p class="text-sm font-medium text-gray-500">Berlaku Mulai</p>
-                    <p class="text-lg font-medium text-gray-900">{{ \Carbon\Carbon::parse($barang->berlaku_mulai)->format('d F Y') }}</p>
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="detail-row">
+                        <p class="text-sm font-medium text-gray-500">Harga Berlaku Mulai</p>
+                        <p class="text-lg font-medium text-gray-900">{{ \Carbon\Carbon::parse($barang->berlaku_mulai)->format('d F Y') }}</p>
+                    </div>
+                    <div class="detail-row">
+                        <p class="text-sm font-medium text-gray-500">Harga Berlaku Mulai</p>
+                        <p class="text-lg font-medium text-gray-900">{{ \Carbon\Carbon::parse($barang->berlaku_mulai)->format('d F Y') }}</p>
+                    </div>
                 </div>
 
                 {{-- Stok dan Satuan --}}

@@ -65,7 +65,7 @@ class StokBarangController extends Controller
         }
 
         // === Hitung kapasitas gudang ===
-        $kapasitasMaks = 10000;
+        $kapasitasMaks = 500;
         $totalStok = $group
             ? $stokBarangs->sum('total_karton')
             : $stokBarangs->sum('jumlah_stok');

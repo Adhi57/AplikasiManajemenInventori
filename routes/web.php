@@ -6,6 +6,7 @@ use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\KatalogController;
 use App\Http\Controllers\KategoriBarangController;
 use App\Http\Controllers\KategoriPelangganController;
+use App\Http\Controllers\LapBarangKeluarController;
 use App\Http\Controllers\LaporanBarangMasukController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\PengirimanController;
@@ -105,6 +106,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/barang-masuk', [LaporanBarangMasukController::class, 'index'])->name('laporan.barang-masuk.index');
     Route::get('/laporan/barang-masuk/cetak', [LaporanBarangMasukController::class, 'cetak'])->name('laporan.barang-masuk.cetak');
 
+    // Lap Barang Keluar
+    Route::get('/laporan/barang-keluar', [LapBarangKeluarController::class, 'index'])
+    ->name('laporan.barang_keluar.index');
 
     // Rute Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

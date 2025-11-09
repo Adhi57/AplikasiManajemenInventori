@@ -130,7 +130,7 @@
                     <div>
                         <label for="status_pengiriman" class="block text-sm font-semibold text-gray-700 mb-1">Status Pengiriman</label>
                         <select name="status_pengiriman" id="status_pengiriman" class="w-full border border-gray-300 rounded-lg py-2.5 px-4 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out bg-white appearance-none">
-                            @foreach(['Menunggu', 'Dalam Perjalanan', 'Terkirim', 'Dibatalkan'] as $status)
+                            @foreach(['Menunggu', 'Dalam Perjalanan', 'Dibatalkan'] as $status)
                             <option value="{{ $status }}"
                                 {{ (old('status_pengiriman', $pengiriman->status_pengiriman) == $status) ? 'selected' : '' }}>
                                 {{ $status }}
