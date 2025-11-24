@@ -49,7 +49,7 @@ class BarangController extends Controller
             'harga_beli' => 'required|numeric|min:0',
             'harga_jual' => 'required|numeric|min:0',
             'tipe_harga_barang' => 'required|in:Eceran,Grosir,Diskon', 
-            'satuan_terkecil' => 'required|string|max:50',
+            'satuan_jual' => 'required|string|max:50',
             'jml_barang_per_karton' => 'required|integer|min:1',
             'berlaku_mulai' => 'required|date',
             

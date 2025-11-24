@@ -1,5 +1,5 @@
 <div
-    class="bg-gradient-to-t from-red-600 to-red-700 border-gray-400 text-white w-68 space-y-6 py-7 px-4 fixed inset-y-0 left-0 z-40 h-full 
+    class="bg-gradient-to-b from-red-900 to-red-950 text-white w-68 space-y-6 py-7 px-4 fixed inset-y-0 left-0 z-40 h-full 
         transform transition duration-300 ease-in-out md:relative md:translate-x-0 overflow-y-scroll"
     :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}"
     @click.away="sidebarOpen = false"
@@ -7,160 +7,167 @@
 >
 
     {{-- Logo / Branding --}}
+    <!-- Catatan: Pastikan aset gambar logo ini benar-benar ada di path yang ditunjukkan -->
     <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="w-36 mx-auto mb-6">
 
-    {{-- Dashboard --}}
+    {{-- Dashboard - Link Utama --}}
     <a href="/dashboard"
-        class="text-sm font-medium text-neutral-100 block my-8 pb-1 px-2 pt-1 rounded transition duration-200 hover:bg-red-700 hover:text-neutral-100 {{ request()->is('dashboard') ? 'bg-red-800 text-neutral-100' : '' }}">
-        <i class="fa-regular fa-chart-bar my-1 mx-2 text-xl"></i>Dashboard
+        class="text-sm font-semibold flex items-center gap-3 w-full p-2.5 rounded-xl transition-all duration-200 
+               hover:bg-red-800/70 hover:shadow-lg hover:shadow-red-950/80
+               {{ request()->is('dashboard') ? 'bg-red-800 text-white shadow-xl shadow-red-950/70' : 'text-neutral-100' }}">
+        <i class="fa-regular fa-chart-bar text-xl w-6"></i>
+        <span>Dashboard</span>
     </a>
 
-    <nav>
-        <h3 class="text-gray-200 uppercase tracking-wider text-sm mb-2">Inventory</h3>
+    <nav class="space-y-1">
+        
+        {{-- Group 1: Inventory --}}
+        <h3 class="text-red-400 uppercase tracking-wider text-xs font-semibold pt-4 pb-2 border-t border-red-800/50">Inventory</h3>
 
         {{-- Data Master --}}
-        <div class="flex">
+        <div>
+            <!-- Tombol Dropdown Utama -->
             <button
                 @click="dataMasterOpen = !dataMasterOpen"
-                class="w-full text-left flex items-center justify-between text-sm font-medium text-gray-100 block my-1 pb-1 px-2 pt-1 rounded transition duration-200 hover:bg-red-700 focus:outline-none"
-                :class="{'bg-red-700': dataMasterOpen}">
-                <span class="flex ml-3 items-center gap-2">
+                class="w-full text-left flex items-center justify-between text-sm font-medium text-neutral-100 p-2.5 rounded-xl transition-all duration-200 
+                       hover:bg-red-800/70 focus:outline-none"
+                :class="{'bg-red-800 text-white shadow-inner shadow-red-950/50': dataMasterOpen}"
+            >
+                <span class="flex items-center gap-3">
                     <i class="fa-solid fa-database text-xl w-6"></i>
                     <p>Data Master</p>
                 </span>
                 <i class="fa-solid fa-chevron-down transform transition-transform duration-200 text-xs"
                     :class="{'rotate-180': dataMasterOpen}"></i>
             </button>
-        </div>
 
-        <div
-            x-show="dataMasterOpen"
-            x-transition
-            class="origin-top ml-4 border-l border-red-400 pl-2 space-y-1"
-            style="display: none;"
-        >
-            <a href="/barangs" class="text-sm font-medium block py-1.5 pl-6 rounded hover:bg-red-600">Data Barang</a>
-            <a href="/pelanggans" class="text-sm font-medium block py-1.5 pl-6 rounded hover:bg-red-600">Data Pelanggan</a>
-            <a href="/kategori_pelanggan" class="text-sm font-medium block py-1.5 pl-6 rounded hover:bg-red-600">Kategori Pelanggan</a>
-            <a href="/suppliers" class="text-sm font-medium block py-1.5 pl-6 rounded hover:bg-red-600">Data Supplier</a>
-            <a href="/kategori_barang" class="text-sm font-medium block py-1.5 pl-6 rounded hover:bg-red-600">Kategori Barang</a>
+            <!-- Isi Dropdown -->
+            <div
+                x-show="dataMasterOpen"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 max-h-0"
+                x-transition:enter-end="opacity-100 max-h-screen"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 max-h-screen"
+                x-transition:leave-end="opacity-0 max-h-0"
+                class="origin-top ml-4 border-l-2 border-red-500 pl-4 py-1 space-y-1 overflow-hidden"
+                style="display: none;"
+            >
+                <a href="/barangs" class="text-sm font-normal block py-1.5 text-neutral-200 hover:text-white hover:bg-red-800/50 rounded-md pl-2 transition-all duration-150">Data Barang</a>
+                <a href="/pelanggans" class="text-sm font-normal block py-1.5 text-neutral-200 hover:text-white hover:bg-red-800/50 rounded-md pl-2 transition-all duration-150">Data Pelanggan</a>
+                <a href="/kategori_pelanggan" class="text-sm font-normal block py-1.5 text-neutral-200 hover:text-white hover:bg-red-800/50 rounded-md pl-2 transition-all duration-150">Kategori Pelanggan</a>
+                <a href="/suppliers" class="text-sm font-normal block py-1.5 text-neutral-200 hover:text-white hover:bg-red-800/50 rounded-md pl-2 transition-all duration-150">Data Supplier</a>
+                <a href="/kategori_barang" class="text-sm font-normal block py-1.5 text-neutral-200 hover:text-white hover:bg-red-800/50 rounded-md pl-2 transition-all duration-150">Kategori Barang</a>
+            </div>
         </div>
 
         {{-- Inventori Gudang --}}
-        <div class="flex">
+        <div>
+            <!-- Tombol Dropdown Utama -->
             <button
                 @click="inventoriGudangOpen = !inventoriGudangOpen"
-                class="w-full text-left flex items-center justify-between text-sm font-medium text-gray-100 block my-1 pb-1 px-2 pt-1 rounded transition duration-200 hover:bg-red-700 focus:outline-none"
-                :class="{'bg-red-700': inventoriGudangOpen}">
-                <span class="flex ml-3 items-center gap-2">
-                    <i class="fa-solid fa-boxes-stacked text-xl w-6 "></i>
+                class="w-full text-left flex items-center justify-between text-sm font-medium text-neutral-100 p-2.5 rounded-xl transition-all duration-200 
+                       hover:bg-red-800/70 focus:outline-none"
+                :class="{'bg-red-800 text-white shadow-inner shadow-red-950/50': inventoriGudangOpen}"
+            >
+                <span class="flex items-center gap-3">
+                    <i class="fa-solid fa-boxes-stacked text-xl w-6"></i>
                     <p>Inventori Gudang</p>
                 </span>
                 <i class="fa-solid fa-chevron-down transform transition-transform duration-200 text-xs"
                     :class="{'rotate-180': inventoriGudangOpen}"></i>
             </button>
-        </div>
 
-        <div
-            x-show="inventoriGudangOpen"
-            x-transition
-            class="origin-top ml-4 border-l border-red-400 pl-2 space-y-1"
-            style="display: none;"
-        >
-            <a href="/katalog_barang" class="text-sm font-medium block py-1.5 pl-6 rounded hover:bg-red-600">
-                Katalog Barang
-            </a>
-            <a href="/stok-barang" class="text-sm font-medium block py-1.5 pl-6 rounded hover:bg-red-600">
-                Stok Barang
-            </a>
-            <a href="/stock_opname" class="text-sm font-medium block py-1.5 pl-6 rounded hover:bg-red-600">
-                Stock Opname
-            </a>
-            <a href="/stock_opname" class="text-sm font-medium block py-1.5 pl-6 rounded hover:bg-red-600">
-                Batch & Tracking Kadaluarsa
-            </a>
+            <!-- Isi Dropdown -->
+            <div
+                x-show="inventoriGudangOpen"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 max-h-0"
+                x-transition:enter-end="opacity-100 max-h-screen"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 max-h-screen"
+                x-transition:leave-end="opacity-0 max-h-0"
+                class="origin-top ml-4 border-l-2 border-red-500 pl-4 py-1 space-y-1 overflow-hidden"
+                style="display: none;"
+            >
+                <a href="/katalog_barang" class="text-sm font-normal block py-1.5 text-neutral-200 hover:text-white hover:bg-red-800/50 rounded-md pl-2 transition-all duration-150">Katalog Barang</a>
+                <a href="/stok-barang" class="text-sm font-normal block py-1.5 text-neutral-200 hover:text-white hover:bg-red-800/50 rounded-md pl-2 transition-all duration-150">Stok Barang</a>
+                <a href="/stock_opname" class="text-sm font-normal block py-1.5 text-neutral-200 hover:text-white hover:bg-red-800/50 rounded-md pl-2 transition-all duration-150">Stock Opname</a>
+                <a href="/stock_opname" class="text-sm font-normal block py-1.5 text-neutral-200 hover:text-white hover:bg-red-800/50 rounded-md pl-2 transition-all duration-150">Batch & Tracking Kadaluarsa</a>
+            </div>
         </div>
-
-        {{-- Verifikasi Barang --}}
+        
+        {{-- Link Navigasi Non-Dropdown --}}
         <a href="/verifBarang"
-            class="text-sm font-medium block my-1 pb-1 px-2 pt-1 rounded hover:bg-red-700 transition duration-200">
-            <span class="flex ml-3 items-center gap-2">
-                <i class="fa-solid fa-clipboard-check text-xl w-6"></i>
-                <p>Verifikasi Barang Masuk</p>
-            </span>
+            class="flex items-center gap-3 text-sm font-medium text-neutral-100 w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200">
+            <i class="fa-solid fa-clipboard-check text-xl w-6"></i>
+            <span>Verifikasi Barang Masuk</span>
         </a>
 
-        {{-- Retur Barang --}}
         <a href="/returBarang"
-            class="text-sm font-medium block my-1 pb-1 px-2 pt-1 rounded hover:bg-red-700 transition duration-200">
-            <span class="flex ml-3 items-center gap-2">
-                <i class="fa-solid fa-clipboard-check text-xl w-6"></i>
-                <p>Retur Barang</p>
-            </span>
+            class="flex items-center gap-3 text-sm font-medium text-neutral-100 w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200">
+            <i class="fa-solid fa-truck-arrow-right text-xl w-6"></i>
+            <span>Retur Barang</span>
         </a>
 
-        {{-- Permintaan Pembelian --}}
         <a href="{{ route('purchase_orders.buat_permintaan') }}"
-            class="text-sm font-medium block my-1 pb-1 px-2 pt-1 rounded hover:bg-red-700 transition duration-200">
-            <span class="flex ml-3 items-center gap-2">
-                <i class="fa-solid fa-money-check-dollar text-xl w-6"></i>
-                <p>Permintaan Pembelian</p>
-            </span>
+            class="flex items-center gap-3 text-sm font-medium text-neutral-100 w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200">
+            <i class="fa-solid fa-money-check-dollar text-xl w-6"></i>
+            <span>Permintaan Pembelian</span>
         </a>
 
-        <h3 class="uppercase tracking-wider text-sm text-gray-200 mt-6 mb-2">Surat Jalan dan Pengiriman</h3>
 
-        {{-- Surat Jalan --}}
+        {{-- Group 2: Surat Jalan dan Pengiriman --}}
+        <h3 class="text-red-400 uppercase tracking-wider text-xs font-semibold mt-6 pt-4 pb-2 border-t border-red-800/50">Surat Jalan & Pengiriman</h3>
         
         <a href="{{ route('surat_jalan.index') }}"
-        class="text-sm font-medium block my-1 pb-1 px-2 pt-1 rounded hover:bg-red-700 transition duration-200">
-        <span class="flex ml-3 items-center gap-2">
+        class="flex items-center gap-3 text-sm font-medium text-neutral-100 w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200">
             <i class="fa-solid fa-file-invoice-dollar text-xl w-6"></i>
-            <p>Surat Jalan</p>
-        </span>
-    </a>
-    
-    <a href="/pengiriman"
-        class="text-sm font-medium block my-1 pb-1 px-2 pt-1 rounded hover:bg-red-700 transition duration-200">
-        <span class="flex ml-3 items-center gap-2">
-            <i class="fa-solid fa-file-invoice-dollar text-xl w-6"></i>
-            <p>Pengiriman Barang</p>
-        </span>
-    </a>
-        {{-- Approval Section --}}
-        <h3 class="uppercase tracking-wider text-sm text-gray-200 mt-6 mb-2">Approval</h3>
-        <a href="{{ route('approval.approval_po') }}" class="text-sm font-medium block my-1 py-1.5 px-2 rounded hover:bg-red-700 transition duration-200">
-            <span class="flex ml-3 items-center gap-2">
-                <i class="fa-solid fa-file text-xl w-6"></i>
-                <p>Approval PO</p>
-            </span>
+            <span>Surat Jalan</span>
         </a>
-        <a href="{{ route('approval.approval_surat_jalan') }}" class="text-sm font-medium block my-1 py-1.5 px-2 rounded hover:bg-red-700 transition duration-200">
-            <span class="flex ml-3 items-center gap-2">
-                <i class="fa-solid fa-file text-xl w-6"></i>
-                <p>Approval Surat Jalan</p>
-            </span>
+        
+        <a href="/pengiriman"
+            class="flex items-center gap-3 text-sm font-medium text-neutral-100 w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200">
+            <i class="fa-solid fa-truck text-xl w-6"></i>
+            <span>Pengiriman Barang</span>
         </a>
 
-        {{-- Laporan Section --}}
-        <h3 class="uppercase tracking-wider text-sm text-gray-200 mt-6 mb-2">Laporan</h3>
-        <a href="/laporan/barang-masuk" class="text-sm font-medium block my-1 py-1.5 px-2 rounded hover:bg-red-700 transition duration-200">
-            <span class="flex ml-3 items-center gap-2">
-                <i class="fa-solid fa-file-export text-xl w-6"></i>
-                <p>Laporan Barang Masuk</p>
-            </span>
-        </a>
-        <a href="/laporan/barang-keluar" class="text-sm font-medium block my-1 py-1.5 px-2 rounded hover:bg-red-700 transition duration-200">
-            <span class="flex ml-3 items-center gap-2">
-                <i class="fa-solid fa-file-export text-xl w-6"></i>
-                <p>Laporan Barang Keluar</p>
-            </span>
+        {{-- Group 3: Approval --}}
+        <h3 class="text-red-400 uppercase tracking-wider text-xs font-semibold mt-6 pt-4 pb-2 border-t border-red-800/50">Approval</h3>
+
+        <a href="{{ route('approval.approval_po') }}" 
+            class="flex items-center gap-3 text-sm font-medium text-neutral-100 w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200">
+            <i class="fa-solid fa-file text-xl w-6"></i>
+            <span>Approval PO</span>
         </a>
 
-        {{-- Settings --}}
-        <h3 class="uppercase tracking-wider text-sm text-gray-200 mt-6 mb-2">Settings</h3>
-        <a href="#" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 text-gray-100">
-            Users & Roles
+        <a href="{{ route('approval.approval_surat_jalan') }}" 
+            class="flex items-center gap-3 text-sm font-medium text-neutral-100 w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200">
+            <i class="fa-solid fa-file text-xl w-6"></i>
+            <span>Approval Surat Jalan</span>
+        </a>
+
+        {{-- Group 4: Laporan --}}
+        <h3 class="text-red-400 uppercase tracking-wider text-xs font-semibold mt-6 pt-4 pb-2 border-t border-red-800/50">Laporan</h3>
+
+        <a href="/laporan/barang-masuk" 
+            class="flex items-center gap-3 text-sm font-medium text-neutral-100 w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200">
+            <i class="fa-solid fa-file-export text-xl w-6"></i>
+            <span>Laporan Barang Masuk</span>
+        </a>
+
+        <a href="/laporan/barang-keluar" 
+            class="flex items-center gap-3 text-sm font-medium text-neutral-100 w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200">
+            <i class="fa-solid fa-file-export text-xl w-6"></i>
+            <span>Laporan Barang Keluar</span>
+        </a>
+
+        {{-- Group 5: Settings --}}
+        <h3 class="text-red-400 uppercase tracking-wider text-xs font-semibold mt-6 pt-4 pb-2 border-t border-red-800/50">Settings</h3>
+
+        <a href="#" class="flex items-center gap-3 text-sm font-medium text-neutral-100 w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200">
+            <i class="fa-solid fa-users-gear text-xl w-6"></i>
+            <span>Users & Roles</span>
         </a>
     </nav>
 </div>

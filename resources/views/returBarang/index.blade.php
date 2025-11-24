@@ -1,33 +1,40 @@
 @extends('layouts.app')
-@section('page-title',  'Retur Barang')
+@section('page-title', 'Retur Barang')
 @section('content')
+<!-- Container Utama dengan Shadow dan Border -->
 <div class="min-h-screen bg-gray-50 py-8 px-6">
-    <div class="max-w-6xl mx-auto bg-white p-6 rounded-xl shadow-md">
+    <div class="max-w-6xl mx-auto bg-white p-8 rounded-xl shadow-xl border border-gray-200">
 
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-semibold text-gray-700">Daftar Retur Barang</h1>
+        {{-- Header & Filter Controls --}}
+        <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 border-b pb-4">
+            <h1 class="text-2xl font-bold text-gray-800 mb-4 md:mb-0">Daftar Retur Barang</h1>
 
-            <form method="GET" class="flex gap-2">
+            <form method="GET" class="flex flex-wrap items-center gap-3">
+                {{-- Input Search dengan Fokus Ring Merah --}}
                 <input type="text" name="search" value="{{ $search }}" placeholder="Cari kode barang / PO ID"
-                    class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                    class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-red-600 focus:border-red-600 focus:outline-none shadow-sm min-w-[180px]">
 
-                <select name="status" class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                {{-- Select Status dengan Fokus Ring Merah --}}
+                <select name="status" class="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 shadow-sm focus:ring-2 focus:ring-red-600 focus:border-red-600 focus:outline-none">
                     <option value="">Semua Status</option>
                     <option value="Pending" {{ $status == 'Pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="Diproses" {{ $status == 'Diproses' ? 'selected' : '' }}>Diproses</option>
-                    <option value="Selesai" {{ $status == 'Selesai' ? 'selected' : '' }}>Selesai</option>
+                    <option value="Disetujui" {{ $status == 'Disetujui' ? 'selected' : '' }}>Disetujui</option>
+                    <option value="Ditolak" {{ $status == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
                 </select>
 
+                {{-- Tombol Filter dengan Warna Merah --}}
                 <button type="submit"
-                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    class="px-4 py-2 bg-red-700 text-white rounded-lg font-medium hover:bg-red-800 transition duration-150 shadow-md">
                     Filter
                 </button>
             </form>
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
-                <thead class="bg-gray-100 text-gray-600 text-sm">
+        {{-- Tabel --}}
+        <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-md">
+            <table class="min-w-full text-sm text-gray-700">
+                {{-- Header Tabel Warna Merah --}}
+                <thead class="bg-red-600 text-white uppercase text-xs font-semibold tracking-wider">
                     <tr>
                         <th class="py-3 px-4 text-left">#</th>
                         <th class="py-3 px-4 text-left">PO ID</th>
@@ -41,73 +48,89 @@
                 </thead>
                 <tbody class="text-sm text-gray-700">
                     @forelse ($returs as $index => $retur)
-                    <tr class="border-t hover:bg-gray-50">
+                    <tr class="border-t border-gray-100 hover:bg-red-50 transition duration-100">
                         <td class="py-3 px-4">{{ $returs->firstItem() + $index }}</td>
-                        <td class="py-3 px-4">{{ $retur->po_id }}</td>
+                        <td class="py-3 px-4 font-medium text-gray-800">{{ $retur->po_id }}</td>
                         <td class="py-3 px-4">{{ $retur->kode_barang }}</td>
-                        <td class="py-3 px-4 text-center">{{ $retur->qty_retur }}</td>
-                        <td class="px-6 py-4 text-gray-800">
+                        {{-- Qty Retur Ditekankan --}}
+                        <td class="py-3 px-4 text-center font-bold text-red-700 bg-red-50/50">
+                            {{ number_format($retur->qty_retur, 2, ',', '.') }}
+                        </td>
+                        <td class="px-4 py-3 text-gray-800">
+                            {{-- Field Alasan yang Dapat Diedit --}}
                             <div
                                 x-data="{ editing: false, alasan: '{{ $retur->alasan }}' }"
                                 @click.away="editing = false"
                                 class="relative">
                                 {{-- Teks normal --}}
-                                <div x-show="!editing" class="cursor-pointer hover:bg-gray-100 p-1 rounded"
+                                <div x-show="!editing" class="cursor-pointer hover:bg-gray-100 p-1 rounded transition"
                                     @click="editing = true">
                                     <span x-text="alasan || 'Klik untuk isi alasan'"></span>
                                 </div>
 
-                                {{-- Input edit --}}
+                                {{-- Input edit dengan Fokus Ring Merah --}}
                                 <div x-show="editing" class="flex gap-2">
                                     <input type="text" x-model="alasan"
-                                        class="border border-gray-300 rounded px-2 py-1 w-full text-sm focus:ring focus:ring-blue-200"
+                                        class="border border-gray-300 rounded px-2 py-1 w-full text-sm focus:ring focus:ring-red-200 focus:border-red-400"
                                         @keydown.enter.prevent="
-                       fetch('{{ route('retur.updateAlasan', $retur->retur_id) }}', {
-                           method: 'PATCH',
-                           headers: { 
-                               'Content-Type': 'application/json',
-                               'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                           },
-                           body: JSON.stringify({ alasan })
-                       })
-                       .then(res => res.json())
-                       .then(data => { if(data.success){ editing = false } })
-                   ">
-                                    <button @click="editing = false" class="text-gray-500 hover:text-gray-700 text-sm">Batal</button>
+                                        fetch('{{ route('retur.updateAlasan', $retur->retur_id) }}', {
+                                            method: 'PATCH',
+                                            headers: { 
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                            },
+                                            body: JSON.stringify({ alasan })
+                                        })
+                                        .then(res => res.json())
+                                        .then(data => { 
+                                            if(data.success){ 
+                                                editing = false 
+                                            } else {
+                                                console.error('Gagal update alasan:', data.message)
+                                            }
+                                        })
+                                    ">
+                                    <button @click="editing = false" class="text-gray-500 hover:text-red-700 text-sm whitespace-nowrap">Batal</button>
                                 </div>
                             </div>
                         </td>
 
+                        {{-- Badge Status --}}
                         <td class="py-3 px-4 text-center">
-                                @if ($retur->status_retur === 'Pending')
-                                    <span class="inline-block px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-medium">Pending</span>
-                                @elseif ($retur->status_retur === 'Disetujui')
-                                    <span class="inline-block px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">Disetujui</span>
-                                @elseif ($retur->status_retur === 'Selesai')
-                                    <span class="inline-block px-3 py-1 bg-red-700 text-white rounded-full text-sm font-medium">Ditolak</span>
-                                @else
-                                    <span class="inline-block px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm font-medium">-</span>
-                                @endif
-                            </div>
+                            @if ($retur->status_retur === 'Pending')
+                                <span class="inline-block px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-semibold shadow-sm">Pending</span>
+                            @elseif ($retur->status_retur === 'Disetujui')
+                                <span class="inline-block px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold shadow-sm">Disetujui</span>
+                            @elseif ($retur->status_retur === 'Ditolak')
+                                <span class="inline-block px-3 py-1 bg-red-700 text-white rounded-full text-xs font-semibold shadow-sm">Ditolak</span>
+                            @else
+                                <span class="inline-block px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-semibold shadow-sm">{{ $retur->status_retur }}</span>
+                            @endif
                         </td>
                         <td class="py-3 px-4 text-center">{{ $retur->tanggal_retur?->format('d/m/Y') }}</td>
+                        
+                        {{-- Tombol Aksi Detail Merah --}}
                         <td class="py-3 px-4 text-center">
                             <a href="{{ route('retur.show', $retur->retur_id) }}"
-                                class="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-xs">
+                                class="px-3 py-1 bg-red-700 text-white rounded-md hover:bg-red-800 transition duration-150 text-xs font-medium shadow">
                                 Detail
                             </a>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="8" class="text-center py-6 text-gray-500">Tidak ada data retur barang</td>
+                        <td colspan="8" class="text-center py-8 text-gray-500 bg-gray-50 text-base font-medium">
+                            <svg class="w-8 h-8 inline-block mr-2 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            Tidak ada data retur barang ditemukan.
+                        </td>
                     </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
 
-        <div class="mt-4">
+        {{-- Pagination --}}
+        <div class="mt-6">
             {{ $returs->links() }}
         </div>
     </div>

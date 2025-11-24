@@ -151,12 +151,12 @@
             {{-- Satuan & Jml/Karton --}}
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                    <label for="satuan_terkecil" class="block text-sm font-medium text-gray-700 mb-1">Satuan Jual</label>
-                    <select name="satuan_terkecil" id="satuan_terkecil"
+                    <label for="satuan_jual" class="block text-sm font-medium text-gray-700 mb-1">Satuan Jual</label>
+                    <select name="satuan_jual" id="satuan_jual"
                         class="py-2.5 sm:py-3 px-4 block w-full border border-gray-300 rounded-lg sm:text-sm focus:ring-indigo-500 focus:border-indigo-500"
                         required>
                         @php
-                        $selectedSatuan = old('satuan_terkecil', $barang->satuan_terkecil);
+                        $selectedSatuan = old('satuan_jual', $barang->satuan_jual);
                         @endphp
                         <option value="pcs" {{ $selectedSatuan == 'pcs' ? 'selected' : '' }}>pcs</option>
                         <option value="renteng" {{ $selectedSatuan == 'renteng' ? 'selected' : '' }}>renteng</option>
@@ -206,6 +206,31 @@
         </form>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const satuanSelect = document.getElementById('satuan_jual');
+    const jumlahInput = document.getElementById('jml_barang_per_karton');
+
+    function updateJumlahKarton() {
+        if (satuanSelect.value === 'karton') {
+            jumlahInput.value = 1;
+            jumlahInput.readOnly = true; // Tidak bisa diubah manual
+            jumlahInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+        } else {
+            jumlahInput.readOnly = false;
+            jumlahInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
+        }
+    }
+
+    // Jalankan saat halaman pertama kali dimuat
+    updateJumlahKarton();
+
+    // Jalankan setiap kali dropdown berubah
+    satuanSelect.addEventListener('change', updateJumlahKarton);
+});
+</script>
+
 
 @endsection
 

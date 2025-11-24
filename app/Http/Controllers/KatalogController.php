@@ -31,7 +31,7 @@ class KatalogController extends Controller
         }
         
         // 5. Paginate the results
-        $barangs = $barangsQuery->paginate(10); // 10 items per page
+        $barangs = $barangsQuery->paginate(12); // 10 items per page
 
         return view('katalog.index', compact('barangs', 'kategoris'));
     }
