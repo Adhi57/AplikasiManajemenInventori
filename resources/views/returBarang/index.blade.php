@@ -3,8 +3,13 @@
 @section('content')
 <!-- Container Utama dengan Shadow dan Border -->
 <div class="min-h-screen bg-gray-50 py-8 px-6" x-data="returActions()">
+<h1 class="text-2xl font-semibold text-gray-800 mb-2">
+            Manajemen Retur Barang 
+        </h1>
+        <p class="text-base text-gray-600 border-b pb-4 mb-4">
+            Memastikan dan Mengonfirmasi Retur Barang Yang Telah Diverifikasi Fisik
+        </p>
     <div class=" mx-auto bg-white p-8 rounded-xl shadow-xl border border-gray-200">
-
         {{-- Header & Filter Controls --}}
         <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 border-b pb-4">
             <h1 class="text-2xl font-bold text-gray-800 mb-4 md:mb-0">Daftar Retur Barang</h1>

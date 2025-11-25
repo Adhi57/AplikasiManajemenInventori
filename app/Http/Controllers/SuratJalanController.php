@@ -14,12 +14,21 @@ use Illuminate\Support\Str;
 class SuratJalanController extends Controller
 {
     /**
-     * 📄 INDEX — Menampilkan daftar surat jalan
+     * INDEX — Menampilkan daftar surat jalan
      */
     public function index(Request $request)
     {
         $query = SuratJalan::with(['pelanggan', 'user'])
-            ->orderBy('tanggal_surat', 'desc');
+        ->orderByRaw("
+        CASE 
+            WHEN status = 'Pending' THEN 1
+            WHEN status = 'Disetujui' THEN 2
+            WHEN status = 'Ditolak' THEN 3
+            WHEN status = 'Dikirim' THEN 4
+            WHEN status = 'Selesai' THEN 5
+            ELSE 6
+        END
+    ");
 
         if ($request->status) {
             $query->where('status', $request->status);
@@ -38,7 +47,7 @@ class SuratJalanController extends Controller
     }
 
     /**
-     * 🧾 CREATE — Form tambah surat jalan (barang belum kadaluarsa)
+     * CREATE — Form tambah surat jalan (barang belum kadaluarsa)
      */
     public function create()
     {

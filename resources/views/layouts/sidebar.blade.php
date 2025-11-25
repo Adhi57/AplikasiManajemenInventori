@@ -35,7 +35,6 @@
 >
 
     {{-- Logo / Branding --}}
-    <!-- Catatan: Pastikan aset gambar logo ini benar-benar ada di path yang ditunjukkan -->
     <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="w-36 mx-auto mb-6">
 
     {{-- Dashboard - Link Utama --}}

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'Aplikasi Gudang BJL') }}</title>
 
     {{-- VITE ASSET INCLUSION (WAJIB untuk JS/CSS utama) --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])

@@ -14,17 +14,25 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
+
     <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
-            <div>
+
+        {{-- BACKGROUND FULL PAGE --}}
+        <div class="min-h-screen flex flex-col justify-center items-center 
+                    bg-gradient-to-b from-red-900 to-red-950 p-6">
+
+            {{-- LOGO --}}
+            <div class="mb-6">
                 <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
+                    <x-application-logo class="w-24 h-24 text-white opacity-90" />
                 </a>
             </div>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
+            {{-- LOGIN CARD --}}
+            <div class="w-full sm:max-w-md bg-white shadow-xl rounded-xl border border-red-200/40 px-6 py-8">
                 {{ $slot }}
             </div>
         </div>
+
     </body>
 </html>
