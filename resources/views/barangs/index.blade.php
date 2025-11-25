@@ -2,24 +2,42 @@
 @section('page-title', 'Data Master / Barang')
 @section('content')
 
-<!-- Card Utama Container -->
 <div class="p-4 sm:p-6 bg-gray-50 rounded-xl shadow-inner min-h-[80vh]">
 
     <div class="grid grid-cols-12 gap-4 items-center mb-6">
-        <!-- Kolom Pencarian (Diperbaiki untuk span 4/12) -->
-        <div class="relative col-span-12 md:col-span-4 text-gray-600">
-            <input
-                type="search"
-                id="search-input"
-                placeholder="Cari Kode atau Nama Barang..."
-                class="w-full h-10 px-5 text-sm border border-gray-300 outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600 rounded-xl transition duration-150 shadow-sm"
-                onkeyup="filterTable()"
-            >
-            <i class="fa-solid fa-magnifying-glass absolute right-0 top-0 mt-3 mr-4 text-gray-400"></i>
-        </div>
+        
+        <div class="relative col-span-12 md:col-span-8 text-gray-600">
+            {{-- Form untuk menampung filter dan search. Method GET digunakan untuk filtering. --}}
+            <form method="GET" action="{{ route('barangs.index') }}" class="flex flex-wrap items-center gap-3">
+                
+                {{-- Input Pencarian Teks --}}
+                <input
+                    type="search"
+                    name="search"
+                    id="search-input"
+                    placeholder="Cari Kode atau Nama Barang..."
+                    value="{{ request('search') }}"
+                    class="flex-1 min-w-[200px] h-10 px-5 text-sm border border-gray-300 outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600 rounded-xl transition duration-150 shadow-sm"
+                >
 
-        <!-- Kolom Tambah Barang (Diperbaiki untuk span 8/12, dorong ke kanan) -->
-        <div class="col-span-12 md:col-span-8 flex justify-end">
+                {{-- Dropdown Kategori --}}
+                <select name="kategori_id" class="h-10 border border-gray-300 rounded-xl px-3 text-sm focus:ring-red-600 focus:border-red-600 shadow-sm outline-none">
+                    <option value="">Semua Kategori</option>
+                    @foreach ($kategoriBarangs as $kategori)
+                    <option value="{{ $kategori->kategori_barang_id }}"
+                        {{ request('kategori_id') == $kategori->kategori_barang_id ? 'selected' : '' }}>
+                        {{ $kategori->nama_kategori_barang }}
+                    </option>
+                    @endforeach
+                </select>
+
+                {{-- Tombol Filter --}}
+                <button type="submit" class="bg-red-700 text-white px-4 py-2 rounded-xl shadow-lg hover:bg-red-800 transition duration-150 ease-in-out">
+                    <i class="fa-solid fa-magnifying-glass"></i> Filter
+                </button>
+            </form>
+        </div>
+        <div class="col-span-12 md:col-span-4 flex justify-end">
             <a href="{{ route('barangs.create') }}"
                 class="bg-red-700 text-white font-semibold px-4 py-2 rounded-xl shadow-lg hover:bg-red-800 transition duration-150 ease-in-out flex items-center gap-2">
                 <i class="fa-solid fa-plus text-sm"></i>
@@ -29,7 +47,6 @@
     </div>
 
 
-    <!-- TABEL -->
     <div class="my-3">
         @if(session('success'))
         <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-lg shadow-sm font-medium" role="alert">
@@ -41,9 +58,9 @@
             <div class="p-6">
                 <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Daftar Barang</h2>
 
-                <div class="overflow-x-auto">
+                <div class="overflow-x-auto max-h-96 overflow-y-auto">
                     <table id="barang-table" class="w-full text-sm text-left rtl:text-right text-gray-700">
-                        <thead class="text-xs text-white uppercase bg-red-700 border-b-4 border-red-500">
+                        <thead class="text-xs text-white uppercase bg-red-700 border-b-4 border-red-500 sticky top-0 z-10">
                             <tr>
                                 <th scope="col" class="px-3 py-3 text-center rounded-tl-xl">Kode</th>
                                 <th scope="col" class="px-6 py-3">Nama Barang</th>
@@ -80,21 +97,21 @@
                                 
                                 <td class="px-6 py-2 text-center whitespace-nowrap">
                                     <a href="{{ route('barangs.show', $barang->kode_barang) }}"
-                                      class="inline-block text-gray-500 hover:text-blue-700 transition duration-150 p-1">
-                                      <i class="fa-solid fa-eye cursor-pointer text-sm"></i>
+                                        class="inline-block text-gray-500 hover:text-blue-700 transition duration-150 p-1">
+                                        <i class="fa-solid fa-eye cursor-pointer text-sm"></i>
                                     </a>
 
                                     <a href="{{ route('barangs.edit', $barang->kode_barang) }}"
-                                      class="inline-block text-gray-500 hover:text-amber-600 transition duration-150 p-1">
-                                      <i class="fa-solid fa-pen-to-square cursor-pointer text-sm"></i>
+                                        class="inline-block text-gray-500 hover:text-amber-600 transition duration-150 p-1">
+                                        <i class="fa-solid fa-pen-to-square cursor-pointer text-sm"></i>
                                     </a>
                                     
                                     <form action="{{ route('barangs.destroy', $barang->kode_barang) }}" method="POST" class="inline-block">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" 
-                                                onclick="return confirm('Yakin ingin menghapus data barang {{ $barang->nama_barang }}? Aksi ini tidak dapat dibatalkan.')"
-                                                class="text-gray-500 hover:text-red-700 transition duration-150 p-1">
+                                            onclick="return confirm('Yakin ingin menghapus data barang {{ $barang->nama_barang }}? Aksi ini tidak dapat dibatalkan.')"
+                                            class="text-gray-500 hover:text-red-700 transition duration-150 p-1">
                                             <i class="fa-solid fa-trash-can cursor-pointer text-sm"></i>
                                         </button>
                                     </form>
@@ -106,65 +123,13 @@
                 </div>
             </div>
             
-            <!-- Tambahkan Pagiasi di sini (jika menggunakan fitur Paginate dari Laravel) -->
-            {{-- <div class="p-4 border-t bg-gray-50">
-                {{ $barangs->links() }}
-            </div> --}}
-
+            <div class="p-4 border-t bg-gray-50">
+                {{ $barangs->appends(request()->query())->links() }}
+            </div>
+            
         </div>
 
     </div>
 </div>
-
-<script>
-    /**
-     * Fungsi untuk memfilter baris tabel berdasarkan input pencarian.
-     * Pencarian dilakukan di sisi klien (browser) untuk Kode Barang (kolom 0) dan Nama Barang (kolom 1).
-     */
-    function filterTable() {
-        // Ambil nilai input dan konversi ke huruf kecil
-        const input = document.getElementById("search-input");
-        const filter = input.value.toLowerCase();
-        
-        // Ambil tabel dan semua baris data (skip header/thead)
-        const table = document.getElementById("barang-table");
-        const tr = table.getElementsByTagName("tr");
-
-        // Loop melalui semua baris tabel (mulai dari index 1 untuk melewati header)
-        for (let i = 1; i < tr.length; i++) {
-            // Ambil kolom Kode Barang (index 0) dan Nama Barang (index 1)
-            const tdKode = tr[i].getElementsByTagName("td")[0];
-            const tdNama = tr[i].getElementsByTagName("td")[1];
-            
-            let match = false;
-
-            // Pastikan elemen kolom ada
-            if (tdKode) {
-                const kodeText = tdKode.textContent || tdKode.innerText;
-                if (kodeText.toLowerCase().indexOf(filter) > -1) {
-                    match = true;
-                }
-            }
-
-            if (!match && tdNama) {
-                const namaText = tdNama.textContent || tdNama.innerText;
-                if (namaText.toLowerCase().indexOf(filter) > -1) {
-                    match = true;
-                }
-            }
-
-            // Tampilkan atau sembunyikan baris berdasarkan hasil pencarian
-            if (match) {
-                tr[i].style.display = ""; // Tampilkan baris
-            } else {
-                tr[i].style.display = "none"; // Sembunyikan baris
-            }
-        }
-    }
-
-    // Mengganti penggunaan `confirm()` dengan solusi yang lebih baik (opsional, tergantung environment)
-    // Karena ini adalah blade, kita asumsikan konfirmasi bawaan browser masih diterima.
-    // Jika Anda menggunakan modal kustom, ganti logic `onclick` pada tombol hapus.
-</script>
 
 @endsection

@@ -49,7 +49,7 @@
                         </a>
 
                         {{-- Tombol Tandai Terkirim --}}
-                        @if($pengiriman->status_pengiriman !== 'Terkirim')
+                        @if($pengiriman->status_pengiriman !== 'Terkirim' && $pengiriman->status_pengiriman !== 'Menunggu' && $pengiriman->suratJalan->status == 'Disetujui')
                             <form action="{{ route('pengiriman.updateStatus', $pengiriman->pengiriman_id) }}" method="POST" class="inline">
                                 @csrf
                                 <input type="hidden" name="status_pengiriman" value="Terkirim">

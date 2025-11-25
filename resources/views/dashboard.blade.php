@@ -5,14 +5,15 @@
 <div class="space-y-6">
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        @php
-            $stats = [
-                ['title' => 'Total Produk', 'value' => '450', 'icon' => 'fa-box-open', 'color' => 'text-slate-600', 'bg' => 'bg-slate-100'],
-                ['title' => 'Stok Tersedia', 'value' => '400', 'icon' => 'fa-cubes', 'color' => 'text-green-600', 'bg' => 'bg-green-100'],
-                ['title' => 'Barang Masuk', 'value' => '75', 'icon' => 'fa-arrow-down', 'color' => 'text-blue-600', 'bg' => 'bg-blue-100'],
-                ['title' => 'Barang Keluar', 'value' => '30', 'icon' => 'fa-arrow-up', 'color' => 'text-red-600', 'bg' => 'bg-red-100'],
-            ];
-        @endphp
+    @php
+        $stats = [
+            ['title' => 'Total Produk Terdata', 'value' => $jumlahProduk, 'icon' => 'fa-box-open', 'color' => 'text-slate-600', 'bg' => 'bg-slate-100'],
+            ['title' => 'Jumlah Karton pada Gudang', 'value' => $jumlahKarton, 'icon' => 'fa-cubes', 'color' => 'text-green-600', 'bg' => 'bg-green-100'],
+            ['title' => 'Karton Barang Masuk Bulan ini', 'value' => $totalMasukBulanIni, 'icon' => 'fa-arrow-down', 'color' => 'text-blue-600', 'bg' => 'bg-blue-100'],
+            ['title' => 'Barang Keluar', 'value' => '30', 'icon' => 'fa-arrow-up', 'color' => 'text-red-600', 'bg' => 'bg-red-100'],
+        ];
+    @endphp
+
 
         @foreach ($stats as $stat)
             <div class="bg-white p-4 rounded-xl shadow border border-gray-100 hover:shadow-lg transition duration-200">
@@ -63,7 +64,7 @@
                         </div>
                         <div class="pt-2 border-t mt-4">
                             <h3 class="text-xs font-medium text-gray-600">Total Stok Gudang</h3>
-                            <p class="text-2xl font-bold text-slate-800">450 <span class="text-sm font-normal text-gray-500">pcs</span></p>
+                            <p class="text-2xl font-bold text-slate-800">{{ $jumlahKarton }} <span class="text-sm font-normal text-gray-500">Karton</span></p>
                         </div>
                     </div>
                 </div>

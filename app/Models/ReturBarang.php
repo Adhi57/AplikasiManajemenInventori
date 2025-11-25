@@ -31,4 +31,9 @@ class ReturBarang extends Model
     {
         return $this->belongsTo(PurchaseOrder::class, 'po_id', 'po_id');
     }
+
+    public function barang()
+    {
+        return $this->belongsTo(\App\Models\Barang::class, 'kode_barang', 'kode_barang');
+    }
 }

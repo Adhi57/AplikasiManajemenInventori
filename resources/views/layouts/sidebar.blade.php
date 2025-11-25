@@ -1,9 +1,37 @@
+@php
+    // --- LOGIKA PENENTUAN ACTIVE STATE UNTUK DROPDOWN ---
+
+    // Data Master paths
+    $dataMasterActive = request()->is('barangs*') || 
+                        request()->is('pelanggans*') || 
+                        request()->is('kategori_pelanggan*') || 
+                        request()->is('suppliers*') || 
+                        request()->is('kategori_barang*');
+
+    // Inventori Gudang paths
+    $inventoriGudangActive = request()->is('katalog_barang*') || 
+                             request()->is('stok-barang*') || 
+                             request()->is('stock_opname*');
+    
+    // Fungsi untuk kelas link aktif
+    $activeLinkClasses = 'bg-red-800 text-white shadow-xl shadow-red-950/70';
+    $defaultLinkClasses = 'text-neutral-100';
+
+    // Fungsi untuk kelas sub-link aktif
+    $activeSubLinkClasses = 'bg-red-700/80 text-white font-semibold shadow-inner';
+    $defaultSubLinkClasses = 'text-neutral-200';
+@endphp
+
 <div
     class="bg-gradient-to-b from-red-900 to-red-950 text-white w-68 space-y-6 py-7 px-4 fixed inset-y-0 left-0 z-40 h-full 
         transform transition duration-300 ease-in-out md:relative md:translate-x-0 overflow-y-scroll"
     :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}"
     @click.away="sidebarOpen = false"
-    x-data="{ dataMasterOpen: false, inventoriGudangOpen: false }"
+    {{-- Initial state ditentukan oleh apakah ada sub-menu yang aktif --}}
+    x-data="{ 
+        dataMasterOpen: {{ $dataMasterActive ? 'true' : 'false' }}, 
+        inventoriGudangOpen: {{ $inventoriGudangActive ? 'true' : 'false' }} 
+    }"
 >
 
     {{-- Logo / Branding --}}
@@ -13,8 +41,8 @@
     {{-- Dashboard - Link Utama --}}
     <a href="/dashboard"
         class="text-sm font-semibold flex items-center gap-3 w-full p-2.5 rounded-xl transition-all duration-200 
-               hover:bg-red-800/70 hover:shadow-lg hover:shadow-red-950/80
-               {{ request()->is('dashboard') ? 'bg-red-800 text-white shadow-xl shadow-red-950/70' : 'text-neutral-100' }}">
+                hover:bg-red-800/70 hover:shadow-lg hover:shadow-red-950/80
+                {{ request()->is('dashboard') ? $activeLinkClasses : $defaultLinkClasses }}">
         <i class="fa-regular fa-chart-bar text-xl w-6"></i>
         <span>Dashboard</span>
     </a>
@@ -29,9 +57,9 @@
             <!-- Tombol Dropdown Utama -->
             <button
                 @click="dataMasterOpen = !dataMasterOpen"
-                class="w-full text-left flex items-center justify-between text-sm font-medium text-neutral-100 p-2.5 rounded-xl transition-all duration-200 
-                       hover:bg-red-800/70 focus:outline-none"
-                :class="{'bg-red-800 text-white shadow-inner shadow-red-950/50': dataMasterOpen}"
+                class="w-full text-left flex items-center justify-between text-sm font-medium p-2.5 rounded-xl transition-all duration-200 
+                        hover:bg-red-800/70 focus:outline-none 
+                        {{ $dataMasterActive ? 'bg-red-800 text-white shadow-inner shadow-red-950/50' : 'text-neutral-100' }}"
             >
                 <span class="flex items-center gap-3">
                     <i class="fa-solid fa-database text-xl w-6"></i>
@@ -53,11 +81,25 @@
                 class="origin-top ml-4 border-l-2 border-red-500 pl-4 py-1 space-y-1 overflow-hidden"
                 style="display: none;"
             >
-                <a href="/barangs" class="text-sm font-normal block py-1.5 text-neutral-200 hover:text-white hover:bg-red-800/50 rounded-md pl-2 transition-all duration-150">Data Barang</a>
-                <a href="/pelanggans" class="text-sm font-normal block py-1.5 text-neutral-200 hover:text-white hover:bg-red-800/50 rounded-md pl-2 transition-all duration-150">Data Pelanggan</a>
-                <a href="/kategori_pelanggan" class="text-sm font-normal block py-1.5 text-neutral-200 hover:text-white hover:bg-red-800/50 rounded-md pl-2 transition-all duration-150">Kategori Pelanggan</a>
-                <a href="/suppliers" class="text-sm font-normal block py-1.5 text-neutral-200 hover:text-white hover:bg-red-800/50 rounded-md pl-2 transition-all duration-150">Data Supplier</a>
-                <a href="/kategori_barang" class="text-sm font-normal block py-1.5 text-neutral-200 hover:text-white hover:bg-red-800/50 rounded-md pl-2 transition-all duration-150">Kategori Barang</a>
+                <a href="/barangs" 
+                    class="text-sm font-normal block py-1.5 rounded-md pl-2 transition-all duration-150 
+                    {{ request()->is('barangs*') ? $activeSubLinkClasses : $defaultSubLinkClasses }}">Data Barang</a>
+                
+                <a href="/pelanggans" 
+                    class="text-sm font-normal block py-1.5 rounded-md pl-2 transition-all duration-150 
+                    {{ request()->is('pelanggans*') ? $activeSubLinkClasses : $defaultSubLinkClasses }}">Data Pelanggan</a>
+                
+                <a href="/kategori_pelanggan" 
+                    class="text-sm font-normal block py-1.5 rounded-md pl-2 transition-all duration-150 
+                    {{ request()->is('kategori_pelanggan*') ? $activeSubLinkClasses : $defaultSubLinkClasses }}">Kategori Pelanggan</a>
+                
+                <a href="/suppliers" 
+                    class="text-sm font-normal block py-1.5 rounded-md pl-2 transition-all duration-150 
+                    {{ request()->is('suppliers*') ? $activeSubLinkClasses : $defaultSubLinkClasses }}">Data Supplier</a>
+                
+                <a href="/kategori_barang" 
+                    class="text-sm font-normal block py-1.5 rounded-md pl-2 transition-all duration-150 
+                    {{ request()->is('kategori_barang*') ? $activeSubLinkClasses : $defaultSubLinkClasses }}">Kategori Barang</a>
             </div>
         </div>
 
@@ -66,9 +108,9 @@
             <!-- Tombol Dropdown Utama -->
             <button
                 @click="inventoriGudangOpen = !inventoriGudangOpen"
-                class="w-full text-left flex items-center justify-between text-sm font-medium text-neutral-100 p-2.5 rounded-xl transition-all duration-200 
-                       hover:bg-red-800/70 focus:outline-none"
-                :class="{'bg-red-800 text-white shadow-inner shadow-red-950/50': inventoriGudangOpen}"
+                class="w-full text-left flex items-center justify-between text-sm font-medium p-2.5 rounded-xl transition-all duration-200 
+                        hover:bg-red-800/70 focus:outline-none
+                        {{ $inventoriGudangActive ? 'bg-red-800 text-white shadow-inner shadow-red-950/50' : 'text-neutral-100' }}"
             >
                 <span class="flex items-center gap-3">
                     <i class="fa-solid fa-boxes-stacked text-xl w-6"></i>
@@ -90,28 +132,42 @@
                 class="origin-top ml-4 border-l-2 border-red-500 pl-4 py-1 space-y-1 overflow-hidden"
                 style="display: none;"
             >
-                <a href="/katalog_barang" class="text-sm font-normal block py-1.5 text-neutral-200 hover:text-white hover:bg-red-800/50 rounded-md pl-2 transition-all duration-150">Katalog Barang</a>
-                <a href="/stok-barang" class="text-sm font-normal block py-1.5 text-neutral-200 hover:text-white hover:bg-red-800/50 rounded-md pl-2 transition-all duration-150">Stok Barang</a>
-                <a href="/stock_opname" class="text-sm font-normal block py-1.5 text-neutral-200 hover:text-white hover:bg-red-800/50 rounded-md pl-2 transition-all duration-150">Stock Opname</a>
-                <a href="/stock_opname" class="text-sm font-normal block py-1.5 text-neutral-200 hover:text-white hover:bg-red-800/50 rounded-md pl-2 transition-all duration-150">Batch & Tracking Kadaluarsa</a>
+                <a href="/katalog_barang" 
+                    class="text-sm font-normal block py-1.5 rounded-md pl-2 transition-all duration-150
+                    {{ request()->is('katalog_barang*') ? $activeSubLinkClasses : $defaultSubLinkClasses }}">Katalog Barang</a>
+                
+                <a href="/stok-barang" 
+                    class="text-sm font-normal block py-1.5 rounded-md pl-2 transition-all duration-150
+                    {{ request()->is('stok-barang*') ? $activeSubLinkClasses : $defaultSubLinkClasses }}">Stok Barang</a>
+                
+                <a href="/stock_opname" 
+                    class="text-sm font-normal block py-1.5 rounded-md pl-2 transition-all duration-150
+                    {{ request()->is('stock_opname*') ? $activeSubLinkClasses : $defaultSubLinkClasses }}">Stock Opname</a>
+                
+                <a href="/tracking-kadaluarsa" 
+                    class="text-sm font-normal block py-1.5 rounded-md pl-2 transition-all duration-150
+                    {{ request()->is('batch*') ? $activeSubLinkClasses : $defaultSubLinkClasses }}">Batch & Tracking Kadaluarsa</a>
             </div>
         </div>
         
         {{-- Link Navigasi Non-Dropdown --}}
         <a href="/verifBarang"
-            class="flex items-center gap-3 text-sm font-medium text-neutral-100 w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200">
+            class="flex items-center gap-3 text-sm font-medium w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200
+            {{ request()->is('verifBarang*') ? $activeLinkClasses : $defaultLinkClasses }}">
             <i class="fa-solid fa-clipboard-check text-xl w-6"></i>
             <span>Verifikasi Barang Masuk</span>
         </a>
 
         <a href="/returBarang"
-            class="flex items-center gap-3 text-sm font-medium text-neutral-100 w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200">
+            class="flex items-center gap-3 text-sm font-medium w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200
+            {{ request()->is('returBarang*') ? $activeLinkClasses : $defaultLinkClasses }}">
             <i class="fa-solid fa-truck-arrow-right text-xl w-6"></i>
             <span>Retur Barang</span>
         </a>
 
         <a href="{{ route('purchase_orders.buat_permintaan') }}"
-            class="flex items-center gap-3 text-sm font-medium text-neutral-100 w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200">
+            class="flex items-center gap-3 text-sm font-medium w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200
+            {{ request()->is('purchase_orders/buat_permintaan*') ? $activeLinkClasses : $defaultLinkClasses }}">
             <i class="fa-solid fa-money-check-dollar text-xl w-6"></i>
             <span>Permintaan Pembelian</span>
         </a>
@@ -121,13 +177,15 @@
         <h3 class="text-red-400 uppercase tracking-wider text-xs font-semibold mt-6 pt-4 pb-2 border-t border-red-800/50">Surat Jalan & Pengiriman</h3>
         
         <a href="{{ route('surat_jalan.index') }}"
-        class="flex items-center gap-3 text-sm font-medium text-neutral-100 w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200">
+            class="flex items-center gap-3 text-sm font-medium w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200
+            {{ request()->is('surat_jalan*') ? $activeLinkClasses : $defaultLinkClasses }}">
             <i class="fa-solid fa-file-invoice-dollar text-xl w-6"></i>
             <span>Surat Jalan</span>
         </a>
         
         <a href="/pengiriman"
-            class="flex items-center gap-3 text-sm font-medium text-neutral-100 w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200">
+            class="flex items-center gap-3 text-sm font-medium w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200
+            {{ request()->is('pengiriman*') ? $activeLinkClasses : $defaultLinkClasses }}">
             <i class="fa-solid fa-truck text-xl w-6"></i>
             <span>Pengiriman Barang</span>
         </a>
@@ -136,13 +194,15 @@
         <h3 class="text-red-400 uppercase tracking-wider text-xs font-semibold mt-6 pt-4 pb-2 border-t border-red-800/50">Approval</h3>
 
         <a href="{{ route('approval.approval_po') }}" 
-            class="flex items-center gap-3 text-sm font-medium text-neutral-100 w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200">
+            class="flex items-center gap-3 text-sm font-medium w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200
+            {{ request()->is('approval/po*') ? $activeLinkClasses : $defaultLinkClasses }}">
             <i class="fa-solid fa-file text-xl w-6"></i>
             <span>Approval PO</span>
         </a>
 
         <a href="{{ route('approval.approval_surat_jalan') }}" 
-            class="flex items-center gap-3 text-sm font-medium text-neutral-100 w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200">
+            class="flex items-center gap-3 text-sm font-medium w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200
+            {{ request()->is('approval/surat-jalan*') ? $activeLinkClasses : $defaultLinkClasses }}">
             <i class="fa-solid fa-file text-xl w-6"></i>
             <span>Approval Surat Jalan</span>
         </a>
@@ -151,13 +211,15 @@
         <h3 class="text-red-400 uppercase tracking-wider text-xs font-semibold mt-6 pt-4 pb-2 border-t border-red-800/50">Laporan</h3>
 
         <a href="/laporan/barang-masuk" 
-            class="flex items-center gap-3 text-sm font-medium text-neutral-100 w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200">
+            class="flex items-center gap-3 text-sm font-medium w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200
+            {{ request()->is('laporan/barang-masuk*') ? $activeLinkClasses : $defaultLinkClasses }}">
             <i class="fa-solid fa-file-export text-xl w-6"></i>
             <span>Laporan Barang Masuk</span>
         </a>
 
         <a href="/laporan/barang-keluar" 
-            class="flex items-center gap-3 text-sm font-medium text-neutral-100 w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200">
+            class="flex items-center gap-3 text-sm font-medium w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200
+            {{ request()->is('laporan/barang-keluar*') ? $activeLinkClasses : $defaultLinkClasses }}">
             <i class="fa-solid fa-file-export text-xl w-6"></i>
             <span>Laporan Barang Keluar</span>
         </a>
@@ -165,7 +227,9 @@
         {{-- Group 5: Settings --}}
         <h3 class="text-red-400 uppercase tracking-wider text-xs font-semibold mt-6 pt-4 pb-2 border-t border-red-800/50">Settings</h3>
 
-        <a href="#" class="flex items-center gap-3 text-sm font-medium text-neutral-100 w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200">
+        <a href="#" 
+            class="flex items-center gap-3 text-sm font-medium w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200
+            {{ request()->is('users-roles*') ? $activeLinkClasses : $defaultLinkClasses }}">
             <i class="fa-solid fa-users-gear text-xl w-6"></i>
             <span>Users & Roles</span>
         </a>

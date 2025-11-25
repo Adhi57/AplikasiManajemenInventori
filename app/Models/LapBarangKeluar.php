@@ -15,6 +15,9 @@ class LapBarangKeluar extends Model
         'pengiriman_id',
         'sj_id',
         'tanggal_keluar',
+        'biaya_kirim',
+        'diskon',
+        'total_akhir',
     ];
 
     public function details()

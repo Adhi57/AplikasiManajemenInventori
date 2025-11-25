@@ -113,7 +113,7 @@
         </div>
         <div class="flex flex-col md:flex-row justify-between items-center mt-6">
             {{-- Tombol Kembali --}}
-            <a href="{{ route('approval.approval_po') }}" class="w-full md:w-auto px-4 py-2 mb-4 md:mb-0 text-center text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-150 shadow-md"> <i class="fas fa-arrow-left mr-2"></i> Kembali ke Daftar Surat Jalan </a>
+            <a href="{{ route('approval.approval_po') }}" class="w-full md:w-auto px-4 py-2 mb-4 md:mb-0 text-center text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-150 shadow-md"> <i class="fas fa-arrow-left mr-2"></i> Kembali ke Daftar Surat PO </a>
             {{-- Tombol Aksi --}}
             <div class="flex justify-end space-x-3 mt-6"> @if ($purchaseOrder->status_po === 'Pending')
                 {{-- Tombol Tolak --}}

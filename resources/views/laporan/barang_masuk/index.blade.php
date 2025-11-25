@@ -54,8 +54,8 @@
                 <label class="text-sm font-medium text-gray-700">Tipe Filter</label>
                 <select name="filter" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
                     <option value="semua" {{ request('filter') == 'semua' ? 'selected' : '' }}>Semua</option>
-                    <option value="mingguan" {{ request('filter') == 'mingguan' ? 'selected' : '' }}>Mingguan</option>
-                    <option value="bulanan" {{ request('filter') == 'bulanan' ? 'selected' : '' }}>Bulanan</option>
+                    <option value="mingguan" {{ request('filter') == 'mingguan' ? 'selected' : '' }}>Minggu ini</option>
+                    <option value="bulanan" {{ request('filter') == 'bulanan' ? 'selected' : '' }}>Bulan ini</option>
                     <option value="rentang" {{ request('filter') == 'rentang' ? 'selected' : '' }}>Rentang Tanggal</option>
                 </select>
             </div>

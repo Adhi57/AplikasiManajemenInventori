@@ -47,7 +47,7 @@ class ReturBarangController extends Controller
      */
     public function show($id)
     {
-        $retur = ReturBarang::with('purchaseOrder')->findOrFail($id);
+        $retur = ReturBarang::with(['purchaseOrder', 'barang'])->findOrFail($id);
         return view('returBarang.show', compact('retur'));
     }
 
@@ -95,6 +95,53 @@ public function konfirmasiSesuai($retur_id)
         ], 500);
     }
 }
+
+public function batalkanRetur($id)
+{
+    try {
+        $retur = ReturBarang::findOrFail($id);
+
+        if ($retur->status_retur === 'Ditolak') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Retur ini sudah dibatalkan sebelumnya.'
+            ]);
+        }
+
+        $retur->update([
+            'status_retur' => 'Ditolak',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Retur berhasil dibatalkan.'
+        ]);
+
+    } catch (\Exception $e) {
+        \Log::error('Gagal batalkan retur: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Terjadi kesalahan saat membatalkan retur.'
+        ], 500);
+    }
+}
+
+public function updateTanggal(Request $request, $id)
+{
+    $request->validate([
+        'tanggal_retur' => 'required|date',
+    ]);
+
+    $retur = ReturBarang::findOrFail($id);
+    $retur->tanggal_retur = $request->tanggal_retur;
+    $retur->save();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Tanggal retur berhasil diperbarui.'
+    ]);
+}
+
 
 
 }

@@ -55,7 +55,7 @@
                 <span class="inline-block px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-medium">Pending</span>
             @elseif ($retur->status_retur === 'Disetujui')
                 <span class="inline-block px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">Disetujui</span>
-            @elseif ($retur->status_retur === 'Selesai')
+            @elseif ($retur->status_retur === 'Ditolak')
                 <span class="inline-block px-3 py-1 bg-red-700 text-white rounded-full text-sm font-medium">Ditolak</span>
             @else
                 <span class="inline-block px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm font-medium">-</span>
@@ -64,17 +64,20 @@
 
         {{-- Tombol Aksi --}}
         <div class="flex justify-end gap-3 mt-8">
-            @if ($retur->status_retur !== 'Selesai')
+            @if ($retur->status_retur == 'Pending') 
                 <button 
                     @click="konfirmasiSesuai('{{ $retur->retur_id }}')" 
                     class="px-5 py-2 bg-green-600 text-white font-semibold rounded-lg shadow hover:bg-green-700 focus:ring-2 focus:ring-green-400 transition">
                     ✅ Konfirmasi Sesuai
                 </button>
+
+                <button 
+                    @click="batalkanRetur('{{ $retur->retur_id }}')" 
+                    class="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg shadow hover:bg-red-700 transition">
+                    ❌ Batalkan Retur
+                </button>
             @endif
 
-            <button class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
-                Batalkan Retur
-            </button>
         </div>
 
     </div>
@@ -128,8 +131,53 @@ function konfirmasiRetur() {
                     }
                 }
             });
+        },
+
+        batalkanRetur(retur_id) {
+            Swal.fire({
+                title: 'Batalkan Retur?',
+                text: 'Retur akan ditandai sebagai Ditolak.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Batalkan',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+
+                    const res = await fetch(`/retur-barang/${retur_id}/batal`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        }
+                    });
+
+                    const data = await res.json();
+
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: data.message,
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: data.message
+                        });
+                    }
+                }
+            });
         }
     }
 }
+     
 </script>
 @endpush

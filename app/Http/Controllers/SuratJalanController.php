@@ -179,5 +179,33 @@ public function show($sj_id)
     return view('surat_jalan.show', compact('suratJalan'));
 }
 
+public function destroy($sj_id)
+{
+    DB::beginTransaction();
+    try {
+        // Ambil data surat jalan
+        $suratJalan = SuratJalan::with('details')->where('sj_id', $sj_id)->firstOrFail();
+
+        // Hapus detail surat jalan
+        \App\Models\SuratJalanDetail::where('sj_id', $sj_id)->delete();
+
+        // Hapus data pengiriman terkait
+        \App\Models\Pengiriman::where('sj_id', $sj_id)->delete();
+
+        // Hapus surat jalan
+        $suratJalan->delete();
+
+        DB::commit();
+
+        return redirect()->route('surat_jalan.index')
+            ->with('success', 'Surat jalan berhasil dihapus.');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        \Log::error('Gagal menghapus Surat Jalan: ' . $e->getMessage());
+
+        return back()->with('error', 'Gagal menghapus surat jalan: ' . $e->getMessage());
+    }
+}
+
 
 }

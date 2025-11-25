@@ -29,7 +29,7 @@
 
         {{-- 3. Main Content Area --}}
         <main class="flex-1 overflow-y-auto" id="app">
-            <div class="p-4 md:p-8">
+            <div class="px-4 md:px-8">
                 @include('layouts.topbar')
                 <div class="my-4">
                     @yield('content')

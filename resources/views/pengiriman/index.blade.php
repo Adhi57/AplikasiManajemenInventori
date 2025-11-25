@@ -3,9 +3,16 @@
 @section('content')
 
 <div class="min-h-screen bg-gray-50 p-6">
-    <div class="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">Daftar Pengiriman Barang</h1>
+    <div class="max-w-screen mx-auto bg-white shadow-lg rounded-lg p-6">
+         {{-- HEADER --}}
+         <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 border-b pb-4">
+            <div>
+                <h1 class="text-2xl font-semibold text-gray-800">Daftar Pengiriman Barang</h1>
+                <p class="text-sm text-gray-500 mt-1">
+                    Klik detail untuk konfirmasi Terkirim
+                </p>
+        </div>
+
             <a href="{{ route('pengiriman.create') }}"
                class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">
                + Tambah Pengiriman
@@ -19,10 +26,11 @@
             </div>
         @endif
 
+
         {{-- Tabel --}}
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto rounded-xl">
             <table class="w-full text-sm text-left text-gray-700 border">
-                <thead class="bg-gray-100 text-xs uppercase">
+                <thead class="bg-red-600 text-white uppercase text-xs font-semibold tracking-wider">
                     <tr>
                         <th class="px-4 py-3">#</th>
                         <th class="px-4 py-3">Nomor Surat Jalan</th>
@@ -64,8 +72,10 @@
                             <td class="px-4 py-3 text-center space-x-2">
                                 <a href="{{ route('pengiriman.show', $p->pengiriman_id) }}" 
                                    class="text-blue-600 hover:text-blue-800">Detail</a>
-                                <a href="{{ route('pengiriman.edit', $p->pengiriman_id) }}" 
+                                @if ($p->status_pengiriman !== 'Terkirim')
+                                 <a href="{{ route('pengiriman.edit', $p->pengiriman_id) }}" 
                                    class="text-yellow-600 hover:text-yellow-800">Edit</a>
+                                @endif
                             </td>
                         </tr>
                     @empty

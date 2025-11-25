@@ -60,12 +60,7 @@ class PengirimanController extends Controller
     public function update(Request $request, Pengiriman $pengiriman)
     {
         $request->validate([
-            'no_polisi' => [
-                'required',
-                'string',
-                'max:15',
-                Rule::unique('pengirimans', 'no_polisi')->ignore($pengiriman->pengiriman_id, 'pengiriman_id'),
-            ],
+            'no_polisi' => 'required|string|max:15',
             'nama_kendaraan' => 'required|string|max:100',
             'nama_driver' => 'required|string|max:100',
             'tanggal_pengiriman' => 'required|date',
@@ -165,10 +160,27 @@ class PengirimanController extends Controller
             return;
         }
 
+        $sj = $pengiriman->suratJalan;
+
+        $totalBarang = 0;
+        foreach ($sj->details as $detail) {
+            $harga = $detail->barang->harga_jual ?? 0;
+            $totalBarang += ($detail->quantity * $harga);
+        }    
+
+        $biayaKirim = $sj->biaya_pengiriman ?? 0;
+        $diskon     = ($totalBarang * $sj->diskon_pelanggan / 100 );
+
+        $totalAkhir = ($totalBarang + $biayaKirim) - $diskon;
+
         $lap = LapBarangKeluar::create([
             'pengiriman_id' => $pengiriman->pengiriman_id,
             'sj_id' => $pengiriman->sj_id,
             'tanggal_keluar' => now(),
+
+            'biaya_kirim' => $sj->biaya_pengiriman,
+            'diskon' => $diskon,
+            'total_akhir' => $totalAkhir,
         ]);
 
         foreach ($pengiriman->suratJalan->details as $detail) {

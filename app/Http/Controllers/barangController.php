@@ -15,12 +15,31 @@ class BarangController extends Controller
     /**
      * Menampilkan daftar semua Barang.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Mengambil semua data barang dengan relasi kategori dan supplier
-        $barangs = Barang::with(['kategori', 'supplier', 'stok'])->paginate(10);
+        $query = Barang::with(['kategori', 'supplier', 'stok']);
+    
+        // 1. FILTER BERDASARKAN KATEGORI
+        if ($request->filled('kategori_id')) {
+            $query->where('kategori_barang_id', $request->kategori_id);
+        }
+    
+        // 2. SEARCH (PENCARIAN BERDASARKAN KODE atau NAMA)
+        if ($request->filled('search')) {
+            $searchTerm = '%' . $request->search . '%';
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('kode_barang', 'like', $searchTerm)
+                  ->orWhere('nama_barang', 'like', $searchTerm);
+            });
+        }
+    
+        // Ambil data barang yang sudah difilter dan paginasi
+        $barangs = $query->paginate(15);
         
-        return view('barangs.index', compact('barangs'));
+        // Ambil data kategori untuk dropdown filter di view
+        $kategoriBarangs = KategoriBarang::all(); 
+    
+        return view('barangs.index', compact('barangs', 'kategoriBarangs'));
     }
 
     /**
@@ -125,7 +144,7 @@ class BarangController extends Controller
             'harga_beli' => 'required|numeric|min:0',
             'harga_jual' => 'required|numeric|min:0',
             'tipe_harga_barang' => 'required|in:Eceran,Grosir,Diskon', // Perbaiki spasi
-            'satuan_terkecil' => 'required|string|max:50',
+            'satuan_jual' => 'required|string|max:50',
             'jml_barang_per_karton' => 'required|integer|min:1',
             'berlaku_mulai' => 'required|date',
             'tgl_kadaluarsa' => 'nullable|date',
@@ -157,7 +176,7 @@ class BarangController extends Controller
                 'harga_beli' => $validated['harga_beli'],
                 'harga_jual' => $validated['harga_jual'],
                 'tipe_harga_barang' => $validated['tipe_harga_barang'],
-                'satuan_terkecil' => $validated['satuan_terkecil'],
+                'satuan_jual' => $validated['satuan_jual'],
                 'jml_barang_per_karton' => $validated['jml_barang_per_karton'],
                 'berlaku_mulai' => $validated['berlaku_mulai'],
             ]);

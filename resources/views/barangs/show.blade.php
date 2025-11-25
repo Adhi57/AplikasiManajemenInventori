@@ -14,19 +14,19 @@
             <div class="md:col-span-1">
                 <h2 class="text-xl font-semibold mb-3 text-gray-700 border-b pb-2">Foto Produk</h2>
                 @if ($barang->foto_produk)
-                    <img src="{{ asset('storage/' . $barang->foto_produk) }}" alt="Foto Produk {{ $barang->nama_barang }}"
-                        class="w-full h-auto object-cover rounded-lg shadow-md border border-gray-200">
+                <img src="{{ asset('storage/' . $barang->foto_produk) }}" alt="Foto Produk {{ $barang->nama_barang }}"
+                    class="w-full h-auto object-cover rounded-lg shadow-md border border-gray-200">
                 @else
-                    <div class="w-full h-48 bg-gray-100 flex items-center justify-center rounded-lg border border-dashed border-gray-400">
-                        <span class="text-gray-500">Tidak ada foto produk</span>
-                    </div>
+                <div class="w-full h-48 bg-gray-100 flex items-center justify-center rounded-lg border border-dashed border-gray-400">
+                    <span class="text-gray-500">Tidak ada foto produk</span>
+                </div>
                 @endif
             </div>
 
             {{-- Bagian Detail Utama --}}
             <div class="md:col-span-2 space-y-4">
                 <h2 class="text-xl font-semibold mb-3 text-gray-700 border-b pb-2">Informasi Utama</h2>
-                
+
                 {{-- Nama Barang --}}
                 <div class="detail-row">
                     <p class="text-sm font-medium text-gray-500">Nama Barang</p>
@@ -80,20 +80,27 @@
                         <p class="text-sm font-medium text-gray-500">Stok Tersedia</p>
                         <p class="text-lg font-medium text-gray-900">{{ number_format($barang->stok->jumlah_stok ?? 0, 0, ',', '.') }} Karton</p>
                         Atau
-                        <p class="text-lg font-medium text-gray-900">{{ number_format($barang->stok->jumlah_stok  * $barang->jml_barang_per_karton ?? 0, 0, ',', '.') }} {{ $barang->satuan_jual }}</p>
+                        <p class="text-lg font-medium text-gray-900">{{ number_format(($barang->stok?->jumlah_stok ?? 0) * $barang->jml_barang_per_karton, 0, ',', '.') }} {{ $barang->satuan_jual }}</p>
                     </div>
                     <div class="detail-row">
                         <p class="text-sm font-medium text-gray-500">Stok Rusak</p>
                         <p class="text-lg font-medium text-gray-900">{{ number_format($barang->stok->jumlah_stok_rusak ?? 0, 0, ',', '.') }} Karton</p>
                         Atau
-                        <p class="text-lg font-medium text-gray-900">{{ number_format( $barang->stok->jumlah_stok_rusak * $barang->jml_barang_per_karton  ?? 0, 0, ',', '.') }} {{ $barang->satuan_jual }}</p>
+                        <p class="text-lg font-medium text-gray-900">
+                            {{ number_format(
+                                ($barang->stok?->jumlah_stok_rusak ?? 0) * $barang->jml_barang_per_karton,
+                                0, // decimals (optional)
+                                ',', // decimal separator
+                                '.' // thousands separator
+                            ) }} {{ $barang->satuan_jual }}
+                        </p>
                     </div>
                     <div class="detail-row">
                         <p class="text-sm font-medium text-gray-500">Satuan Jual</p>
                         <p class="text-lg font-medium text-gray-900">{{ $barang->satuan_jual }}</p>
                     </div>
                 </div>
-                
+
                 {{-- Jml Per Karton & Kadaluarsa --}}
                 <div class="grid grid-cols-2 gap-4">
                     <div class="detail-row">

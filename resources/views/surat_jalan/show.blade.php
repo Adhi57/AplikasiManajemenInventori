@@ -96,11 +96,12 @@
 
             {{-- RINGKASAN --}}
             @php
-                $pajak = $subtotal * 0.11;
                 $diskonPersen = floatval($suratJalan->diskon_pelanggan/100 ?? 0);
                 $diskon = $subtotal * $diskonPersen;
                 $biaya_kirim = floatval($suratJalan->biaya_pengiriman ?? 0);
-                $grandTotal = $subtotal + $pajak + $biaya_kirim - $diskon;
+                $total = $subtotal + $biaya_kirim - $diskon;
+                $pajak = $total * 0.11;
+                $grandTotal = $total + $pajak;
             @endphp
 
 
@@ -110,16 +111,24 @@
                     <td class="text-right py-2 px-3 border-t border-gray-300">{{ 'Rp ' . number_format($subtotal, 2, ',', '.') }}</td>
                 </tr>
                 <tr>
-                    <td colspan="5" class="text-right font-semibold py-2 px-3 border-t border-gray-300">Pajak (11%)</td>
-                    <td class="text-right py-2 px-3 border-t border-gray-300">{{ 'Rp ' . number_format($pajak, 2, ',', '.') }}</td>
-                </tr>
-                <tr>
                     <td colspan="5" class="text-right font-semibold py-2 px-3 border-t border-gray-300">Biaya Pengiriman</td>
                     <td class="text-right py-2 px-3 border-t border-gray-300">{{ 'Rp ' . number_format($biaya_kirim, 2, ',', '.') }}</td>
                 </tr>
                 <tr>
                     <td colspan="5" class="text-right font-semibold py-2 px-3 border-t border-gray-300">Diskon Pelanggan</td>
                     <td class="text-right py-2 px-3 border-t border-gray-300"> - {{ 'Rp ' . number_format($diskon, 2, ',', '.') }}</td>
+                </tr>
+                
+                <tr>
+                    <td colspan="5" class="text-right font-bold py-2 px-3 border-t border-gray-400 text-lg">Total</td>
+                    <td class="text-right font-bold py-2 px-3 border-t border-gray-400 text-lg text-green-700">
+                        {{ 'Rp ' . number_format($total, 2, ',', '.') }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="5" class="text-right font-semibold py-2 px-3 border-t border-gray-300">Pajak (11%)</td>
+                    <td class="text-right py-2 px-3 border-t border-gray-300">{{ 'Rp ' . number_format($pajak, 2, ',', '.') }}</td>
                 </tr>
 
                 <tr>

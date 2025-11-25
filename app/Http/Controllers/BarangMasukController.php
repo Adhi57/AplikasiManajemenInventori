@@ -30,7 +30,7 @@ class BarangMasukController extends Controller
                 ],
                 'items.*.qty_diterima' => 'required|numeric|min:0',
                 'items.*.tgl_kadaluarsa' => [
-                    'nullable',
+                    'required',
                     'date',
                     function ($attribute, $value, $fail) use ($request) {
                         $index = explode('.', $attribute)[1];
