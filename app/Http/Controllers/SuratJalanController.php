@@ -81,55 +81,72 @@ class SuratJalanController extends Controller
      * 📨 STORE — Simpan surat jalan baru
      */
     public function store(Request $request)
-    {
-        \Log::info('Masuk ke store surat jalan', $request->only(['pelanggan_id', 'biaya_pengiriman', 'diskon_pelanggan']));
-    
-        DB::beginTransaction();
-        try {
-            $sj_id = 'SJ-' . now()->format('ymd') . '-' . strtoupper(Str::random(5));
-            \Log::info('Generated SJ ID', ['sj_id' => $sj_id]);
-    
-            $sj = SuratJalan::create([
-                'sj_id' => $sj_id,
-                'user_id' => Auth::user()->user_id ?? Auth::id(),
-                'pelanggan_id' => $request->pelanggan_id,
-                'tanggal_surat' => $request->tanggal_surat,
-                'status' => 'Pending',
-                'biaya_pengiriman' => $request->biaya_pengiriman ?? 0,
-                'diskon_pelanggan' => $request->diskon_pelanggan ?? 0,
-                'subtotal' => $request->subtotal ?? 0,
-            ]);
+{
+    \Log::info('Masuk ke store surat jalan', $request->only(['pelanggan_id', 'biaya_pengiriman', 'diskon_pelanggan']));
 
-            \App\Models\Pengiriman::create([
+    // VALIDASI INPUT
+    $request->validate([
+        'pelanggan_id' => 'required',
+        'nama_penerima' => 'required|string|max:40',
+        'alamat_penerima' => 'required|string|max:255',
+        'tanggal_surat' => 'required|date',
+        'subtotal' => 'nullable|numeric',
+        'biaya_pengiriman' => 'nullable|numeric',
+        'diskon_pelanggan' => 'nullable|numeric',
+        'items' => 'required|array',
+        'items.*.kode_barang' => 'required',
+        'items.*.quantity' => 'required|numeric|min:1',
+        'items.*.harga_satuan' => 'required|numeric|min:0',
+        'items.*.satuan' => 'required',
+    ]);
+
+    DB::beginTransaction();
+    try {
+        $sj_id = 'SJ-' . now()->format('ymd') . '-' . strtoupper(Str::random(5));
+        \Log::info('Generated SJ ID', ['sj_id' => $sj_id]);
+
+        $sj = SuratJalan::create([
+            'sj_id' => $sj_id,
+            'user_id' => Auth::user()->user_id ?? Auth::id(),
+            'pelanggan_id' => $request->pelanggan_id,
+            'nama_penerima' => $request->nama_penerima,
+            'alamat_penerima' => $request->alamat_penerima,
+            'tanggal_surat' => $request->tanggal_surat,
+            'status' => 'Pending',
+            'biaya_pengiriman' => $request->biaya_pengiriman ?? 0,
+            'diskon_pelanggan' => $request->diskon_pelanggan ?? 0,
+            'subtotal' => $request->subtotal ?? 0,
+        ]);
+
+        \App\Models\Pengiriman::create([
+            'sj_id' => $sj_id,
+            'status_pengiriman' => 'Menunggu',
+        ]);
+
+        \Log::info('Surat Jalan Created', $sj->toArray());
+
+        foreach ($request->items as $item) {
+            \App\Models\SuratJalanDetail::create([
+                'detail_sj_id' => 'SJD-' . strtoupper(Str::random(8)),
                 'sj_id' => $sj_id,
-                'status_pengiriman' => 'Menunggu',
+                'kode_barang' => $item['kode_barang'],
+                'quantity' => $item['quantity'],
+                'harga_satuan' => $item['harga_satuan'],
+                'satuan' => $item['satuan'],
             ]);
-            
-    
-            \Log::info('Surat Jalan Created', $sj->toArray());
-    
-            foreach ($request->items as $item) {
-                \App\Models\SuratJalanDetail::create([
-                    'detail_sj_id' => 'SJD-' . strtoupper(Str::random(8)),
-                    'sj_id' => $sj_id,
-                    'kode_barang' => $item['kode_barang'],
-                    'quantity' => $item['quantity'],
-                    'harga_satuan' => $item['harga_satuan'],
-                    'satuan' => $item['satuan'],
-                ]);
-            }
-    
-            DB::commit();
-            \Log::info('Surat Jalan Committed', ['sj_id' => $sj_id]);
-    
-            return redirect()->route('surat_jalan.index')->with('success', 'Surat jalan berhasil dibuat!');
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            \Log::error('Gagal menyimpan surat jalan', ['error' => $e->getMessage()]);
-            return back()->with('error', 'Gagal menyimpan surat jalan: ' . $e->getMessage());
         }
+
+        DB::commit();
+        \Log::info('Surat Jalan Committed', ['sj_id' => $sj_id]);
+
+        return redirect()->route('surat_jalan.index')->with('success', 'Surat jalan berhasil dibuat!');
+    } catch (\Throwable $e) {
+        DB::rollBack();
+        \Log::error('Gagal menyimpan surat jalan', ['error' => $e->getMessage()]);
+        return back()->with('error', 'Gagal menyimpan surat jalan: ' . $e->getMessage());
     }
-    
+}
+
 
     public function fetchBarangs(Request $request)
 {

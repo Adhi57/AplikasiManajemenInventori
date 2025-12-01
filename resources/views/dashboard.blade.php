@@ -138,7 +138,7 @@
                 @foreach ( $barangTerlaris as $barangTerlaris )
                 <div class="flex items-center gap-4 p-3 border-b border-gray-100">
                     <span class="text-xl font-bold text-slate-700 w-6">{{ $loop->iteration }}</span>
-                    <img src="{{$barangTerlaris->foto_produk}}" class="w-12 h-12 rounded-lg object-cover">
+                    <img src="{{ asset('storage/' . $barangTerlaris->foto_produk) }}" alt="{{ $barangTerlaris->nama_barang }}" class="w-12 h-12 rounded-lg object-cover">
                     <div class="flex-1 min-w-0">
                         <p class="font-medium text-gray-800 truncate">{{ $barangTerlaris->nama_barang }}</p>
                         <p class="text-xs text-gray-500">{{ $barangTerlaris->nama_kategori }}</p>

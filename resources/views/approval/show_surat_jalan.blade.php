@@ -49,7 +49,7 @@
                 <p class="mb-1"><strong>Tujuan:</strong></p>
                 <p class="pl-4 leading-tight">
                     {{ $suratJalan->pelanggan->nama_pelanggan ?? '..............................' }}<br>
-                    {{ $suratJalan->pelanggan->alamat ?? '..............................' }}<br>
+                    {{ $suratJalan->alamat_penerima ?? '..............................' }}<br>
                     ({{ $suratJalan->pelanggan->PIC ?? '...................' }})
                 </p>
             </div>
@@ -145,7 +145,7 @@
             <p>Penerima,</p>
             <br><br><br>
             <p>( Ttd )</p>
-            <p class="mt-4 font-semibold">{{ $suratJalan->pelanggan->nama_pelanggan ?? '....................................' }}</p>
+            <p class="mt-4 font-semibold">{{ $suratJalan->nama_penerima ?? '....................................' }}</p>
         </div>
     </div>
     

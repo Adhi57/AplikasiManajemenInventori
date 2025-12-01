@@ -1,11 +1,25 @@
 @extends('layouts.app')
 @section('page-title',  'Surat Jalan dan Pengiriman Barang')
 @section('content')
+<style>
+.ts-dropdown, .ts-control {
+    background-color: #f9fafb !important; /* bg-gray-100 */
+    color: #111827 !important; /* text-gray-900 */
+}
+
+.ts-dropdown .option {
+    padding: 8px 12px;
+}
+
+.ts-dropdown .option:hover {
+    background: #e5e7eb !important; /* hover: gray-200 */
+}
+</style>
 
 <div 
     class="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6" 
     x-data="suratJalanApp()" 
-    x-init="fetchBarangs()"
+    x-init="initLokasi(); fetchBarangs()"
     @tambah-barang.window="addItem($event.detail)"
 >
 
@@ -30,13 +44,97 @@
                     @endforeach
                 </select>
             </div>
-
+            
             <div>
                 <label class="block text-sm font-medium text-gray-700">Tanggal Surat Jalan</label>
                 <input type="date" name="tanggal_surat" 
                        value="{{ now()->format('Y-m-d') }}" 
                        class="w-full border rounded-md py-2 px-3" required>
             </div>
+
+            <div class="col-span-2">
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700">Nama Penerima</label>
+                    <input
+                        name="nama_penerima" 
+                        class="w-full border rounded-md py-2 px-3"
+                        placeholder="Masukkan Nama Penerima"
+                        ></input>
+                </div>
+            </div>
+            {{-- ALAMAT PENERIMA --}}
+            <div class="col-span-2">
+                <div class="mt-6 border-t pt-4">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-3">
+                        Alamat Penerima
+                    </h2>
+
+                    <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Provinsi</label>
+                            <select 
+                                x-model="alamat.provinsi"
+                                @change="fetchKota()"
+                                class="w-full border rounded-md py-2 px-3"
+                                required>
+                                <option value="">-- Pilih Provinsi --</option>
+                                <template x-for="p in daftarProvinsi">
+                                    <option :value="p.id" x-text="p.name"></option>
+                                </template>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Kota / Kabupaten</label>
+                            <select 
+                                x-model="alamat.kota"
+                                @change="fetchKecamatan()"
+                                class="w-full border rounded-md py-2 px-3"
+                                required>
+                                <option value="">-- Pilih Kota --</option>
+                                <template x-for="k in daftarKota">
+                                    <option :value="k.id" x-text="k.name"></option>
+                                </template>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Kecamatan</label>
+                            <select 
+                                x-model="alamat.kecamatan"
+                                class="w-full border rounded-md py-2 px-3"
+                                required>
+                                <option value="">-- Pilih Kecamatan --</option>
+                                <template x-for="c in daftarKecamatan">
+                                    <option :value="c.id" x-text="c.name"></option>
+                                </template>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Kode Pos</label>
+                            <input type="text" 
+                                x-model="alamat.kode_pos"
+                                class="w-full border rounded-md py-2 px-3"
+                                placeholder="Kode Pos"
+                                required>
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Detail Alamat</label>
+                            <textarea 
+                                x-model="alamat.detail"
+                                class="w-full border rounded-md py-2 px-3"
+                                placeholder="Nama jalan, No rumah, RT RW, patokan..."
+                                required></textarea>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="alamat_penerima" :value="alamatGabungan">
+                </div>
+            </div>
+
         </div>
 
         {{-- BODY --}}
@@ -212,6 +310,81 @@ document.addEventListener('alpine:init', () => {
         loading: false,
         biayaPengiriman: 0,
         diskonPelanggan: 0,
+
+        // =============================
+        // DATA ALAMAT
+        // =============================
+        alamat: {
+            provinsi: '',
+            kota: '',
+            kecamatan: '',
+            kode_pos: '',
+            detail: ''
+        },
+
+        daftarProvinsi: [],
+        daftarKota: [],
+        daftarKecamatan: [],
+
+        // =============================
+        // INISIASI PROVINSI
+        // =============================
+        async initLokasi() {
+            const res = await fetch("https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json");
+            this.daftarProvinsi = await res.json();
+        },
+
+        // =============================
+        // FETCH KOTA
+        // =============================
+        async fetchKota() {
+            this.daftarKota = [];
+            this.daftarKecamatan = [];
+            this.alamat.kota = '';
+            this.alamat.kecamatan = '';
+
+            const idProv = this.alamat.provinsi;
+            if (!idProv) return;
+
+            const res = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${idProv}.json`);
+            this.daftarKota = [...await res.json()];
+        },
+
+        // =============================
+        // FETCH KECAMATAN
+        // =============================
+        async fetchKecamatan() {
+            this.daftarKecamatan = [];
+            this.alamat.kecamatan = '';
+
+            const idKota = this.alamat.kota;
+            if (!idKota) return;
+
+            const res = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${idKota}.json`);
+            this.daftarKecamatan = [...await res.json()];
+        },
+
+        // =============================
+        // GABUNGKAN ALAMAT
+        // =============================
+        get alamatGabungan() {
+            return [
+                this.getNamaById(this.daftarProvinsi, this.alamat.provinsi),
+                this.getNamaById(this.daftarKota, this.alamat.kota),
+                this.getNamaById(this.daftarKecamatan, this.alamat.kecamatan),
+                this.alamat.kode_pos,
+                this.alamat.detail
+            ].filter(Boolean).join(', ');
+        },
+
+        // =============================
+        // HELPER GET NAMA
+        // =============================
+        getNamaById(list, id) {
+            const item = list.find(l => l.id == id);
+            return item ? item.name : '';
+        },
+
 
         async fetchBarangs(page = 1) {
             this.loading = true;

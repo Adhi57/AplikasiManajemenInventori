@@ -21,6 +21,7 @@ use App\Http\Controllers\SuratJalanController;
 use App\Http\Controllers\VerifikasiBarangController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StokBarangController;
+use App\Http\Controllers\StokOpnameController;
 use App\Http\Controllers\TrackingKadaluarsaController;
 
 Route::get('/', function () {
@@ -42,6 +43,12 @@ Route::middleware('auth')->group(function () {
 
     // Stok Barang
     Route::get('/stok-barang', [StokBarangController::class, 'index'])->name('stok.index');
+
+    //stok opname
+    // Stock opname index & update
+    Route::get('/stock_opname', [StokOpnameController::class, 'index'])->name('stock.opname.index');
+    Route::post('/stock_opname/update', [StokOpnameController::class, 'update'])->name('stock.opname.update');
+
 
     
     Route::get('/tracking-kadaluarsa', [TrackingKadaluarsaController::class, 'index'])

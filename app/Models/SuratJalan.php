@@ -17,6 +17,8 @@ class SuratJalan extends Model
         'sj_id',
         'user_id',
         'pelanggan_id',
+        'nama_penerima',
+        'alamat_penerima',
         'tanggal_surat',
         'status',
         'biaya_pengiriman',   

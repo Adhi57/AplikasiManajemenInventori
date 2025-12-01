@@ -1,7 +1,7 @@
 <header id="main-navbar" class="py-4 px-8 lg:px-12 bg-gradient-to-r  from-red-900 to-red-950 shadow-xl sticky top-0 z-10 rounded-b-3xl">
     <div class="flex justify-between items-center w-full max-w-7xl mx-auto">
         
-        <h1 class="text-3xl font-extrabold text-white tracking-wide">
+        <h1 class="text-2xl font-bold text-white tracking-wide">
             @yield('page-title', 'Dashboard')
         </h1>
 
