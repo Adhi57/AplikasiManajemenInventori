@@ -307,12 +307,18 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    const bulanID = [
+        "", "Januari", "Februari", "Maret", "April", "Mei",
+        "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ];
+
+// CHART MASUK
     const ctxMasuk = document.getElementById('barangMasukChart');
 
     new Chart(ctxMasuk, {
         type: 'bar',
         data: {
-            labels: @json(array_keys($barangMasuk->toArray())),
+            labels: @json(array_keys($barangMasuk->toArray())).map(m => bulanID[m]),
             datasets: [{
                 label: 'Barang Masuk',
                 data: @json(array_values($barangMasuk->toArray())),
@@ -324,14 +330,35 @@
             legend: {
                 position: 'top',
             },
-            title: {
-                display: true,
-                text: 'Chart.js Bar Chart'
             }
+        },
+    });
+
+    // CHART BRANG KELUAR
+    const ctxKeluar = document.getElementById('barangKeluarChart');
+
+    new Chart(ctxKeluar, {
+        type: 'bar',
+        data: {
+            labels: @json(array_keys($barangKeluar->toArray())).map(m => bulanID[m]),
+            datasets: [{
+                label: 'Barang Keluar',
+                data: @json(array_values($barangKeluar->toArray())),
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+            legend: {
+                position: 'top',
+            },
+
             }
         },
     });
     
+
+    // CHART STOK
     const ctx = document.getElementById('stokDonutChart').getContext('2d');
     const stokDonutChart = new Chart(ctx, {
         type: 'doughnut',
@@ -357,5 +384,41 @@
             }
         }
     });
+
+    // CHART Omset
+    const ctxOmset = document.getElementById('omsetChart');
+
+new Chart(ctxOmset, {
+    type: 'line',
+    data: {
+        labels: @json(array_keys($omsetBulanan->toArray())).map(m => bulanID[m]),
+        datasets: [{
+            label: 'Omset (Rp)',
+            data: @json(array_values($omsetBulanan->toArray())),
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let value = context.raw;
+                        return 'Rp ' + value.toLocaleString('id-ID');
+                    }
+                }
+            }
+        },
+        scales: {
+            y: {
+                ticks: {
+                    callback: function(value) {
+                        return 'Rp ' + value.toLocaleString('id-ID');
+                    }
+                }
+            }
+        }
+    }
+});
 </script>
 @endsection
