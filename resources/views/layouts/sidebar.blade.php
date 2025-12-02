@@ -142,14 +142,14 @@
 
         <a href="{{ route('approval.approval_po') }}" 
             class="flex items-center gap-3 text-sm font-medium w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200
-            {{ request()->is('approval/po*') ? $activeLinkClasses : $defaultLinkClasses }}">
+            {{ request()->is('approval/approval_po*') ? $activeLinkClasses : $defaultLinkClasses }}">
             <i class="fa-solid fa-file text-xl w-6"></i>
             <span>Approval PO</span>
         </a>
 
         <a href="{{ route('approval.approval_surat_jalan') }}" 
             class="flex items-center gap-3 text-sm font-medium w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200
-            {{ request()->is('approval/surat-jalan*') ? $activeLinkClasses : $defaultLinkClasses }}">
+            {{ request()->is('approval/approval_surat_jalan*') ? $activeLinkClasses : $defaultLinkClasses }}">
             <i class="fa-solid fa-file text-xl w-6"></i>
             <span>Approval Surat Jalan</span>
         </a>

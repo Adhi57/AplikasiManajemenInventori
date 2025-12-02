@@ -41,7 +41,7 @@
 
     <!-- Pilih PO (Sidebar - Col 1) -->
     <div class="lg:col-span-4 bg-white rounded-xl shadow-sm p-6 h-fit sticky top-6">
-        <h2 class="text-xl font-extrabold mb-4 text-black border-b pb-2">1. Pilih Surat PO</h2>
+        <h2 class="text-xl font-semibold mb-4 text-black border-b pb-2">1. Pilih Surat PO</h2>
         <div class="space-y-3 max-h-[70vh] overflow-y-auto pr-2">
             @foreach($purchaseOrders as $po)
             <label class="flex items-start space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-indigo-50 transition duration-150 cursor-pointer">
@@ -63,7 +63,7 @@
 
     <!-- Daftar Barang (Form - Col 2) -->
     <div class="lg:col-span-8 bg-white rounded-xl shadow-sm p-6">
-        <h2 class="text-xl font-extrabold mb-4 border-b pb-2">2. Daftar Barang (Verifikasi & Retur)</h2>
+        <h2 class="text-xl font-semibold mb-4 border-b pb-2">2. Daftar Barang (Verifikasi & Retur)</h2>
 
         <form x-ref="poForm" method="POST" action="{{ route('verifBarang.store') }}">
             @csrf

@@ -12,7 +12,7 @@
     <div class=" mx-auto bg-white p-8 rounded-xl shadow-xl border border-gray-200">
         {{-- Header & Filter Controls --}}
         <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 border-b pb-4">
-            <h1 class="text-2xl font-bold text-gray-800 mb-4 md:mb-0">Daftar Retur Barang</h1>
+            <h1 class="text-2xl font-semibold text-gray-800 mb-4 md:mb-0">Daftar Barang Retur</h1>
 
             <form method="GET" class="flex flex-wrap items-center gap-3">
                 {{-- Input Search dengan Fokus Ring Merah --}}
@@ -160,14 +160,14 @@
                             <button
                                 @click="konfirmasiSesuai('{{ $retur->retur_id }}')"
                                 class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs font-medium">
-                                ✔ Setujui
+                                Setujui
                             </button>
 
                             {{-- TOLAK --}}
                             <button
                                 @click="batalkanRetur('{{ $retur->retur_id }}')"
                                 class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs font-medium">
-                                ✖ Tolak
+                                Tolak
                             </button>
 
                         </td>

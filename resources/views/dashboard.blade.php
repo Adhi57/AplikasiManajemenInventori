@@ -78,7 +78,7 @@
                             <span class="w-3 h-3 inline-block bg-red-500 rounded-sm"></span>
                             <div>
                                 <span class="text-sm font-medium text-gray-800">Stok Rusak</span>
-                                <p class="text-xs text-gray-500">{{$jumlahKarton}} karton</p>
+                                <p class="text-xs text-gray-500">{{$jumlahKartonRusak}} karton</p>
                             </div>
                         </div>
                         <div class="pt-2 border-t mt-4">
