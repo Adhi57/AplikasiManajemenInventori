@@ -14,10 +14,22 @@ class PO_ApprovalController extends Controller
     public function index(Request $request)
     {
         $status = $request->get('status');
+        $search = $request->get('search');
 
-        $PO_List = PurchaseOrder::with(['details'])
+        $PO_List = PurchaseOrder::with(['details', 'supplier', 'user'])
             ->when($status, function ($query, $status) {
                 $query->where('status_po', $status);
+            })
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('po_id', 'like', "%{$search}%")
+                        ->orWhereHas('supplier', function ($supplierQuery) use ($search) {
+                            $supplierQuery->where('namaSupplier', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('user', function ($userQuery) use ($search) {
+                            $userQuery->where('nama_lengkap', 'like', "%{$search}%");
+                        });
+                });
             })
             ->orderByRaw("
             CASE 
@@ -31,8 +43,7 @@ class PO_ApprovalController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-
-        return view('approval.approval_po', compact('PO_List'));
+        return view('approval.approval_po', compact('PO_List', 'status', 'search'));
     }
 
     public function show($po_id)
@@ -104,12 +115,12 @@ class PO_ApprovalController extends Controller
         $purchaseOrder = PurchaseOrder::with(['user', 'supplier', 'details.barang'])
             ->where('po_id', $po_id)
             ->firstOrFail();
-    
+
         return Pdf::loadView('approval.show_po', [
             'purchaseOrder' => $purchaseOrder,
             'pdf' => true
         ])
-        ->setPaper('a4', 'portrait')
-        ->stream('PurchaseOrder_' . $po_id . '.pdf');
+            ->setPaper('a4', 'portrait')
+            ->stream('PurchaseOrder_' . $po_id . '.pdf');
     }
 }

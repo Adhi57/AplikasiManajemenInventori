@@ -13,27 +13,39 @@ class SJ_ApprovalController extends Controller
     public function index(Request $request)
     {
         $status = $request->get('status');
-
-        $suratJalans = SuratJalan::with(['details'])
+        $search = $request->get('search'); // ambil keyword pencarian
+    
+        $suratJalans = SuratJalan::with(['details', 'pelanggan', 'user'])
             ->when($status, function ($query, $status) {
                 $query->where('status', $status);
             })
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('sj_id', 'like', "%{$search}%")
+                      ->orWhereHas('pelanggan', function ($pelangganQuery) use ($search) {
+                          $pelangganQuery->where('nama_pelanggan', 'like', "%{$search}%");
+                      })
+                      ->orWhereHas('user', function ($userQuery) use ($search) {
+                          $userQuery->where('nama_lengkap', 'like', "%{$search}%");
+                      });
+                });
+            })
             ->orderByRaw("
-            CASE 
-                WHEN status = 'Pending' THEN 1
-                WHEN status = 'Disetujui' THEN 2
-                WHEN status = 'Ditolak' THEN 3
-                WHEN status = 'Dikirim' THEN 4
-                WHEN status = 'Selesai' THEN 5
-                ELSE 6
-            END
-        ")
+                CASE 
+                    WHEN status = 'Pending' THEN 1
+                    WHEN status = 'Disetujui' THEN 2
+                    WHEN status = 'Ditolak' THEN 3
+                    WHEN status = 'Dikirim' THEN 4
+                    WHEN status = 'Selesai' THEN 5
+                    ELSE 6
+                END
+            ")
             ->orderBy('created_at', 'desc')
             ->get();
-
-
-        return view('approval.approval_surat_jalan', compact('suratJalans'));
+    
+        return view('approval.approval_surat_jalan', compact('suratJalans', 'status', 'search'));
     }
+    
 
     public function show($sj_id)
     {

@@ -115,6 +115,20 @@ class DashboardController extends Controller
             ->orderBy('bulan')
             ->pluck('total', 'bulan');
 
+        $barangKeluar = DB::table('lap_barang_keluar')
+            ->select(DB::raw('MONTH(tanggal_keluar) as bulan'), DB::raw('COUNT(*) as total'))
+            ->groupBy('bulan')
+            ->orderBy('bulan')
+            ->pluck('total', 'bulan');
+
+
+        // Omset per bulan (subtotal barang keluar)
+        $omsetBulanan = DB::table('lap_barang_keluar')
+            ->select(DB::raw('MONTH(tanggal_keluar) as bulan'), DB::raw('SUM(total_akhir) as total'))
+            ->groupBy('bulan')
+            ->orderBy('bulan')
+            ->pluck('total', 'bulan');
+
         return view('dashboard', compact(
             'jumlahProduk',
             'jumlahKarton',
@@ -127,7 +141,9 @@ class DashboardController extends Controller
             'sjPending',
             'barangExpired',
             'statusPengiriman',
-            'barangMasuk'
+            'barangMasuk',
+            'barangKeluar',
+            'omsetBulanan'
         ));
     }
 }

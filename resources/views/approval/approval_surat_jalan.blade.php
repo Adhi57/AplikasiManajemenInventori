@@ -15,9 +15,8 @@
     </div>
 
     {{-- FILTER --}}
-    {{-- FILTER --}}
     <div class="max-w-7xl mx-auto mb-8 p-5 bg-white shadow-sm rounded-xl border border-gray-200">
-        <form method="GET" action="{{ route('approval.approval_po') }}" class="flex flex-wrap items-center gap-4">
+        <form method="GET" action="{{ route('approval.approval_surat_jalan') }}" class="flex flex-wrap items-center gap-4">
 
             {{-- Search --}}
             <div class="relative flex-grow min-w-[230px]">
@@ -27,18 +26,19 @@
                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 <input type="text" name="search" id="search" value="{{ request('search') }}"
-                    placeholder="Cari PO ID atau Pembuat..."
+                    placeholder="Cari SJ ID atau Pembuat..."
                     class="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2 text-sm focus:border-red-600 focus:ring-red-600">
             </div>
 
             {{-- Status --}}
             <select name="status" id="status"
-                class="border border-gray-300 rounded-lg p-2 text-sm shadow-sm focus:border-red-600 focus:ring-red-600">
+                class="border border-gray-300 rounded-lg py-2 text-sm shadow-sm focus:border-red-600 focus:ring-red-600">
                 <option value="">Semua Status</option>
                 <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
                 <option value="Disetujui" {{ request('status') == 'Disetujui' ? 'selected' : '' }}>Disetujui</option>
                 <option value="Ditolak" {{ request('status') == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
-                <option value="Diterima" {{ request('status') == 'Diterima' ? 'selected' : '' }}>Diterima (Gudang)</option>
+                <option value="Dikirim" {{ request('status') == 'Dikirim' ? 'selected' : '' }}>Dikirim</option>
+                <option value="Selesai" {{ request('status') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
             </select>
 
             <button type="submit"
@@ -46,7 +46,7 @@
                 Terapkan
             </button>
 
-            <a href="{{ route('approval.approval_po') }}"
+            <a href="{{ route('approval.approval_surat_jalan') }}"
                 class="bg-gray-400 text-white px-4 py-2 rounded-lg text-sm shadow-sm hover:bg-gray-500">
                 Reset
             </a>
