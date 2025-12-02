@@ -43,12 +43,12 @@
                         ? \Carbon\Carbon::parse($suratJalan->tanggal_surat)->translatedFormat('d F Y')
                         : '...........' }}
                 </p>
+                <p><strong>Nama Pelanggan:</strong> {{ $suratJalan->pelanggan->nama_pelanggan ?? '..............................' }}</p>
                 <p><strong>Status:</strong> {{ $suratJalan->status ?? '...........' }}</p>
             </div>
             <div>
                 <p class="mb-1"><strong>Tujuan:</strong></p>
                 <p class="pl-4 leading-tight">
-                    {{ $suratJalan->pelanggan->nama_pelanggan ?? '..............................' }}<br>
                     {{ $suratJalan->alamat_penerima ?? '..............................' }}<br>
                     ({{ $suratJalan->pelanggan->PIC ?? '...................' }})
                 </p>

@@ -177,7 +177,6 @@ class PengirimanController extends Controller
             'pengiriman_id' => $pengiriman->pengiriman_id,
             'sj_id' => $pengiriman->sj_id,
             'tanggal_keluar' => now(),
-
             'biaya_kirim' => $sj->biaya_pengiriman,
             'diskon' => $diskon,
             'total_akhir' => $totalAkhir,

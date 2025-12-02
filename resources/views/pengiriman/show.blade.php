@@ -89,6 +89,11 @@
                         <p class="font-medium text-sm text-gray-500">Nama Driver</p>
                         <p class="text-lg">{{ $pengiriman->nama_driver ?? '-' }}</p>
                     </div>
+
+                    <div class="my-3">
+                        <p class="font-medium text-sm text-gray-500">Alamat Pengiriman</p>
+                        <p class="text-lg">{{ $pengiriman->suratJalan->alamat_penerima ?? '-' }}</p>
+                    </div>
                 </div>
 
                 {{-- Catatan --}}
@@ -111,7 +116,7 @@
                             </div>
                             <div>
                                 <p class="font-medium text-sm text-gray-500">Tanggal Dibuat SJ</p>
-                                <p class="text-lg">{{ $pengiriman->suratJalan->tanggal_sj ? date('d F Y', strtotime($pengiriman->suratJalan->tanggal_sj)) : 'N/A' }}</p>
+                                <p class="text-lg">{{ $pengiriman->suratJalan->tanggal_surat ? date('d F Y', strtotime($pengiriman->suratJalan->tanggal_surat)) : 'N/A' }}</p>
                             </div>
                             <div>
                                 <p class="font-medium text-sm text-gray-500">Status Persetujuan SJ</p>

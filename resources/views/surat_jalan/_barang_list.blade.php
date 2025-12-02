@@ -27,7 +27,7 @@
         </button>
     </td>
     <tr>
-    <td colspan="5" class="text-center text-xs text-gray-500 py-1">
+    <td colspan="5" class="text-center text-xs border-b text-gray-500 py-1">
         1 karton = {{ $b->jml_barang_per_karton }} {{ $b->satuan_jual }}
     </td>
     </tr>

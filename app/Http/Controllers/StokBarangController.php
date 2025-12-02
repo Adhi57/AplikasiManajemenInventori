@@ -27,7 +27,6 @@ class StokBarangController extends Controller
                     DB::raw('MAX(stok_barangs.tgl_kadaluarsa) as terakhir_kadaluarsa')
                 )
                 ->join('barangs', 'barangs.kode_barang', '=', 'stok_barangs.kode_barang')
-                ->where('stok_barangs.jumlah_stok', '>', 0) // 🔹 hanya stok > 0
                 ->when($search, function ($query, $search) {
                     $query->where('stok_barangs.kode_barang', 'like', "%{$search}%")
                           ->orWhere('barangs.nama_barang', 'like', "%{$search}%");
@@ -36,7 +35,7 @@ class StokBarangController extends Controller
                     $query->where('barangs.kategori_id', $kategori);
                 })
                 ->groupBy('stok_barangs.kode_barang')
-                ->havingRaw('SUM(stok_barangs.jumlah_stok) > 0') // 🔹 pastikan hasil group juga ada stok
+                ->havingRaw('SUM(stok_barangs.jumlah_stok)') 
                 ->orderBy('stok_barangs.kode_barang')
                 ->get();
 
@@ -47,7 +46,6 @@ class StokBarangController extends Controller
         } else {
             // === DETAIL PER BATCH ===
             $stokBarangs = StokBarang::with(['barang.kategori'])
-                ->where('jumlah_stok', '>', 0) // 🔹 hanya stok > 0
                 ->when($search, function ($query, $search) {
                     $query->where('kode_barang', 'like', "%{$search}%")
                           ->orWhereHas('barang', function ($q) use ($search) {

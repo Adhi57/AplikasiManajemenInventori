@@ -66,7 +66,7 @@
                         @enderror
                     </div>
                     <div>
-                        <label for="tanggal_sampai" class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Sampai Tujuan</label>
+                        <label for="tanggal_sampai" class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Sampai Tujuan (Estimasi) </label>
                         <input type="date" name="tanggal_sampai" id="tanggal_sampai"
                             value="{{ old('tanggal_sampai', isset($pengiriman) ? $pengiriman->tanggal_sampai : '') }}"
                             class="w-full border border-gray-300 rounded-lg py-2.5 px-4 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out">

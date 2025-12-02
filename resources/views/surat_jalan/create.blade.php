@@ -211,6 +211,7 @@
                                             :name="'items[' + item.kode_barang + '][quantity]'"
                                             class="w-20 text-center border rounded-md py-1 text-sm"
                                         >
+                                        <br>
                                         <small class="text-xs">Max: <span x-text="item.stok_tersedia"></span></small> 
                                         <small x-show="item.qty > item.stok_tersedia" class="text-red-500 text-xs block">
                                             Kuantitas melebihi stok!

@@ -157,7 +157,7 @@
                                 <thead class="bg-gray-50">
                                     <tr>
                                         <th class="px-3 py-2 text-left text-xs text-gray-500">Barang</th>
-                                        <th class="px-2 py-2 text-center text-xs text-gray-500">Qty</th>
+                                        <th class="px-2 py-2 text-center text-xs text-gray-500">Qty (Karton)</th>
                                         <th class="px-2 py-2 text-center text-xs text-gray-500">Harga</th>
                                         <th class="px-2 py-2 text-xs"></th>
                                     </tr>

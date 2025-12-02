@@ -50,58 +50,6 @@
         
         {{-- Group 1: Inventory --}}
         <h3 class="text-red-400 uppercase tracking-wider text-xs font-semibold pt-4 pb-2 border-t border-red-800/50">Inventory</h3>
-
-        {{-- Data Master --}}
-        <div>
-            <!-- Tombol Dropdown Utama -->
-            <button
-                @click="dataMasterOpen = !dataMasterOpen"
-                class="w-full text-left flex items-center justify-between text-sm font-medium p-2.5 rounded-xl transition-all duration-200 
-                        hover:bg-red-800/70 focus:outline-none 
-                        {{ $dataMasterActive ? 'bg-red-800 text-white shadow-inner shadow-red-950/50' : 'text-neutral-100' }}"
-            >
-                <span class="flex items-center gap-3">
-                    <i class="fa-solid fa-database text-xl w-6"></i>
-                    <p>Data Master</p>
-                </span>
-                <i class="fa-solid fa-chevron-down transform transition-transform duration-200 text-xs"
-                    :class="{'rotate-180': dataMasterOpen}"></i>
-            </button>
-
-            <!-- Isi Dropdown -->
-            <div
-                x-show="dataMasterOpen"
-                x-transition:enter="transition ease-out duration-300"
-                x-transition:enter-start="opacity-0 max-h-0"
-                x-transition:enter-end="opacity-100 max-h-screen"
-                x-transition:leave="transition ease-in duration-200"
-                x-transition:leave-start="opacity-100 max-h-screen"
-                x-transition:leave-end="opacity-0 max-h-0"
-                class="origin-top ml-4 border-l-2 border-red-500 pl-4 py-1 space-y-1 overflow-hidden"
-                style="display: none;"
-            >
-                <a href="/barangs" 
-                    class="text-sm font-normal block py-1.5 rounded-md pl-2 transition-all duration-150 
-                    {{ request()->is('barangs*') ? $activeSubLinkClasses : $defaultSubLinkClasses }}">Data Barang</a>
-                
-                <a href="/pelanggans" 
-                    class="text-sm font-normal block py-1.5 rounded-md pl-2 transition-all duration-150 
-                    {{ request()->is('pelanggans*') ? $activeSubLinkClasses : $defaultSubLinkClasses }}">Data Pelanggan</a>
-                
-                <a href="/kategori_pelanggan" 
-                    class="text-sm font-normal block py-1.5 rounded-md pl-2 transition-all duration-150 
-                    {{ request()->is('kategori_pelanggan*') ? $activeSubLinkClasses : $defaultSubLinkClasses }}">Kategori Pelanggan</a>
-                
-                <a href="/suppliers" 
-                    class="text-sm font-normal block py-1.5 rounded-md pl-2 transition-all duration-150 
-                    {{ request()->is('suppliers*') ? $activeSubLinkClasses : $defaultSubLinkClasses }}">Data Supplier</a>
-                
-                <a href="/kategori_barang" 
-                    class="text-sm font-normal block py-1.5 rounded-md pl-2 transition-all duration-150 
-                    {{ request()->is('kategori_barang*') ? $activeSubLinkClasses : $defaultSubLinkClasses }}">Kategori Barang</a>
-            </div>
-        </div>
-
         {{-- Inventori Gudang --}}
         <div>
             <!-- Tombol Dropdown Utama -->
@@ -225,7 +173,57 @@
 
         {{-- Group 5: Settings --}}
         <h3 class="text-red-400 uppercase tracking-wider text-xs font-semibold mt-6 pt-4 pb-2 border-t border-red-800/50">Settings</h3>
+        {{-- Data Master --}}
+        <div>
+            <!-- Tombol Dropdown Utama -->
+            <button
+                @click="dataMasterOpen = !dataMasterOpen"
+                class="w-full text-left flex items-center justify-between text-sm font-medium p-2.5 rounded-xl transition-all duration-200 
+                        hover:bg-red-800/70 focus:outline-none 
+                        {{ $dataMasterActive ? 'bg-red-800 text-white shadow-inner shadow-red-950/50' : 'text-neutral-100' }}"
+            >
+                <span class="flex items-center gap-3">
+                    <i class="fa-solid fa-database text-xl w-6"></i>
+                    <p>Data Master</p>
+                </span>
+                <i class="fa-solid fa-chevron-down transform transition-transform duration-200 text-xs"
+                    :class="{'rotate-180': dataMasterOpen}"></i>
+            </button>
 
+            <!-- Isi Dropdown -->
+            <div
+                x-show="dataMasterOpen"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 max-h-0"
+                x-transition:enter-end="opacity-100 max-h-screen"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 max-h-screen"
+                x-transition:leave-end="opacity-0 max-h-0"
+                class="origin-top ml-4 border-l-2 border-red-500 pl-4 py-1 space-y-1 overflow-hidden"
+                style="display: none;"
+            >
+                <a href="/barangs" 
+                    class="text-sm font-normal block py-1.5 rounded-md pl-2 transition-all duration-150 
+                    {{ request()->is('barangs*') ? $activeSubLinkClasses : $defaultSubLinkClasses }}">Data Barang</a>
+                
+                <a href="/pelanggans" 
+                    class="text-sm font-normal block py-1.5 rounded-md pl-2 transition-all duration-150 
+                    {{ request()->is('pelanggans*') ? $activeSubLinkClasses : $defaultSubLinkClasses }}">Data Pelanggan</a>
+                
+                <a href="/kategori_pelanggan" 
+                    class="text-sm font-normal block py-1.5 rounded-md pl-2 transition-all duration-150 
+                    {{ request()->is('kategori_pelanggan*') ? $activeSubLinkClasses : $defaultSubLinkClasses }}">Kategori Pelanggan</a>
+                
+                <a href="/suppliers" 
+                    class="text-sm font-normal block py-1.5 rounded-md pl-2 transition-all duration-150 
+                    {{ request()->is('suppliers*') ? $activeSubLinkClasses : $defaultSubLinkClasses }}">Data Supplier</a>
+                
+                <a href="/kategori_barang" 
+                    class="text-sm font-normal block py-1.5 rounded-md pl-2 transition-all duration-150 
+                    {{ request()->is('kategori_barang*') ? $activeSubLinkClasses : $defaultSubLinkClasses }}">Kategori Barang</a>
+            </div>
+        </div>
+        
         <a href="#" 
             class="flex items-center gap-3 text-sm font-medium w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200
             {{ request()->is('users-roles*') ? $activeLinkClasses : $defaultLinkClasses }}">

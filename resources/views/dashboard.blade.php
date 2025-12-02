@@ -27,45 +27,63 @@
         </div>
         @endforeach
     </div>
+
+    @if(auth()->user()->role === 'Head')
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        <div class="bg-white p-4 rounded-lg shadow">
+            <h2 class="mb-2 font-semibold text-gray-700">Barang Masuk per Bulan</h2>
+            <canvas id="barangMasukChart" ></canvas>
+        </div>
+
+        <div class="bg-white p-4 rounded-lg shadow">
+            <h2 class="mb-2 font-semibold text-gray-700">Barang Keluar per Bulan</h2>
+            <canvas id="barangKeluarChart"></canvas>
+        </div>
+
+        <div class="bg-white p-4 rounded-lg shadow">
+            <h2 class="mb-2 font-semibold text-gray-700">Stok per Kategori</h2>
+            <canvas id="stokKategoriChart"></canvas>
+        </div>
+
+        <div class="bg-white p-4 rounded-lg shadow">
+            <h2 class="mb-2 font-semibold text-gray-700">Omset Penjualan per Bulan</h2>
+            <canvas id="omsetChart"></canvas>
+        </div>
+    </div>
+    @endif
+
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
         <div class="lg:col-span-5 space-y-6">
             <div class="bg-white p-5 rounded-xl shadow border border-gray-100">
                 <div class="flex justify-between items-center mb-5">
                     <h2 class="text-lg font-semibold text-gray-800">Ringkasan Stok Bulanan</h2>
-                    <div x-data="{ selectedFilter: 'Bulan ini' }" class="relative">
-                        <button class="flex items-center gap-1 bg-white hover:bg-gray-100 px-3 py-1.5 rounded-lg text-xs font-medium border border-gray-200 text-gray-700">
-                            <span x-text="selectedFilter">Bulan ini</span>
-                            <svg viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 text-gray-400">
-                                <path d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" />
-                            </svg>
-                        </button>
-                    </div>
                 </div>
 
                 <div class="flex flex-col md:flex-row items-center gap-6">
                     <div class="w-3/5">
-                        <div id="hs-doughnut-chart" class="w-full max-w-sm">
-                        </div>
+                    <div id="hs-doughnut-chart" class="w-full max-w-sm">
+                        <canvas id="stokDonutChart"></canvas>
+                    </div>
                     </div>
                     <div class="w-2/5 space-y-3">
                         <div class="flex items-center gap-2">
                             <span class="w-3 h-3 inline-block bg-green-500 rounded-sm"></span>
                             <div>
                                 <span class="text-sm font-medium text-gray-800">Stok Baik</span>
-                                <p class="text-xs text-gray-500">80% / 360 pcs</p>
+                                <p class="text-xs text-gray-500"> {{$jumlahKarton}} karton</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="w-3 h-3 inline-block bg-red-500 rounded-sm"></span>
                             <div>
                                 <span class="text-sm font-medium text-gray-800">Stok Rusak</span>
-                                <p class="text-xs text-gray-500">20% / 90 pcs</p>
+                                <p class="text-xs text-gray-500">{{$jumlahKarton}} karton</p>
                             </div>
                         </div>
                         <div class="pt-2 border-t mt-4">
                             <h3 class="text-xs font-medium text-gray-600">Total Stok Gudang</h3>
-                            <p class="text-2xl font-bold text-slate-800">{{ $jumlahKarton }} <span class="text-sm font-normal text-gray-500">Karton</span></p>
+                            <p class="text-2xl font-bold text-slate-800">{{ $jumlahKarton }} <span class="text-sm font-normal text-gray-500"> / 500 Karton</span></p>
                         </div>
                     </div>
                 </div>
@@ -120,9 +138,9 @@
                 </div>
                 @endforeach
 
-                <button class="mt-3 bg-red-900 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-red-800">
+                <a href="/tracking-kadaluarsa" class="mt-3 bg-red-900 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-red-800">
                     Lihat Semua Tracking Expired
-                </button>
+                </a>
 
             </div>
             @endif
@@ -166,34 +184,33 @@
                     <p class="text-xs text-gray-500">Dari: {{ $po->user->nama_lengkap ?? '-' }}</p>
                 </div>
             </div>
-            <a href="{{ route('approval.show_po', $po->po_id) }}"
-                class="bg-red-900 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-red-950">
-                Detail
-            </a>
         </div>
-        @empty
-        <p class="text-xs text-gray-400">Tidak ada PO pending.</p>
-        @endforelse
-        <button class="bg-red-900 text-white px-3 mt-2 py-1.5 rounded-lg text-xs font-medium hover:bg-slate-900">Lihat Lainnya</button>
+            @empty
+            <p class="text-xs mb-2 text-gray-400">Tidak ada PO Pending.</p>
+            @endforelse
+            <a href="{{ route('approval.approval_po') }}"  class="bg-red-900 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-slate-900">Lihat Lainnya</a>
 
     </div>
 
     <div class="bg-white p-5 rounded-xl shadow border border-gray-100 overflow-x-auto">
         <h2 class="text-lg font-semibold text-gray-800 mb-4">Persetujuan Surat Jalan Menunggu</h2>
         <div class="space-y-3">
-            <div class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-lg">
+            @forelse($sjPending as $sj)
+            <div class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-lg mb-1">
                 <div class="flex items-center gap-3">
                     <div class="bg-slate-800 text-white p-2 rounded-lg text-lg">
                         <i class="fa-solid fa-file-signature"></i>
                     </div>
                     <div>
-                        <p class="font-medium text-gray-800 text-sm">SJ-20252904-0023</p>
-                        <p class="text-xs text-gray-500">Dari: Admin Gudang</p>
+                        <p class="font-medium text-gray-800 text-sm">{{ $sj->sj_id }}</p>
+                        <p class="text-xs text-gray-500">Pelanggan: {{ $sj->pelanggan->nama_pelanggan ?? '-' }}</p>
                     </div>
                 </div>
-                <button class="bg-red-900 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-slate-900">Detail</button>
             </div>
-            <button class="bg-red-900 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-slate-900">Lihat Lainnya</button>
+            @empty
+            <p class="text-xs mb-2 text-gray-400">Tidak ada Surat Jalan Pending.</p>
+            @endforelse
+            <a href="{{ route('approval.approval_surat_jalan') }}"  class="bg-red-900 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-slate-900">Lihat Lainnya</a>
         </div>
     </div>
 
@@ -259,7 +276,7 @@
 <div class="bg-white p-5 rounded-xl shadow border border-gray-100 overflow-x-auto">
     <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold text-gray-900">Log Barang Masuk Terbaru</h2>
-        <button class="text-xs font-medium text-slate-600 hover:text-slate-800 px-3 py-1 rounded-full border border-gray-200 hover:bg-gray-50 transition">Lihat Semua Log</button>
+        <a href="/laporan/barang-masuk" class="text-xs font-medium text-slate-600 hover:text-slate-800 px-3 py-1 rounded-full border border-gray-200 hover:bg-gray-50 transition">Lihat Semua Log</a>
     </div>
 
     <table class="min-w-full text-sm text-left text-gray-700 border-collapse">
@@ -270,36 +287,75 @@
                 <th class="px-4 py-2 font-medium">Qty</th>
                 <th class="px-4 py-2 font-medium">Satuan</th>
                 <th class="px-4 py-2 font-medium">Tanggal</th>
-                <th class="px-4 py-2 font-medium">Gudang</th>
+                <th class="px-4 py-2 font-medium">Supplier</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
+         @foreach ( $barangMasukBulanIni as $barangMasukBulanIni )
             <tr class="bg-white hover:bg-slate-50 transition duration-100">
-                <td class="px-4 py-2 font-medium text-gray-900">IN-10281</td>
-                <td class="px-4 py-2">Dummy Product A</td>
-                <td class="px-4 py-2 text-green-600 font-semibold">1961</td>
-                <td class="px-4 py-2">Pcs</td>
-                <td class="px-4 py-2 text-gray-500">2025-11-15</td>
-                <td class="px-4 py-2 text-gray-500">Gudang Utama</td>
-            </tr>
-            <tr class="bg-white hover:bg-slate-50 transition duration-100">
-                <td class="px-4 py-2 font-medium text-gray-900">IN-10282</td>
-                <td class="px-4 py-2">Dummy Product B</td>
-                <td class="px-4 py-2 text-green-600 font-semibold">500</td>
+                <td class="px-4 py-2 font-medium text-gray-900">{{ $barangMasukBulanIni->po_id }}</td>
+                <td class="px-4 py-2">{{$barangMasukBulanIni->nama_barang}}</td>
+                <td class="px-4 py-2 text-green-600 font-semibold">{{ $barangMasukBulanIni->quantity_diterima }}</td>
                 <td class="px-4 py-2">Karton</td>
-                <td class="px-4 py-2 text-gray-500">2025-11-16</td>
-                <td class="px-4 py-2 text-gray-500">Gudang B</td>
+                <td class="px-4 py-2 text-gray-500"> {{ \Carbon\Carbon::parse($barangMasukBulanIni->tanggal_masuk)->format('d/m/Y')}}</td>
+                <td class="px-4 py-2 text-gray-500">{{$barangMasukBulanIni->namaSupplier }}</td>
             </tr>
-            <tr class="bg-white hover:bg-slate-50 transition duration-100">
-                <td class="px-4 py-2 font-medium text-gray-900">IN-10283</td>
-                <td class="px-4 py-2">Dummy Product C</td>
-                <td class="px-4 py-2 text-green-600 font-semibold">300</td>
-                <td class="px-4 py-2">Pcs</td>
-                <td class="px-4 py-2 text-gray-500">2025-11-17</td>
-                <td class="px-4 py-2 text-gray-500">Gudang Utama</td>
-            </tr>
+        @endforeach       
         </tbody>
     </table>
 </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctxMasuk = document.getElementById('barangMasukChart');
+
+    new Chart(ctxMasuk, {
+        type: 'bar',
+        data: {
+            labels: @json(array_keys($barangMasuk->toArray())),
+            datasets: [{
+                label: 'Barang Masuk',
+                data: @json(array_values($barangMasuk->toArray())),
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Chart.js Bar Chart'
+            }
+            }
+        },
+    });
+    
+    const ctx = document.getElementById('stokDonutChart').getContext('2d');
+    const stokDonutChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Stok Baik', 'Stok Rusak'],
+            datasets: [{
+                data: [{{ $jumlahKarton }}, {{$jumlahKartonRusak}}], 
+                backgroundColor: ['#22c55e', '#ef4444'], 
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        font: {
+                            size: 0
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
 @endsection

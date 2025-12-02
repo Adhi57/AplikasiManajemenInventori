@@ -18,7 +18,8 @@ class DashboardController extends Controller
     {
         // 1. Data Ringkasan Utama
         $jumlahProduk = Barang::count('kode_barang'); // Total varian produk
-        $jumlahKarton = StokBarang::sum('jumlah_stok'); // Total stok dalam unit karton/kotak
+        $jumlahKarton = StokBarang::sum('jumlah_stok');
+        $jumlahKartonRusak = StokBarang::sum('jumlah_stok_rusak');
 
         // =============================
         // 2. HITUNG BARANG MASUK BULAN INI
@@ -46,8 +47,10 @@ class DashboardController extends Controller
                 'd.subtotal'
             )
             ->orderBy('lbm.tanggal_masuk', 'desc')
-            ->get();
+            ->paginate(5);
+        
 
+        
         // Total quantity barang masuk Bulan ini (untuk kartu statistik)
         $totalMasukBulanIni = $barangMasukBulanIni->sum('quantity_diterima');
 
@@ -106,9 +109,16 @@ class DashboardController extends Controller
             ->groupBy('status_pengiriman')
             ->pluck('total','status_pengiriman');
 
+        $barangMasuk = DB::table('lap_barang_masuk')
+            ->select(DB::raw('MONTH(tanggal_masuk) as bulan'), DB::raw('COUNT(*) as total'))
+            ->groupBy('bulan')
+            ->orderBy('bulan')
+            ->pluck('total', 'bulan');
+
         return view('dashboard', compact(
             'jumlahProduk',
             'jumlahKarton',
+            'jumlahKartonRusak',
             'barangMasukBulanIni',
             'totalMasukBulanIni',
             'totalKeluarBulanIni',
@@ -116,9 +126,8 @@ class DashboardController extends Controller
             'poPending',
             'sjPending',
             'barangExpired',
-            'statusPengiriman'
+            'statusPengiriman',
+            'barangMasuk'
         ));
-
-        
     }
 }

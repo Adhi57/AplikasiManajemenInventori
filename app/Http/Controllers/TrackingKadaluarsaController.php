@@ -26,7 +26,7 @@ class TrackingKadaluarsaController extends Controller
         return view('tracking_kadaluarsa.index', compact('stok', 'search'));
     }
 
-    // Detail satu barang berdasarkan kode
+    // Detail satu barang berdasarkan kode 
     public function detail($kode_barang)
     {
         $stok = StokBarang::where('kode_barang', $kode_barang)

@@ -91,14 +91,16 @@
                 <td class="p-4 text-center">
                     {{-- Tombol Hapus --}}
                     <form action="{{ route('tracking_kadaluarsa.destroy', $s->id) }}"
-                        method="POST" class="inline-block ml-1"
-                        onsubmit="return confirm('Hapus stok ini?')">
+                        method="POST" class="inline-block ml-1 deleteForm">
                         @csrf
                         @method('DELETE')
-                        <button class="px-3 py-1.5 text-xs bg-red-600 text-white rounded-lg shadow hover:bg-red-700">
-                            Hapus
+                        <button type="button" 
+                                class="px-3 py-1.5 text-xs bg-red-600 text-white rounded-lg shadow hover:bg-red-700"
+                                onclick="confirmDelete(this)">
+                            Hapus dari Stok
                         </button>
                     </form>
+
 
                 </td>
             </tr>
@@ -120,3 +122,24 @@
 </div>
 
 @endsection
+@push('scripts')
+<script>
+function confirmDelete(button) {
+    Swal.fire({
+        title: 'Apakah Anda yakin?',
+        text: "Tindakan ini bersifat permanen dan tidak dapat dikembalikan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Ya, Hapus',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // submit form terdekat
+            button.closest('form').submit();
+        }
+    });
+}
+</script>
+@endpush
