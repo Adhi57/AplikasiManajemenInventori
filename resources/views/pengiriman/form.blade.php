@@ -4,7 +4,7 @@
 
 <div class="max-w-4xl mx-auto mt-8">
     <div class="bg-white shadow-xl rounded-xl p-8">
-        <h1 class="text-3xl font-extrabold mb-8 text-indigo-800 border-b pb-3">
+        <h1 class="text-3xl font-semibold mb-8 border-b pb-3">
             {{ isset($pengiriman) ? 'Edit Data Pengiriman' : 'Tambah Data Pengiriman Baru' }}
         </h1>
 

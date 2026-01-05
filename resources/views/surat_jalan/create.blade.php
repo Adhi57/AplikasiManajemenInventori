@@ -170,7 +170,11 @@
                         <tbody x-html="barangHtml"></tbody>
                     </table>
                 </div>
-                <div x-html="paginationHtml" class="mt-3"></div>
+                <div 
+                    x-html="paginationHtml" 
+                    class="mt-3"
+                    @click.prevent="handlePaginationClick($event)"
+                ></div>
                 <div x-show="loading" class="text-center text-indigo-500 py-2">Memuat data...</div>
             </div>
 
@@ -463,7 +467,20 @@ document.addEventListener('alpine:init', () => {
 
         formatRupiah(num) {
             return 'Rp ' + (num || 0).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        },
+
+        handlePaginationClick(e) {
+        const link = e.target.closest('a');
+        if (!link) return;
+
+        const url = new URL(link.href);
+        const page = url.searchParams.get('page');
+
+        if (page) {
+            this.fetchBarangs(page);
         }
+    }
+
     }));
 });
 </script>

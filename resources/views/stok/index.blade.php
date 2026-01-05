@@ -77,7 +77,7 @@
                         @endif
                         <th class="p-4 text-center">Jumlah Stok (Karton)</th>
                         <th class="p-4 text-center">Isi per Karton</th>
-                        <th class="p-4 text-center">Total (pcs)</th>
+                        <th class="p-4 text-center">Total</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -123,9 +123,9 @@
 
                             <td class="p-4 text-center">{{ $isiPerKarton }}</td>
 
-                            {{-- Total PCS --}}
+                            {{-- Total --}}
                             <td class="p-4 text-center text-gray-800 font-semibold">
-                                {{ number_format($totalPcs, 0, ',', '.') }} pcs
+                                {{ number_format($totalPcs, 0, ',', '.') }} {{ $stok->barang->satuan_jual ?? '-' }}
                             </td>
                         </tr>
                         @empty

@@ -58,6 +58,40 @@
     {{-- 5. Pustaka Lain (Dibiarkan) --}}
     <script src="https://kit.fontawesome.com/0063d6d309.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @if (session('success'))
+    <script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil',
+        text: @json(session('success')),
+        timer: 2000,
+        showConfirmButton: false
+    });
+    </script>
+    @endif
+
+    @if (session('warning'))
+    <script>
+    Swal.fire({
+        icon: 'warning',
+        title: 'Perhatian',
+        text: @json(session('warning'))
+    });
+    </script>
+    @endif
+
+    @if (session('error'))
+    <script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Gagal',
+        text: @json(session('error'))
+    });
+    </script>
+    @endif
+
     
 </body>
 </html>

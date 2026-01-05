@@ -307,118 +307,80 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const bulanID = [
-        "", "Januari", "Februari", "Maret", "April", "Mei",
-        "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-    ];
+    const bulanID = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
-// CHART MASUK
+    // 1. CHART MASUK (Hanya jalan jika elemen ada)
     const ctxMasuk = document.getElementById('barangMasukChart');
-
-    new Chart(ctxMasuk, {
-        type: 'bar',
-        data: {
-            labels: @json(array_keys($barangMasuk->toArray())).map(m => bulanID[m]),
-            datasets: [{
-                label: 'Barang Masuk',
-                data: @json(array_values($barangMasuk->toArray())),
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-            legend: {
-                position: 'top',
+    if (ctxMasuk) {
+        new Chart(ctxMasuk, {
+            type: 'bar',
+            data: {
+                labels: @json(array_keys($barangMasuk->toArray())).map(m => bulanID[m]),
+                datasets: [{
+                    label: 'Barang Masuk',
+                    data: @json(array_values($barangMasuk->toArray())),
+                }]
             },
-            }
-        },
-    });
-
-    // CHART BRANG KELUAR
-    const ctxKeluar = document.getElementById('barangKeluarChart');
-
-    new Chart(ctxKeluar, {
-        type: 'bar',
-        data: {
-            labels: @json(array_keys($barangKeluar->toArray())).map(m => bulanID[m]),
-            datasets: [{
-                label: 'Barang Keluar',
-                data: @json(array_values($barangKeluar->toArray())),
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-            legend: {
-                position: 'top',
-            },
-
-            }
-        },
-    });
-    
-
-    // CHART STOK
-    const ctx = document.getElementById('stokDonutChart').getContext('2d');
-    const stokDonutChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Stok Baik', 'Stok Rusak'],
-            datasets: [{
-                data: [{{ $jumlahKarton }}, {{$jumlahKartonRusak}}], 
-                backgroundColor: ['#22c55e', '#ef4444'], 
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        font: {
-                            size: 0
-                        }
-                    }
-                }
-            }
-        }
-    });
-
-    // CHART Omset
-    const ctxOmset = document.getElementById('omsetChart');
-
-new Chart(ctxOmset, {
-    type: 'line',
-    data: {
-        labels: @json(array_keys($omsetBulanan->toArray())).map(m => bulanID[m]),
-        datasets: [{
-            label: 'Omset (Rp)',
-            data: @json(array_values($omsetBulanan->toArray())),
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        let value = context.raw;
-                        return 'Rp ' + value.toLocaleString('id-ID');
-                    }
-                }
-            }
-        },
-        scales: {
-            y: {
-                ticks: {
-                    callback: function(value) {
-                        return 'Rp ' + value.toLocaleString('id-ID');
-                    }
-                }
-            }
-        }
+            options: { responsive: true }
+        });
     }
-});
+
+    // 2. CHART KELUAR (Hanya jalan jika elemen ada)
+    const ctxKeluar = document.getElementById('barangKeluarChart');
+    if (ctxKeluar) {
+        new Chart(ctxKeluar, {
+            type: 'bar',
+            data: {
+                labels: @json(array_keys($barangKeluar->toArray())).map(m => bulanID[m]),
+                datasets: [{
+                    label: 'Barang Keluar',
+                    data: @json(array_values($barangKeluar->toArray())),
+                }]
+            },
+            options: { responsive: true }
+        });
+    }
+
+    // 3. CHART STOK DONUT (Selalu muncul untuk semua role)
+    const ctxStok = document.getElementById('stokDonutChart');
+    if (ctxStok) {
+        new Chart(ctxStok, {
+            type: 'pie',
+            data: {
+                labels: ['Stok Baik', 'Stok Rusak'],
+                datasets: [{
+                    data: [{{ $jumlahKarton }}, {{ $jumlahKartonRusak }}], 
+                    backgroundColor: ['#22c55e', '#ef4444'], 
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    // 4. CHART OMSET (Hanya jalan jika elemen ada)
+    const ctxOmset = document.getElementById('omsetChart');
+    if (ctxOmset) {
+        new Chart(ctxOmset, {
+            type: 'line',
+            data: {
+                labels: @json(array_keys($omsetBulanan->toArray())).map(m => bulanID[m]),
+                datasets: [{
+                    label: 'Omset (Rp)',
+                    data: @json(array_values($omsetBulanan->toArray())),
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { ticks: { callback: (value) => 'Rp ' + value.toLocaleString('id-ID') } }
+                }
+            }
+        });
+    }
 </script>
 @endsection

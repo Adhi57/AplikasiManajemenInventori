@@ -11,10 +11,11 @@
     // Inventori Gudang paths
     $inventoriGudangActive = request()->is('katalog_barang*') || 
                              request()->is('stok-barang*') || 
-                             request()->is('stock_opname*');
+                             request()->is('stock_opname*') || 
+                             request()->is('tracking-kadaluarsa*');
     
     // Fungsi untuk kelas link aktif
-    $activeLinkClasses = 'bg-red-800 text-white shadow-xl shadow-red-950/70';
+    $activeLinkClasses = 'bg-red-800 text-white shadow-md shadow-red-950/70';
     $defaultLinkClasses = 'text-neutral-100';
 
     // Fungsi untuk kelas sub-link aktif
@@ -93,11 +94,19 @@
                 
                 <a href="/tracking-kadaluarsa" 
                     class="text-sm font-normal block py-1.5 rounded-md pl-2 transition-all duration-150
-                    {{ request()->is('batch*') ? $activeSubLinkClasses : $defaultSubLinkClasses }}">Batch & Tracking Kadaluarsa</a>
+                    {{ request()->is('tracking-kadaluarsa*') ? $activeSubLinkClasses : $defaultSubLinkClasses }}">Batch & Tracking Kadaluarsa</a>
             </div>
         </div>
         
         {{-- Link Navigasi Non-Dropdown --}}
+        
+        <a href="{{ route('purchase_orders.buat_permintaan') }}"
+            class="flex items-center gap-3 text-sm font-medium w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200
+            {{ request()->is('purchase_orders/buat_permintaan*') ? $activeLinkClasses : $defaultLinkClasses }}">
+            <i class="fa-solid fa-money-check-dollar text-xl w-6"></i>
+            <span>Permintaan Pembelian</span>
+        </a>
+
         <a href="/verifBarang"
             class="flex items-center gap-3 text-sm font-medium w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200
             {{ request()->is('verifBarang*') ? $activeLinkClasses : $defaultLinkClasses }}">
@@ -110,13 +119,6 @@
             {{ request()->is('returBarang*') ? $activeLinkClasses : $defaultLinkClasses }}">
             <i class="fa-solid fa-truck-arrow-right text-xl w-6"></i>
             <span>Retur Barang</span>
-        </a>
-
-        <a href="{{ route('purchase_orders.buat_permintaan') }}"
-            class="flex items-center gap-3 text-sm font-medium w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200
-            {{ request()->is('purchase_orders/buat_permintaan*') ? $activeLinkClasses : $defaultLinkClasses }}">
-            <i class="fa-solid fa-money-check-dollar text-xl w-6"></i>
-            <span>Permintaan Pembelian</span>
         </a>
 
 
@@ -224,11 +226,13 @@
             </div>
         </div>
         
-        <a href="#" 
+        @if(auth()->user()->role === 'SuperAdmin')
+        <a href="/users" 
             class="flex items-center gap-3 text-sm font-medium w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200
-            {{ request()->is('users-roles*') ? $activeLinkClasses : $defaultLinkClasses }}">
+            {{ request()->is('users*') ? $activeLinkClasses : $defaultLinkClasses }}">
             <i class="fa-solid fa-users-gear text-xl w-6"></i>
             <span>Users & Roles</span>
         </a>
+        @endif
     </nav>
 </div>

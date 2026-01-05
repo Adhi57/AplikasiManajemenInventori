@@ -57,30 +57,35 @@ class PO_ApprovalController extends Controller
 
     public function approve($po_id)
     {
-        // Menggunakan transaksi database untuk memastikan konsistensi data
         DB::beginTransaction();
 
         try {
             $purchaseOrder = PurchaseOrder::where('po_id', $po_id)->firstOrFail();
 
-            // 1. Cek status PO, hanya PO 'Pending' yang bisa disetujui
             if ($purchaseOrder->status_po !== 'Pending') {
-                return back()->with('error', 'Gagal menyetujui. Purchase Order ini sudah tidak dalam status Pending.');
+                return redirect()
+                    ->route('approval.show_po', $po_id)
+                    ->with('error', 'PO ini sudah tidak berstatus Pending.');
             }
 
-            // 2. Update status PO menjadi 'Disetujui'
             $purchaseOrder->status_po = 'Disetujui';
             $purchaseOrder->save();
 
             DB::commit();
 
-            return redirect()->route('approval.approval_po')->with('success', "Purchase Order {$po_id} berhasil disetujui dan stok barang telah ditambahkan!");
-        } catch (Exception $e) {
+            return redirect()
+                ->route('approval.show_po', $po_id)
+                ->with('success', "Purchase Order {$po_id} berhasil disetujui.");
+
+        } catch (\Exception $e) {
             DB::rollBack();
-            // Log error
-            return back()->with('error', 'Terjadi kesalahan saat menyetujui PO: ' . $e->getMessage());
+
+            return redirect()
+                ->route('approval.show_po', $po_id)
+                ->with('error', 'Terjadi kesalahan saat menyetujui PO.');
         }
     }
+
 
     /**
      * Menolak Purchase Order.
@@ -93,22 +98,26 @@ class PO_ApprovalController extends Controller
         try {
             $purchaseOrder = PurchaseOrder::where('po_id', $po_id)->firstOrFail();
 
-            // 1. Cek status PO, hanya PO 'Pending' yang bisa ditolak
             if ($purchaseOrder->status_po !== 'Pending') {
-                return back()->with('error', 'Gagal menolak. Purchase Order ini sudah tidak dalam status Pending.');
+                return redirect()
+                    ->route('approval.show_po', $po_id)
+                    ->with('error', 'PO ini sudah tidak berstatus Pending.');
             }
 
-            // 2. Update status PO menjadi 'Ditolak'
             $purchaseOrder->status_po = 'Ditolak';
-            // Tambahkan kolom lain seperti alasan_penolakan jika ada
             $purchaseOrder->save();
 
-            return redirect()->route('approval.approval_po')->with('warning', "Purchase Order {$po_id} berhasil ditolak.");
-        } catch (Exception $e) {
-            // Log error
-            return back()->with('error', 'Terjadi kesalahan saat menolak PO: ' . $e->getMessage());
+            return redirect()
+                ->route('approval.show_po', $po_id)
+                ->with('warning', "Purchase Order {$po_id} berhasil ditolak.");
+
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('approval.show_po', $po_id)
+                ->with('error', 'Terjadi kesalahan saat menolak PO.');
         }
     }
+
 
     public function print_po($po_id)
     {

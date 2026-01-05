@@ -34,6 +34,7 @@
                     <tr>
                         <th class="px-4 py-3">#</th>
                         <th class="px-4 py-3">Nomor Surat Jalan</th>
+                        <th class="px-4 py-3">Tanggal Surat</th>
                         <th class="px-4 py-3">Pelanggan</th>
                         <th class="px-4 py-3">Driver</th>
                         <th class="px-4 py-3">Kendaraan</th>
@@ -50,6 +51,7 @@
                             <td class="px-4 py-3 font-medium text-indigo-600">
                                 {{ $p->sj_id }}
                             </td>
+                            <td class="px-4 py-3">{{ \Carbon\Carbon::parse($p->suratJalan->tanggal_surat)->format('d/m/Y') }}</td>
                             <td class="px-4 py-3">{{ $p->suratJalan->pelanggan->nama_pelanggan ?? '-' }}</td>
                             <td class="px-4 py-3">{{ $p->nama_driver ?? '-' }}</td>
                             <td class="px-4 py-3">{{ $p->no_polisi ?? '-' }}</td>

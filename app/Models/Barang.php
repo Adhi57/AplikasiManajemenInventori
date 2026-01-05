@@ -9,10 +9,10 @@ class Barang extends Model
 {
     protected $table = 'barangs';
     protected $primaryKey = 'kode_barang';
-    public $incrementing = false; // karena PK bukan auto-increment
+    public $incrementing = false; 
     public $timestamps = false;   
 
-    protected $keyType = 'string'; // karena PK varchar
+    protected $keyType = 'string'; 
 
     protected $fillable = [
         'kode_barang',
@@ -63,7 +63,6 @@ class Barang extends Model
         });
     }
 
-    // Relasi ke kategori
     public function kategori()
     {
         return $this->belongsTo(KategoriBarang::class, 'kategori_barang_id', 'kategori_barang_id');
