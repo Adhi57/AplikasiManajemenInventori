@@ -30,7 +30,7 @@
 
         {{-- HEADER --}}
         <div class="flex justify-between items-center mb-6 print:hidden">
-            <h1 class="text-2xl font-bold text-gray-800">📦 Laporan Barang Keluar</h1>
+            <h1 class="text-2xl font-bold text-gray-800">Laporan Barang Keluar</h1>
 
             {{-- Tombol Print --}}
             <button id="print-button" onclick="window.print()"
@@ -60,6 +60,13 @@
                 <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow">
                     🔍 Tampilkan
                 </button>
+
+                
+                {{-- Tombol Lihat Semua --}}
+                <a href="{{ route('laporan.barang_keluar.index') }}"
+                    class="w-full text-center bg-gray-500 hover:bg-gray-600 text-white px-4 mx-1 py-2 rounded-md text-sm font-medium shadow">
+                    📄 Lihat Semua
+                </a>
             </div>
         </form>
 
