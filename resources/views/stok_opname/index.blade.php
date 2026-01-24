@@ -103,7 +103,7 @@
                     <div class="mb-2 text-sm text-gray-700">
                         <span class="font-semibold text-red-700">{{ $log->user->nama_lengkap }}</span>
                         memperbarui <span class="font-semibold">{{ $log->stok->barang->nama_barang ?? '-' }}</span>
-                        ({{ $log->stok->kode_barang }}) → 
+                        ({{ $log->stok->kode_barang ?? 'N/A' }}) → 
                         <span class="italic">{{ $log->alasan_update }}</span>
                         <span class="text-gray-500">[{{ $log->created_at->format('d M Y H:i') }}]</span>
                     </div>

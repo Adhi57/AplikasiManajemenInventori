@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -11,14 +12,11 @@ public function index(Request $request)
 {
     $query = User::query();
 
-    // Logika Search (jika ada)
     if ($request->has('search')) {
         $query->where('nama_lengkap', 'like', '%' . $request->search . '%')
               ->orWhere('username', 'like', '%' . $request->search . '%');
     }
 
-    // Tampilkan semua user kecuali diri sendiri dengan pagination
-    // Ganti ->get() menjadi ->paginate(10)
     $users = $query->where('user_id', '!=', auth()->user()->user_id)
                    ->orderBy('role', 'asc')
                    ->paginate(10); // Menampilkan 10 data per halaman
@@ -40,7 +38,6 @@ public function index(Request $request)
             'role'         => 'required|in:SuperAdmin,Admin,Head,Staff',
         ]);
 
-        // Generate Custom ID (misal: USR-RANDOM)
         $userId = 'USR-' . strtoupper(bin2hex(random_bytes(3)));
 
         User::create([

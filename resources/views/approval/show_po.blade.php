@@ -146,7 +146,7 @@
                class="px-4 py-2 text-sm bg-gray-200 rounded-lg hover:bg-gray-300 shadow">
                 ← Kembali ke Daftar PO
             </a>
-
+        @if(auth()->user()->role === 'Head'|| auth()->user()->role === 'SuperAdmin') 
             @if ($purchaseOrder->status_po === 'Pending')
             <div class="flex space-x-3 mt-4 md:mt-0">
                 <form id="rejectForm" action="{{ route('po.reject', $purchaseOrder->po_id) }}" method="POST">
@@ -168,7 +168,7 @@
                 </form>
             </div>
             @endif
-
+        @endif
         </div>
     </div>
 </div>

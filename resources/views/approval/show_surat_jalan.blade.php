@@ -153,6 +153,7 @@
             {{-- Tombol Kembali --}}
             <a href="{{ route('approval.approval_surat_jalan') }}" class="w-full md:w-auto px-4 py-2 mb-4 md:mb-0 text-center text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-150 shadow-md"> <i class="fas fa-arrow-left mr-2"></i> Kembali ke Daftar PO </a>
             {{-- Tombol Aksi --}}
+            @if(auth()->user()->role === 'Head'|| auth()->user()->role === 'SuperAdmin') 
             <div class="flex justify-end space-x-3"> 
                 @if ($suratJalan->status === 'Pending')
                 {{-- Tombol Tolak --}}
@@ -165,6 +166,7 @@
                 </form> 
                 @endif
             </div>
+            @endif
         </div>
     </div>
 </div>
