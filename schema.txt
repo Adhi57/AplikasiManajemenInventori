@@ -1,0 +1,53 @@
+
+--- pelanggans ---
+pelanggan_id (bigint unsigned)
+nama_pelanggan (varchar(40))
+alamat (varchar(255))
+NPWP (varchar(16))
+PIC (varchar(40))
+kategori_pelanggan_id (bigint unsigned)
+tipe_harga (enum('eceran','grosir','diskon'))
+created_at (timestamp)
+updated_at (timestamp)
+
+--- kategori_pelanggans ---
+kategori_pelanggan_id (bigint unsigned)
+kategori_pelanggan (enum('Retail','Grosir','Biasa'))
+jumlah_diskon (decimal(5,2))
+created_at (timestamp)
+updated_at (timestamp)
+
+--- suppliers ---
+id_supplier (bigint unsigned)
+namaSupplier (varchar(40))
+alamatSupplier (varchar(100))
+Kota (varchar(30))
+noTelepon (varchar(12))
+waktuPengiriman (int)
+created_at (timestamp)
+updated_at (timestamp)
+
+--- kategori_barangs ---
+kategori_barang_id (bigint unsigned)
+nama_kategori_barang (varchar(255))
+created_at (timestamp)
+updated_at (timestamp)
+
+--- barangs ---
+kode_barang (varchar(50))
+nama_barang (varchar(255))
+satuan_jual (enum('pcs','renteng','pack','karton'))
+kategori_barang_id (bigint unsigned)
+id_supplier (bigint unsigned)
+jml_barang_per_karton (int)
+foto_produk (varchar(255))
+tipe_harga_barang (enum('Eceran','Grosir','Diskon'))
+harga_jual (decimal(15,2))
+harga_beli (decimal(15,2))
+berlaku_mulai (datetime)
+berlaku_sampai (datetime)
+created_at (timestamp)
+updated_at (timestamp)
+
+--- harga_barangs ---
+Table does not exist or error: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'sistem_manajemen_inventori_database.harga_barangs' doesn't exist (Connection: mysql, SQL: DESCRIBE harga_barangs)

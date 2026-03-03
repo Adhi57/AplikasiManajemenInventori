@@ -1,0 +1,38 @@
+﻿
+   INFO  Seeding database.  
+
+Ô£ô Data lama dihapus (barangs, kategori, suppliers, users, pelanggan tetap)
+Ô£ô Ditemukan 42 barang
+  PO PO_2512_0001: 6 barang, lead time 7 hari
+  PO PO_2512_0002: 10 barang, lead time 5 hari
+  PO PO_2512_0003: 8 barang, lead time 10 hari
+  PO PO_2601_0004: 7 barang, lead time 3 hari
+  PO PO_2601_0005: 8 barang, lead time 8 hari
+  PO PO_2601_0006: 7 barang, lead time 6 hari
+  PO PO_2601_0007: 5 barang, lead time 4 hari
+  PO PO_2602_0008: 6 barang, lead time 12 hari
+  PO PO_2602_0009: 6 barang, lead time 2 hari
+  PO PO_2602_0010: 10 barang, lead time 5 hari
+Ô£ô 10 Purchase Order + Barang Masuk + Stok dibuat
+
+   Illuminate\Database\QueryException 
+
+  SQLSTATE[HY000]: General error: 1366 Incorrect integer value: 'PGR_2601_0001' for column 'pengiriman_id' at row 1 (Connection: mysql, SQL: insert into `pengirimans` (`pengiriman_id`, `sj_id`, `nama_driver`, `no_polisi`, `nama_kendaraan`, `tanggal_pengiriman`, `tanggal_sampai`, `status_pengiriman`, `catatan`, `created_at`, `updated_at`) values (PGR_2601_0001, SJ_2601_0001, Driver A, L 9747 QD, Engkel, 2026-01-09 05:47:17, 2026-01-12 05:47:17, Selesai, ?, 2026-01-09 05:47:17, 2026-01-12 05:47:17))
+
+  at vendor\laravel\framework\src\Illuminate\Database\Connection.php:824
+    820Ôûò                     $this->getName(), $query, $this->prepareBindings($bindings), $e
+    821Ôûò                 );
+    822Ôûò             }
+    823Ôûò 
+  Ô×£ 824Ôûò             throw new QueryException(
+    825Ôûò                 $this->getName(), $query, $this->prepareBindings($bindings), $e
+    826Ôûò             );
+    827Ôûò         }
+    828Ôûò     }
+
+  1   vendor\laravel\framework\src\Illuminate\Database\MySqlConnection.php:53
+      PDOException::("SQLSTATE[HY000]: General error: 1366 Incorrect integer value: 'PGR_2601_0001' for column 'pengiriman_id' at row 1")
+
+  2   vendor\laravel\framework\src\Illuminate\Database\MySqlConnection.php:53
+      PDOStatement::execute()
+

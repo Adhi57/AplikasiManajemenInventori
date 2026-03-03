@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class SuratJalanController extends Controller
 {
@@ -18,32 +19,45 @@ class SuratJalanController extends Controller
      */
     public function index(Request $request)
     {
-        $query = SuratJalan::with(['pelanggan', 'user'])
-        ->orderByRaw("
-        CASE 
-            WHEN status = 'Pending' THEN 1
-            WHEN status = 'Disetujui' THEN 2
-            WHEN status = 'Ditolak' THEN 3
-            WHEN status = 'Dikirim' THEN 4
-            WHEN status = 'Selesai' THEN 5
-            ELSE 6
-        END
-    ");
+        $query = SuratJalan::with(['pelanggan', 'user', 'pengiriman'])
+            ->withCount('details')
+            ->orderBy('sj_id','desc')
+            ->orderByRaw("
+                CASE 
+                    WHEN status = 'Pending' THEN 1
+                    WHEN status = 'Disetujui' THEN 2
+                    WHEN status = 'Ditolak' THEN 3
+                    WHEN status = 'Dikirim' THEN 4
+                    WHEN status = 'Selesai' THEN 5
+                    ELSE 6
+                END
+            ");
 
         if ($request->status) {
             $query->where('status', $request->status);
         }
 
         if ($request->search) {
-            $query->where('sj_id', 'like', "%{$request->search}%")
-                  ->orWhereHas('pelanggan', function($q) use ($request) {
-                      $q->where('nama_pelanggan', 'like', "%{$request->search}%");
+            $query->where(function($q) use ($request) {
+                $q->where('sj_id', 'like', "%{$request->search}%")
+                  ->orWhereHas('pelanggan', function($sub) use ($request) {
+                      $sub->where('nama_pelanggan', 'like', "%{$request->search}%");
                   });
+            });
         }
 
         $suratJalans = $query->paginate(10);
 
-        return view('surat_jalan.index', compact('suratJalans'));
+        // Status counts for summary cards
+        $statusCounts = SuratJalan::selectRaw("
+            COUNT(*) as total,
+            SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) as pending,
+            SUM(CASE WHEN status = 'Disetujui' THEN 1 ELSE 0 END) as disetujui,
+            SUM(CASE WHEN status = 'Ditolak' THEN 1 ELSE 0 END) as ditolak,
+            SUM(CASE WHEN status = 'Dikirim' OR status = 'Selesai' THEN 1 ELSE 0 END) as dikirim
+        ")->first();
+
+        return view('surat_jalan.index', compact('suratJalans', 'statusCounts'));
     }
 
     /**
@@ -82,7 +96,7 @@ class SuratJalanController extends Controller
      */
     public function store(Request $request)
 {
-    \Log::info('Masuk ke store surat jalan', $request->only(['pelanggan_id', 'biaya_pengiriman', 'diskon_pelanggan']));
+    Log::info('Masuk ke store surat jalan', $request->only(['pelanggan_id', 'biaya_pengiriman', 'diskon_pelanggan']));
 
     // VALIDASI INPUT
     $request->validate([
@@ -103,7 +117,7 @@ class SuratJalanController extends Controller
     DB::beginTransaction();
     try {
         $sj_id = 'SJ-' . now()->format('ymd') . '-' . strtoupper(Str::random(5));
-        \Log::info('Generated SJ ID', ['sj_id' => $sj_id]);
+        Log::info('Generated SJ ID', ['sj_id' => $sj_id]);
 
         $sj = SuratJalan::create([
             'sj_id' => $sj_id,
@@ -123,7 +137,7 @@ class SuratJalanController extends Controller
             'status_pengiriman' => 'Menunggu',
         ]);
 
-        \Log::info('Surat Jalan Created', $sj->toArray());
+        Log::info('Surat Jalan Created', $sj->toArray());
 
         foreach ($request->items as $item) {
             \App\Models\SuratJalanDetail::create([
@@ -137,12 +151,12 @@ class SuratJalanController extends Controller
         }
 
         DB::commit();
-        \Log::info('Surat Jalan Committed', ['sj_id' => $sj_id]);
+        Log::info('Surat Jalan Committed', ['sj_id' => $sj_id]);
 
         return redirect()->route('surat_jalan.index')->with('success', 'Surat jalan berhasil dibuat!');
     } catch (\Throwable $e) {
         DB::rollBack();
-        \Log::error('Gagal menyimpan surat jalan', ['error' => $e->getMessage()]);
+        Log::error('Gagal menyimpan surat jalan', ['error' => $e->getMessage()]);
         return back()->with('error', 'Gagal menyimpan surat jalan: ' . $e->getMessage());
     }
 }
@@ -227,7 +241,7 @@ public function destroy($sj_id)
             ->with('success', 'Surat jalan berhasil dihapus.');
     } catch (\Exception $e) {
         DB::rollBack();
-        \Log::error('Gagal menghapus Surat Jalan: ' . $e->getMessage());
+        Log::error('Gagal menghapus Surat Jalan: ' . $e->getMessage());
 
         return back()->with('error', 'Gagal menghapus surat jalan: ' . $e->getMessage());
     }

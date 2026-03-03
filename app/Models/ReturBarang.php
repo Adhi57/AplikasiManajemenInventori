@@ -34,6 +34,6 @@ class ReturBarang extends Model
 
     public function barang()
     {
-        return $this->belongsTo(\App\Models\Barang::class, 'kode_barang', 'kode_barang');
+        return $this->belongsTo(\App\Models\Barang::class, 'kode_barang', 'kode_barang')->withTrashed();
     }
 }

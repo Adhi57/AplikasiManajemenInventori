@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SJ_ApprovalController extends Controller
 {
@@ -69,7 +70,7 @@ class SJ_ApprovalController extends Controller
             return redirect()
                 ->route('approval.approval_surat_jalan')
                 ->with('success', 'Surat Jalan berhasil disetujui.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Gagal menyetujui surat jalan: ' . $e->getMessage());
         }
@@ -87,10 +88,21 @@ class SJ_ApprovalController extends Controller
             return redirect()
                 ->route('approval.approval_surat_jalan')
                 ->with('success', 'Surat Jalan berhasil ditolak.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Gagal menolak surat jalan: ' . $e->getMessage());
         }
+    }
+
+    public function print_sj($sj_id)
+    {
+        $suratJalan = SuratJalan::with(['details.barang', 'pelanggan', 'user'])
+            ->where('sj_id', $sj_id)
+            ->firstOrFail();
+
+        return Pdf::loadView('approval.print_sj', compact('suratJalan'))
+            ->setPaper('a4', 'portrait')
+            ->stream('SuratJalan_' . $sj_id . '.pdf');
     }
 
 }

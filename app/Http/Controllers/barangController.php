@@ -201,19 +201,14 @@ class BarangController extends Controller
 
         DB::beginTransaction();
         try {
-            // Hapus foto produk jika ada (menggunakan disk 'public')
-            if ($barang->foto_produk) {
-                Storage::disk('public')->delete($barang->foto_produk);
-            }
+            // Karena menggunakan soft delete, kita tidak perlu hapus foto fisiknya di storage.
+            // Biarkan data stok tetap utuh (soft delete secara implisit kalau perlu, tapi saat ini cukup Barang-nya)
             
-            // Relasi stok akan terhapus jika Anda menggunakan `onDelete('cascade')` pada foreign key
-            // Jika tidak, Anda harus menghapus stok secara eksplisit: $barang->stok()->delete();
-
-            $barang->delete();
+            $barang->delete(); // Ini sekarang akan memicu Soft Deletes
 
             DB::commit();
 
-            return redirect()->route('barangs.index')->with('success', 'Barang berhasil dihapus.');
+            return redirect()->route('barangs.index')->with('success', 'Barang berhasil diarsipkan (Soft Delete).');
 
         } catch (\Exception $e) {
             DB::rollBack();

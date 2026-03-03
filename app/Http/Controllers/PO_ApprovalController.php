@@ -77,7 +77,7 @@ class PO_ApprovalController extends Controller
                 ->route('approval.show_po', $po_id)
                 ->with('success', "Purchase Order {$po_id} berhasil disetujui.");
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
 
             return redirect()
@@ -111,7 +111,7 @@ class PO_ApprovalController extends Controller
                 ->route('approval.show_po', $po_id)
                 ->with('warning', "Purchase Order {$po_id} berhasil ditolak.");
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return redirect()
                 ->route('approval.show_po', $po_id)
                 ->with('error', 'Terjadi kesalahan saat menolak PO.');
@@ -125,10 +125,7 @@ class PO_ApprovalController extends Controller
             ->where('po_id', $po_id)
             ->firstOrFail();
 
-        return Pdf::loadView('approval.show_po', [
-            'purchaseOrder' => $purchaseOrder,
-            'pdf' => true
-        ])
+        return Pdf::loadView('approval.print_po', compact('purchaseOrder'))
             ->setPaper('a4', 'portrait')
             ->stream('PurchaseOrder_' . $po_id . '.pdf');
     }

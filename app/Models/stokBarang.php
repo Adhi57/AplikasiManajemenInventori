@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\PurchaseOrder; 
@@ -9,6 +11,7 @@ use App\Models\Barang;
 
 class stokBarang extends Model
 {
+    use HasFactory;
     protected $table = 'stok_barangs';
     
     public $incrementing = false; 

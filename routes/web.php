@@ -22,6 +22,7 @@ use App\Http\Controllers\VerifikasiBarangController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StokBarangController;
 use App\Http\Controllers\StokOpnameController;
+use App\Http\Controllers\ReorderPointController;
 use App\Http\Controllers\TrackingKadaluarsaController;
 use App\Http\Controllers\UserController;
 
@@ -45,6 +46,9 @@ Route::middleware('auth')->group(function () {
     // Stok Barang
     Route::get('/stok-barang', [StokBarangController::class, 'index'])->name('stok.index');
     
+    // Reorder Point
+    Route::get('/reorder-point', [ReorderPointController::class, 'index'])->name('reorder_point.index');
+    
     //stok opname
     // Stock opname index & update
     Route::get('/stock_opname', [StokOpnameController::class, 'index'])->name('stock.opname.index');
@@ -54,6 +58,9 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/tracking-kadaluarsa', [TrackingKadaluarsaController::class, 'index'])
     ->name('tracking_kadaluarsa.index');
+
+    Route::get('/tracking-kadaluarsa/riwayat', [TrackingKadaluarsaController::class, 'riwayat'])
+    ->name('tracking_kadaluarsa.riwayat');
     
     Route::get('/tracking-kadaluarsa/{kode_barang}', [TrackingKadaluarsaController::class, 'detail'])
     ->name('tracking_kadaluarsa.detail');
@@ -73,6 +80,8 @@ Route::middleware('auth')->group(function () {
     
     Route::put('/approval/po/{po_id}/reject', [PO_ApprovalController::class, 'reject'])
     ->name('po.reject');
+    Route::get('/approval/po/{po_id}/print', [PO_ApprovalController::class, 'print_po'])
+    ->name('approval.print_po');
     
     // Approval Surat Jalan
     Route::get('approval/approval_surat_jalan', [SJ_ApprovalController::class, 'index'])->name('approval.approval_surat_jalan');
@@ -84,6 +93,9 @@ Route::middleware('auth')->group(function () {
     ->name('sj.approve');
     Route::put('approval/sj/reject/{sj_id}', [SJ_ApprovalController::class, 'reject'])
     ->name('sj.reject');
+    Route::get('approval/sj/{sj_id}/print', [SJ_ApprovalController::class, 'print_sj'])
+    ->name('approval.print_sj')
+    ->where('sj_id', '.*');
     
     // buat permintaan
     Route::get('/purchase_orders/buat_permintaan', [PurchaseOrdersController::class, 'create'])->name('purchase_orders.buat_permintaan');
@@ -117,7 +129,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/retur-barang/{id}/update-tanggal', [ReturBarangController::class, 'updateTanggal'])
     ->name('retur.updateTanggal');
     
-    Route::patch('/retur-barang/{retur_id}/konfirmasi', [\App\Http\Controllers\ReturBarangController::class, 'konfirmasiSesuai'])
+    Route::patch('/retur-barang/{retur_id}/konfirmasi', [ReturBarangController::class, 'konfirmasiSesuai'])
     ->name('retur.konfirmasi');
     Route::patch('/retur-barang/{retur_id}/batal', [ReturBarangController::class, 'batalkanRetur'])
     ->name('retur.batal');
@@ -133,7 +145,9 @@ Route::middleware('auth')->group(function () {
     
     // Lap Barang Keluar
     Route::get('/laporan/barang-keluar', [LapBarangKeluarController::class, 'index'])
-    ->name('laporan.barang_keluar.index');
+        ->name('laporan.barang_keluar.index');
+    Route::get('/laporan/barang-keluar/cetak', [LapBarangKeluarController::class, 'cetak'])
+        ->name('laporan.barang_keluar.cetak');
     
 
     // Pastikan ada ->name('profile.index') di akhir

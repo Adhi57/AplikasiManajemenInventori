@@ -12,15 +12,44 @@ use App\Models\DetailLapBarangKeluar;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PengirimanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pengirimans = Pengiriman::with(['suratJalan.pelanggan'])
-            ->latest()
-            ->paginate(10);
-        return view('pengiriman.index', compact('pengirimans'));
+        $query = Pengiriman::with(['suratJalan.pelanggan'])
+            ->latest();
+
+        // Filter by status
+        if ($request->status) {
+            $query->where('status_pengiriman', $request->status);
+        }
+
+        // Search by SJ ID or pelanggan name
+        if ($request->search) {
+            $query->where(function($q) use ($request) {
+                $q->where('sj_id', 'like', "%{$request->search}%")
+                  ->orWhere('nama_driver', 'like', "%{$request->search}%")
+                  ->orWhere('no_polisi', 'like', "%{$request->search}%")
+                  ->orWhereHas('suratJalan.pelanggan', function($sub) use ($request) {
+                      $sub->where('nama_pelanggan', 'like', "%{$request->search}%");
+                  });
+            });
+        }
+
+        $pengirimans = $query->paginate(10);
+
+        // Status counts for summary cards
+        $statusCounts = Pengiriman::selectRaw("
+            COUNT(*) as total,
+            SUM(CASE WHEN status_pengiriman = 'Menunggu' THEN 1 ELSE 0 END) as menunggu,
+            SUM(CASE WHEN status_pengiriman = 'Dalam Perjalanan' THEN 1 ELSE 0 END) as dalam_perjalanan,
+            SUM(CASE WHEN status_pengiriman = 'Terkirim' THEN 1 ELSE 0 END) as terkirim,
+            SUM(CASE WHEN status_pengiriman = 'Dibatalkan' THEN 1 ELSE 0 END) as dibatalkan
+        ")->first();
+
+        return view('pengiriman.index', compact('pengirimans', 'statusCounts'));
     }
 
     public function create()
@@ -47,18 +76,30 @@ class PengirimanController extends Controller
             'tanggal_sampai' => 'nullable|date|after_or_equal:tanggal_pengiriman',
         ]);
 
+        // Verify the SJ is approved before creating pengiriman
+        $suratJalan = SuratJalan::where('sj_id', $request->sj_id)->first();
+        if (!$suratJalan || $suratJalan->status !== 'Disetujui') {
+            return redirect()->back()->with('error', 'Surat Jalan harus berstatus "Disetujui" sebelum membuat pengiriman.');
+        }
+
         Pengiriman::create($request->all());
         return redirect()->route('pengiriman.index')->with('success', 'Data pengiriman berhasil disimpan!');
     }
 
     public function show(Pengiriman $pengiriman)
     {
-        $pengiriman->load('suratJalan.pelanggan');
+        $pengiriman->load(['suratJalan.pelanggan', 'suratJalan.details.barang', 'suratJalan.user']);
         return view('pengiriman.show', compact('pengiriman'));
     }
 
     public function update(Request $request, Pengiriman $pengiriman)
     {
+        // Verify the linked SJ is still approved
+        $suratJalan = SuratJalan::where('sj_id', $pengiriman->sj_id)->first();
+        if (!$suratJalan || $suratJalan->status !== 'Disetujui') {
+            return redirect()->back()->with('error', 'Surat Jalan terkait harus berstatus "Disetujui" untuk memperbarui pengiriman.');
+        }
+
         $request->validate([
             'no_polisi' => 'required|string|max:15',
             'nama_kendaraan' => 'required|string|max:100',
@@ -84,7 +125,7 @@ class PengirimanController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-        \Log::info('Masuk updateStatus controller', ['id' => $id, 'input' => $request->all()]);
+        Log::info('Masuk updateStatus controller', ['id' => $id, 'input' => $request->all()]);
 
         DB::beginTransaction();
         try {
@@ -96,7 +137,7 @@ class PengirimanController extends Controller
             $pengiriman->save();
 
             if ($status === 'Terkirim') {
-                \Log::info("Memanggil kurangiStokFEFO...");
+                Log::info("Memanggil kurangiStokFEFO...");
                 $this->kurangiStokFEFO($pengiriman);
                 $this->buatLaporanBarangKeluar($pengiriman);
             }
@@ -106,7 +147,7 @@ class PengirimanController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Gagal updateStatus: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            Log::error('Gagal updateStatus: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return back()->with('error', $e->getMessage());
         }
     }
@@ -114,7 +155,7 @@ class PengirimanController extends Controller
     // ================= FEFO (stok keluar berdasarkan expired paling cepat) =====================
     public function kurangiStokFEFO(Pengiriman $pengiriman)
     {
-        \Log::info('=== FEFO DIJALANKAN ===', [
+        Log::info('=== FEFO DIJALANKAN ===', [
             'pengiriman_id' => $pengiriman->pengiriman_id,
             'sj_id' => $pengiriman->sj_id
         ]);
@@ -156,7 +197,7 @@ class PengirimanController extends Controller
     protected function buatLaporanBarangKeluar(Pengiriman $pengiriman)
     {
         if (LapBarangKeluar::where('pengiriman_id', $pengiriman->pengiriman_id)->exists()) {
-            \Log::info("Laporan keluar sudah ada untuk pengiriman {$pengiriman->pengiriman_id}");
+            Log::info("Laporan keluar sudah ada untuk pengiriman {$pengiriman->pengiriman_id}");
             return;
         }
 
@@ -164,7 +205,7 @@ class PengirimanController extends Controller
 
         $totalBarang = 0;
         foreach ($sj->details as $detail) {
-            $harga = $detail->barang->harga_jual ?? 0;
+            $harga = $detail->harga_satuan ?? 0;
             $totalBarang += ($detail->quantity * $harga);
         }    
 
@@ -183,15 +224,16 @@ class PengirimanController extends Controller
         ]);
 
         foreach ($pengiriman->suratJalan->details as $detail) {
+            $hargaSatuan = $detail->harga_satuan ?? 0;
             DetailLapBarangKeluar::create([
                 'lap_keluar_id' => $lap->lap_keluar_id,
                 'kode_barang' => $detail->kode_barang,
                 'jumlah_keluar' => $detail->quantity,
-                'harga_jual' => $detail->barang->harga_jual ?? 0,
-                'subtotal' => $detail->quantity * ($detail->barang->harga_jual ?? 0),
+                'harga_jual' => $hargaSatuan,
+                'subtotal' => $detail->quantity * $hargaSatuan,
             ]);
         }
 
-        \Log::info("Laporan barang keluar dibuat otomatis untuk pengiriman {$pengiriman->pengiriman_id}");
+        Log::info("Laporan barang keluar dibuat otomatis untuk pengiriman {$pengiriman->pengiriman_id}");
     }
 }

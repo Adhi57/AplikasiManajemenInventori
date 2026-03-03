@@ -3,156 +3,192 @@
 @section('page-title', 'Detail Tracking Kadaluarsa')
 
 @section('content')
+    <div class="space-y-6">
 
-<div class="min-h-screen bg-gray-50 p-6">
-    <div class="max-w-4xl mx-auto bg-white shadow-xl rounded-xl p-8 border border-gray-200">
-
-        {{-- Header Barang --}}
+        {{-- HEADER --}}
         @php
             $barang = $stok->first()->barang;
         @endphp
 
-        <div class="mb-6 border-b pb-4">
-            <h1 class="text-2xl font-bold text-gray-800">{{ $barang->nama_barang }}</h1>
-            <p class="text-sm text-gray-500">Kode Barang: {{ $stok->first()->kode_barang }}</p>
+        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+            <div>
+                <div class="flex items-center gap-2 mb-1">
+                    <a href="{{ route('tracking_kadaluarsa.index') }}" class="text-gray-400 hover:text-gray-600 transition">
+                        <i class="fa-solid fa-arrow-left text-sm"></i>
+                    </a>
+                    <span class="text-xs text-gray-400 font-mono">{{ $stok->first()->kode_barang }}</span>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900">{{ $barang->nama_barang }}</h1>
+                <p class="text-sm text-gray-500 mt-1">Detail batch kadaluarsa untuk produk ini.</p>
+            </div>
+            <a href="{{ route('tracking_kadaluarsa.index') }}"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200 transition">
+                <i class="fa-solid fa-arrow-left text-xs"></i> Kembali
+            </a>
         </div>
 
-        {{-- Grafik --}}
-        <div class="mb-10">
-            <h2 class="text-lg font-semibold text-gray-800 mb-3">Grafik Sisa Hari Kadaluarsa</h2>
-            <div class="bg-gray-100 p-4 rounded-lg border shadow-inner">
+        {{-- CHART --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+            <div class="flex items-center gap-2 mb-4">
+                <div class="w-2 h-5 bg-amber-500 rounded-full"></div>
+                <h2 class="font-semibold text-gray-800">Grafik Sisa Hari Kadaluarsa</h2>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
                 <canvas id="expiryChart" height="110"></canvas>
             </div>
         </div>
 
-        {{-- Table Batch --}}
-        <h2 class="text-lg font-semibold text-gray-800 mb-3">Daftar Batch Kadaluarsa</h2>
+        {{-- BATCH TABLE --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+            <div class="flex items-center gap-2 mb-4">
+                <div class="w-2 h-5 bg-red-500 rounded-full"></div>
+                <h2 class="font-semibold text-gray-800">Daftar Batch Kadaluarsa</h2>
+                <span class="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded-full">{{ $stok->count() }}
+                    batch</span>
+            </div>
 
-        <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-md">
-            <table class="w-full text-sm text-gray-700">
-                <thead>
-                    <tr class="bg-red-600 text-white uppercase text-xs font-semibold">
-                        <th class="p-4 text-left">Tanggal Kadaluarsa</th>
-                        <th class="p-4 text-center">Sisa Hari</th>
-                        <th class="p-4 text-center">Stok (Karton)</th>
-                        <th class="p-4 text-center">Total (PCS)</th>
-                        <th class="p-4 text-center">Aksi</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @foreach($stok as $s)
-
-                        @php
-                            $expiryDate = strtotime($s->tgl_kadaluarsa);
-                            $daysLeft = floor(($expiryDate - time()) / (60*60*24));
-                            $isi = $s->barang->jml_barang_per_karton ?? 1;
-
-                            $rowClass = $daysLeft < 30 ? 'bg-red-100 text-red-700 font-semibold'
-                                        : ($daysLeft < 60 ? 'bg-yellow-100 text-yellow-700 font-medium'
-                                        : '');
-                        @endphp
-
-                        <tr class="border-b border-gray-100 hover:bg-red-50 transition {{ $rowClass }}">
-                            <td class="p-4">{{ date('d M Y', $expiryDate) }}</td>
-
-                            <td class="p-4 text-center">{{ $daysLeft }} hari</td>
-
-                            <td class="p-4 text-center font-bold text-red-700">
-                                {{ number_format($s->jumlah_stok, 2, ',', '.') }}
-                            </td>
-
-                            <td class="p-4 text-center">
-                                {{ number_format($s->jumlah_stok * $isi, 0, ',', '.') }} pcs
-                            </td>
-
-                            <td class="p-4 text-center">
-
-                                {{-- Hapus --}}
-                                <form action="{{ route('tracking_kadaluarsa.destroy', $s->id) }}"
-                                      method="POST"
-                                      onsubmit="return confirm('Hapus batch stok ini? Data tidak dapat dipulihkan.')">
-                                    @csrf
-                                    @method('DELETE')
-
-                                    <button class="px-3 py-1.5 text-xs bg-red-600 text-white rounded-lg shadow hover:bg-red-700">
-                                        Hapus
-                                    </button>
-                                </form>
-
-                            </td>
+            <div class="overflow-x-auto rounded-xl border border-gray-100">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                Kadaluarsa</th>
+                            <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                Sisa Hari</th>
+                            <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                Stok (Karton)</th>
+                            <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                Total (PCS)</th>
+                            <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                Aksi</th>
                         </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50">
+                        @foreach($stok as $s)
+                            @php
+                                $expiryDate = strtotime($s->tgl_kadaluarsa);
+                                $daysLeft = floor(($expiryDate - time()) / (60 * 60 * 24));
+                                $isi = $s->barang->jml_barang_per_karton ?? 1;
 
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+                                $isExpired = $daysLeft < 0;
+                                $isCritical = $daysLeft >= 0 && $daysLeft < 30;
+                                $isWarning = $daysLeft >= 30 && $daysLeft < 60;
+                                $rowBg = $isExpired ? 'bg-gray-50' : ($isCritical ? 'bg-red-50' : ($isWarning ? 'bg-amber-50' : ''));
+                            @endphp
 
-        {{-- Tombol Kembali --}}
-        <div class="mt-6">
-            <a href="{{ route('tracking_kadaluarsa.index') }}"
-               class="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg shadow hover:bg-gray-700">
-                Kembali
-            </a>
+                            <tr class="hover:bg-blue-50/30 transition-colors {{ $rowBg }}">
+                                <td class="px-4 py-3 font-medium text-gray-800">{{ date('d M Y', $expiryDate) }}</td>
+
+                                <td class="px-4 py-3 text-center">
+                                    @if($isExpired)
+                                        <span
+                                            class="px-2.5 py-1 bg-gray-200 text-gray-600 text-xs font-bold rounded-full">Expired</span>
+                                    @elseif($isCritical)
+                                        <span
+                                            class="px-2.5 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full">{{ $daysLeft }}
+                                            hari</span>
+                                    @elseif($isWarning)
+                                        <span
+                                            class="px-2.5 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full">{{ $daysLeft }}
+                                            hari</span>
+                                    @else
+                                        <span
+                                            class="px-2.5 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">{{ $daysLeft }}
+                                            hari</span>
+                                    @endif
+                                </td>
+
+                                <td class="px-4 py-3 text-center">
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-1 bg-emerald-50 text-emerald-700 font-bold text-sm rounded-lg">
+                                        {{ number_format($s->jumlah_stok, 2, ',', '.') }}
+                                    </span>
+                                </td>
+
+                                <td class="px-4 py-3 text-center font-semibold text-gray-800">
+                                    {{ number_format($s->jumlah_stok * $isi, 0, ',', '.') }} pcs
+                                </td>
+
+                                <td class="px-4 py-3 text-center">
+                                    <form action="{{ route('tracking_kadaluarsa.destroy', $s->id) }}" method="POST"
+                                        onsubmit="return confirm('Hapus batch stok ini? Data tidak dapat dipulihkan.')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button
+                                            class="inline-flex items-center gap-1 px-3 py-1.5 text-xs bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors shadow-sm">
+                                            <i class="fa-solid fa-trash text-[10px]"></i> Hapus
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
 
     </div>
-</div>
 
+    {{-- CHART.JS --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const expiryLabels = [
+            @foreach($stok as $s)
+                "{{ date('d M Y', strtotime($s->tgl_kadaluarsa)) }}",
+            @endforeach
+        ];
 
-{{-- =============== CHART.JS SCRIPT =============== --}}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        const expiryDays = [
+            @foreach($stok as $s)
+                {{ floor((strtotime($s->tgl_kadaluarsa) - time()) / 86400) }},
+            @endforeach
+        ];
 
-<script>
-    const expiryLabels = [
-        @foreach($stok as $s)
-            "{{ date('d M Y', strtotime($s->tgl_kadaluarsa)) }}",
-        @endforeach
-    ];
+        const barColors = expiryDays.map(day => {
+            if (day < 0) return "rgba(156, 163, 175, 0.7)";
+            if (day < 30) return "rgba(239, 68, 68, 0.85)";
+            if (day < 60) return "rgba(245, 158, 11, 0.85)";
+            return "rgba(16, 185, 129, 0.85)";
+        });
 
-    const expiryDays = [
-        @foreach($stok as $s)
-            {{ floor((strtotime($s->tgl_kadaluarsa) - time()) / 86400) }},
-        @endforeach
-    ];
-
-    const barColors = expiryDays.map(day => {
-        if (day < 30) return "rgba(220, 38, 38, 0.9)";      // Merah
-        if (day < 60) return "rgba(234, 179, 8, 0.9)";      // Kuning
-        return "rgba(22, 163, 74, 0.9)";                    // Hijau
-    });
-
-    const ctx = document.getElementById('expiryChart').getContext('2d');
-
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: expiryLabels,
-            datasets: [{
-                label: 'Sisa Hari',
-                data: expiryDays,
-                backgroundColor: barColors,
-                borderRadius: 6,
-                barThickness: 40,
-            }]
-        },
-        options: {
-            plugins: {
-                legend: { display: false },
+        new Chart(document.getElementById('expiryChart'), {
+            type: 'bar',
+            data: {
+                labels: expiryLabels,
+                datasets: [{
+                    label: 'Sisa Hari',
+                    data: expiryDays,
+                    backgroundColor: barColors,
+                    borderRadius: 6,
+                    maxBarThickness: 40,
+                    borderSkipped: false,
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { color: "#374151" },
-                    grid: { color: "#e5e7eb" }
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        cornerRadius: 8,
+                        padding: 10,
+                        displayColors: false,
+                    }
                 },
-                x: {
-                    ticks: { color: "#374151" },
-                    grid: { display: false }
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#f1f5f9', drawBorder: false },
+                        ticks: { font: { size: 11 }, color: '#94a3b8' },
+                        border: { display: false }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 11, weight: '500' }, color: '#374151' }
+                    }
                 }
             }
-        }
-    });
-</script>
+        });
+    </script>
 
 @endsection

@@ -33,6 +33,6 @@ class DetailLapBarangMasuk extends Model
     // Relasi ke barang
     public function barang()
     {
-        return $this->belongsTo(Barang::class, 'kode_barang', 'kode_barang');
+        return $this->belongsTo(Barang::class, 'kode_barang', 'kode_barang')->withTrashed();
     }
 }

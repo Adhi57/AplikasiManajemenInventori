@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ReturBarang;
 use App\Models\PurchaseOrder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ReturBarangController extends Controller
 {
@@ -15,8 +16,7 @@ class ReturBarangController extends Controller
     {
         $search = $request->get('search', null);
         $status = $request->get('status', null);
-
-        $query = ReturBarang::with('purchaseOrder');
+        $query = ReturBarang::with(['purchaseOrder', 'barang']);
 
         // Filter pencarian berdasarkan kode barang atau po_id
         if ($search) {
@@ -70,7 +70,7 @@ class ReturBarangController extends Controller
 public function konfirmasiSesuai($retur_id)
 {
     try {
-        $retur = \App\Models\ReturBarang::findOrFail($retur_id);
+        $retur = ReturBarang::findOrFail($retur_id);
 
         if ($retur->status_retur === 'Selesai') {
             return response()->json([
@@ -88,7 +88,7 @@ public function konfirmasiSesuai($retur_id)
             'message' => 'Retur berhasil dikonfirmasi sebagai Disetujui.'
         ]);
     } catch (\Exception $e) {
-        \Log::error('Gagal konfirmasi retur: ' . $e->getMessage());
+        Log::error('Gagal konfirmasi retur: ' . $e->getMessage());
         return response()->json([
             'success' => false,
             'message' => 'Terjadi kesalahan saat mengonfirmasi retur.'
@@ -118,7 +118,7 @@ public function batalkanRetur($id)
         ]);
 
     } catch (\Exception $e) {
-        \Log::error('Gagal batalkan retur: ' . $e->getMessage());
+        Log::error('Gagal batalkan retur: ' . $e->getMessage());
         return response()->json([
             'success' => false,
             'message' => 'Terjadi kesalahan saat membatalkan retur.'

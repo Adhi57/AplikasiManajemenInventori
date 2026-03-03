@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 
 class PurchaseOrdersController extends Controller
 {
@@ -144,7 +145,7 @@ class PurchaseOrdersController extends Controller
             // 7. ROLLBACK JIKA ADA KEGAGALAN
             DB::rollBack();
             
-            \log::error('Gagal Menyimpan Purchase Order:', ['error' => $e->getMessage(), 'request' => $request->all()]);
+            Log::error('Gagal Menyimpan Purchase Order:', ['error' => $e->getMessage(), 'request' => $request->all()]);
 
             return redirect()->back()->withInput()->with('error', 'Gagal membuat Permintaan Pembelian. Silakan coba lagi. ' . $e->getMessage());
         }
@@ -166,7 +167,8 @@ class PurchaseOrdersController extends Controller
     }
     public function index()
     {
-        $purchaseOrders = PurchaseOrder::with('supplier')
+        $purchaseOrders = PurchaseOrder::with(['supplier', 'user'])
+            ->withCount('details')
             ->where('status_po', 'Disetujui')
             ->latest()
             ->get();

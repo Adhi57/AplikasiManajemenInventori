@@ -1,0 +1,11 @@
+﻿Purchase_Order_Detail:
+  detail_po_id (varchar(50)) NO PRI
+  po_id (varchar(25)) NO MUL
+  kode_barang (varchar(50)) NO MUL
+  quantity (int) YES 
+  harga_satuan (decimal(15,2)) NO 
+  satuan (enum('pcs','renteng','pack','karton')) NO 
+  tgl_kadaluarsa_batch (datetime) YES 
+  created_at (timestamp) YES 
+  updated_at (timestamp) YES 
+
