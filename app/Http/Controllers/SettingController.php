@@ -56,12 +56,14 @@ class SettingController extends Controller
     public function updateGeneralSettings(Request $request)
     {
         $request->validate([
-            'ppn_persen' => 'required|numeric|min:0|max:100',
-            'mata_uang'  => 'required|string|max:10',
+            'ppn_persen'       => 'required|numeric|min:0|max:100',
+            'mata_uang'        => 'required|string|max:10',
+            'kapasitas_gudang' => 'required|numeric|min:1',
         ]);
 
         Setting::set('ppn_persen', $request->ppn_persen);
         Setting::set('mata_uang', $request->mata_uang);
+        Setting::set('kapasitas_gudang', $request->kapasitas_gudang);
 
         return back()->with('success', 'Pengaturan umum berhasil diperbarui!');
     }

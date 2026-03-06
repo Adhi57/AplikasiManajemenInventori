@@ -54,6 +54,7 @@ Route::middleware('auth')->group(function () {
     // Stock opname index & update
     Route::get('/stock_opname', [StokOpnameController::class, 'index'])->name('stock.opname.index');
     Route::post('/stock_opname/update', [StokOpnameController::class, 'update'])->name('stock.opname.update');
+    Route::get('/stock_opname/riwayat', [StokOpnameController::class, 'riwayat'])->name('stock.opname.riwayat');
     
     
     

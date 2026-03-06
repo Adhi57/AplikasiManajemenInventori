@@ -8,15 +8,26 @@ use App\Models\StokBarang;
 
 class StokOpnameController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $stok = StokBarang::with('barang')->get();
+        $search = $request->input('search');
+
+        $stok = StokBarang::with('barang')
+            ->when($search, function ($query, $search) {
+                $query->where('kode_barang', 'like', "%{$search}%")
+                    ->orWhereHas('barang', function ($q) use ($search) {
+                        $q->where('nama_barang', 'like', "%{$search}%");
+                    });
+            })
+            ->orderBy('kode_barang')
+            ->get();
+
         $logs = stokOpnameLogs::with(['stok.barang', 'user'])
                     ->latest()
-                    ->take(20) 
+                    ->take(5)
                     ->get();
 
-        return view('stok_opname.index', compact('stok', 'logs'));
+        return view('stok_opname.index', compact('stok', 'logs', 'search'));
     }
 
     public function update(Request $request)
@@ -59,6 +70,29 @@ class StokOpnameController extends Controller
         ]);
 
         return back()->with('success', 'Stock opname berhasil diperbarui & dicatat!');
+    }
+
+    public function riwayat(Request $request)
+    {
+        $search = $request->input('search');
+
+        $logs = stokOpnameLogs::with(['stok.barang', 'user'])
+            ->when($search, function ($query, $search) {
+                $query->where('alasan_update', 'like', "%{$search}%")
+                    ->orWhereHas('stok', function ($q) use ($search) {
+                        $q->where('kode_barang', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('stok.barang', function ($q) use ($search) {
+                        $q->where('nama_barang', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('nama_lengkap', 'like', "%{$search}%");
+                    });
+            })
+            ->latest()
+            ->paginate(15);
+
+        return view('stok_opname.riwayat', compact('logs', 'search'));
     }
 }
 

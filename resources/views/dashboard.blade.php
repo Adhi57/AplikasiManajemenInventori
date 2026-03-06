@@ -34,9 +34,10 @@
             [
                 'title' => 'Stok Gudang',
                 'value' => $jumlahKarton,
-                'suffix' => 'Karton',
+                'suffix' => 'dari ' . number_format(floatval($appSettings['kapasitas_gudang'] ?? 1000), 0, ',', '.') . ' Karton',
                 'icon' => 'fa-cubes',
                 'gradient' => 'from-emerald-500 to-emerald-700',
+                'capacity' => floatval($appSettings['kapasitas_gudang'] ?? 1000),
             ],
             [
                 'title' => 'Stok Rusak',
@@ -85,6 +86,18 @@
                     </div>
                     <p class="text-2xl font-extrabold tracking-tight">{{ $stat['value'] }}</p>
                     <p class="text-xs text-white/60 mt-1">{{ $stat['suffix'] }}</p>
+                    @if(isset($stat['capacity']))
+                        @php
+                            $capPct = $stat['capacity'] > 0 ? min(round(($stat['value'] / $stat['capacity']) * 100, 1), 100) : 0;
+                        @endphp
+                        <div class="mt-3">
+                            <div class="w-full bg-white/20 rounded-full h-2 overflow-hidden">
+                                <div class="h-2 rounded-full transition-all duration-700 {{ $capPct >= 90 ? 'bg-red-300' : ($capPct >= 70 ? 'bg-amber-300' : 'bg-white/70') }}"
+                                    style="width: {{ $capPct }}%"></div>
+                            </div>
+                            <p class="text-[10px] text-white/50 mt-1">Kapasitas terpakai: {{ $capPct }}%</p>
+                        </div>
+                    @endif
                 </div>
             </div>
         @endforeach
@@ -356,8 +369,27 @@
                             <p class="text-xs text-gray-500 mb-0.5">Total Stok Gudang</p>
                             <p class="text-2xl font-bold text-gray-900">
                                 {{ $jumlahKarton + $jumlahKartonRusak }}
-                                <span class="text-sm font-normal text-gray-400">Karton</span>
+                                <span class="text-sm font-normal text-gray-400">/
+                                    {{ number_format(floatval($appSettings['kapasitas_gudang'] ?? 1000), 0, ',', '.') }}
+                                    Karton</span>
                             </p>
+                            @php
+                                $totalAll = $jumlahKarton + $jumlahKartonRusak;
+                                $kapMax = floatval($appSettings['kapasitas_gudang'] ?? 1000);
+                                $pctUsed = $kapMax > 0 ? min(round(($totalAll / $kapMax) * 100, 1), 100) : 0;
+                                $barColor = $pctUsed >= 90 ? 'bg-red-500' : ($pctUsed >= 70 ? 'bg-amber-500' : 'bg-emerald-500');
+                                $pctColor = $pctUsed >= 90 ? 'text-red-600' : ($pctUsed >= 70 ? 'text-amber-600' : 'text-emerald-600');
+                            @endphp
+                            <div class="mt-2">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-[11px] text-gray-400">Kapasitas Gudang</span>
+                                    <span class="text-xs font-bold {{ $pctColor }}">{{ $pctUsed }}%</span>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                                    <div class="{{ $barColor }} h-2 rounded-full transition-all duration-700 ease-out"
+                                        style="width: {{ $pctUsed }}%"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -482,7 +514,7 @@
                             @if($loop->iteration <= 3)
                                 <div
                                     class="w-8 h-8 flex items-center justify-center rounded-lg text-sm font-bold
-                                                                                                                                                    {{ $loop->iteration == 1 ? 'bg-amber-100 text-amber-700' : ($loop->iteration == 2 ? 'bg-gray-100 text-gray-600' : 'bg-orange-100 text-orange-600') }}">
+                                                                                                                                                                {{ $loop->iteration == 1 ? 'bg-amber-100 text-amber-700' : ($loop->iteration == 2 ? 'bg-gray-100 text-gray-600' : 'bg-orange-100 text-orange-600') }}">
                                     {{ $loop->iteration }}
                                 </div>
                             @else
@@ -784,266 +816,266 @@
         };
 
         // =============================================
-            // CHART 1: Tren Pergerakan Barang (Combined Bar)
-            // =============================================
-            const ctxPergerakan = document.getElementById('pergerakanBarangChart');
-            if (ctxPergerakan) {
-                const masukData = @json($barangMasuk->toArray());
-                const keluarData = @json($barangKeluar->toArray());
-                const allMonths = [...new Set([...Object.keys(masukData), ...Object.keys(keluarData)])].sort((a,b) => a-b);
+        // CHART 1: Tren Pergerakan Barang (Combined Bar)
+        // =============================================
+        const ctxPergerakan = document.getElementById('pergerakanBarangChart');
+        if (ctxPergerakan) {
+            const masukData = @json($barangMasuk->toArray());
+            const keluarData = @json($barangKeluar->toArray());
+            const allMonths = [...new Set([...Object.keys(masukData), ...Object.keys(keluarData)])].sort((a, b) => a - b);
 
-                new Chart(ctxPergerakan, {
-                    type: 'bar',
-                    data: {
-                        labels: allMonths.map(m => bulanID[m]),
-                        datasets: [
-                            {
-                                label: 'Barang Masuk',
-                                data: allMonths.map(m => masukData[m] || 0),
-                                backgroundColor: 'rgba(59, 130, 246, 0.85)',
-                                borderRadius: 5,
-                                maxBarThickness: 28,
-                            },
-                            {
-                                label: 'Barang Keluar',
-                                data: allMonths.map(m => keluarData[m] || 0),
-                                backgroundColor: 'rgba(239, 68, 68, 0.85)',
-                                borderRadius: 5,
-                                maxBarThickness: 28,
-                            }
-                        ]
-                    },
-                    options: {
-                        ...chartDefaults,
-                        plugins: {
-                            ...chartDefaults.plugins,
-                            legend: { display: true, position: 'top', align: 'end', labels: { usePointStyle: true, pointStyle: 'rectRounded', boxWidth: 8, font: { size: 11, weight: '500' } } }
-                        }
-                    }
-                });
-            }
-
-            // =============================================
-            // CHART 2: Kualitas Penerimaan (Doughnut)
-            // =============================================
-            const ctxKualitas = document.getElementById('kualitasPenerimaanChart');
-            if (ctxKualitas) {
-                const totalBaik = {{ $totalMasukBulanIni }};
-                const totalRusak = {{ $totalRusakBulanIni ?? 0 }};
-                const totalAll = totalBaik + totalRusak;
-                const pctBaik = totalAll > 0 ? ((totalBaik / totalAll) * 100).toFixed(1) : 0;
-
-                new Chart(ctxKualitas, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Diterima Baik', 'Diterima Rusak'],
-                        datasets: [{
-                            data: [totalBaik, totalRusak],
-                            backgroundColor: ['#3b82f6', '#ef4444'],
-                            borderWidth: 0,
-                            cutout: '72%',
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: { backgroundColor: '#1e293b', cornerRadius: 8, padding: 10 }
-                        }
-                    },
-                    plugins: [{
-                        id: 'centerText',
-                        afterDraw(chart) {
-                            const { ctx, width, height } = chart;
-                            ctx.save();
-                            ctx.font = 'bold 20px Inter, sans-serif';
-                            ctx.fillStyle = '#1e293b';
-                            ctx.textAlign = 'center';
-                            ctx.textBaseline = 'middle';
-                            ctx.fillText(pctBaik + '%', width / 2, height / 2 - 6);
-                            ctx.font = '10px Inter, sans-serif';
-                            ctx.fillStyle = '#94a3b8';
-                            ctx.fillText('Baik', width / 2, height / 2 + 12);
-                            ctx.restore();
-                        }
-                    }]
-                });
-            }
-
-            // =============================================
-            // CHART 3: Distribusi Stok per Kategori (Horizontal Bar)
-            // =============================================
-            const ctxKategori = document.getElementById('stokKategoriChart');
-            if (ctxKategori) {
-                const kategoriData = @json($stokPerKategori);
-                const kategoriColors = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
-                new Chart(ctxKategori, {
-                    type: 'bar',
-                    data: {
-                        labels: kategoriData.map(i => i.kategori),
-                        datasets: [{
-                            label: 'Stok (Karton)',
-                            data: kategoriData.map(i => i.total_stok),
-                            backgroundColor: kategoriData.map((_, idx) => kategoriColors[idx % kategoriColors.length] + 'dd'),
+            new Chart(ctxPergerakan, {
+                type: 'bar',
+                data: {
+                    labels: allMonths.map(m => bulanID[m]),
+                    datasets: [
+                        {
+                            label: 'Barang Masuk',
+                            data: allMonths.map(m => masukData[m] || 0),
+                            backgroundColor: 'rgba(59, 130, 246, 0.85)',
                             borderRadius: 5,
-                            borderSkipped: false,
-                            maxBarThickness: 36,
-                        }]
-                    },
-                    options: {
-                        ...chartDefaults,
-                        indexAxis: 'y',
-                        plugins: {
-                            ...chartDefaults.plugins,
-                            legend: { display: false },
-                            tooltip: {
-                                ...chartDefaults.plugins.tooltip,
-                                callbacks: {
-                                    label: (ctx) => ctx.parsed.x.toLocaleString('id-ID') + ' Karton'
-                                }
-                            }
+                            maxBarThickness: 28,
                         },
-                        scales: {
-                            x: {
-                                grid: { color: '#f1f5f9', drawBorder: false },
-                                ticks: { font: { size: 11 }, color: '#94a3b8' },
-                                border: { display: false }
-                            },
-                            y: {
-                                grid: { display: false },
-                                ticks: { font: { size: 11, weight: '500' }, color: '#374151' }
-                            }
+                        {
+                            label: 'Barang Keluar',
+                            data: allMonths.map(m => keluarData[m] || 0),
+                            backgroundColor: 'rgba(239, 68, 68, 0.85)',
+                            borderRadius: 5,
+                            maxBarThickness: 28,
                         }
+                    ]
+                },
+                options: {
+                    ...chartDefaults,
+                    plugins: {
+                        ...chartDefaults.plugins,
+                        legend: { display: true, position: 'top', align: 'end', labels: { usePointStyle: true, pointStyle: 'rectRounded', boxWidth: 8, font: { size: 11, weight: '500' } } }
                     }
-                });
-            }
+                }
+            });
+        }
 
-            // =============================================
-            // CHART 4: Status Pengiriman (Doughnut)
-            // =============================================
-            const ctxPengiriman = document.getElementById('pengirimanChart');
-            if (ctxPengiriman) {
-                const statusData = @json($statusPengiriman);
-                const statusLabels = Object.keys(statusData);
-                const statusValues = Object.values(statusData);
-                const statusTotal = statusValues.reduce((a, b) => a + b, 0);
-                const statusColorMap = { 'Menunggu': '#f59e0b', 'Dalam Perjalanan': '#3b82f6', 'Terkirim': '#10b981', 'Dibatalkan': '#ef4444' };
-                const statusColors = statusLabels.map(l => statusColorMap[l] || '#94a3b8');
+        // =============================================
+        // CHART 2: Kualitas Penerimaan (Doughnut)
+        // =============================================
+        const ctxKualitas = document.getElementById('kualitasPenerimaanChart');
+        if (ctxKualitas) {
+            const totalBaik = {{ $totalMasukBulanIni }};
+            const totalRusak = {{ $totalRusakBulanIni ?? 0 }};
+            const totalAll = totalBaik + totalRusak;
+            const pctBaik = totalAll > 0 ? ((totalBaik / totalAll) * 100).toFixed(1) : 0;
 
-                new Chart(ctxPengiriman, {
-                    type: 'doughnut',
-                    data: {
-                        labels: statusLabels,
-                        datasets: [{
-                            data: statusValues,
-                            backgroundColor: statusColors,
-                            borderWidth: 0,
-                            cutout: '72%',
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: { backgroundColor: '#1e293b', cornerRadius: 8, padding: 10 }
-                        }
-                    },
-                    plugins: [{
-                        id: 'centerTextPengiriman',
-                        afterDraw(chart) {
-                            const { ctx, width, height } = chart;
-                            ctx.save();
-                            ctx.font = 'bold 22px Inter, sans-serif';
-                            ctx.fillStyle = '#1e293b';
-                            ctx.textAlign = 'center';
-                            ctx.textBaseline = 'middle';
-                            ctx.fillText(statusTotal, width / 2, height / 2 - 6);
-                            ctx.font = '10px Inter, sans-serif';
-                            ctx.fillStyle = '#94a3b8';
-                            ctx.fillText('Total', width / 2, height / 2 + 12);
-                            ctx.restore();
-                        }
+            new Chart(ctxKualitas, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Diterima Baik', 'Diterima Rusak'],
+                    datasets: [{
+                        data: [totalBaik, totalRusak],
+                        backgroundColor: ['#3b82f6', '#ef4444'],
+                        borderWidth: 0,
+                        cutout: '72%',
                     }]
-                });
-            }
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { backgroundColor: '#1e293b', cornerRadius: 8, padding: 10 }
+                    }
+                },
+                plugins: [{
+                    id: 'centerText',
+                    afterDraw(chart) {
+                        const { ctx, width, height } = chart;
+                        ctx.save();
+                        ctx.font = 'bold 20px Inter, sans-serif';
+                        ctx.fillStyle = '#1e293b';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(pctBaik + '%', width / 2, height / 2 - 6);
+                        ctx.font = '10px Inter, sans-serif';
+                        ctx.fillStyle = '#94a3b8';
+                        ctx.fillText('Baik', width / 2, height / 2 + 12);
+                        ctx.restore();
+                    }
+                }]
+            });
+        }
 
-            // =============================================
-            // CHART 5: Tren Omset Penjualan (Area Line)
-            // =============================================
-            const ctxOmset = document.getElementById('omsetChart');
-            if (ctxOmset) {
-                new Chart(ctxOmset, {
-                    type: 'line',
-                    data: {
-                        labels: @json(array_keys($omsetBulanan->toArray())).map(m => bulanID[m]),
-                        datasets: [{
-                            label: 'Omset (Rp)',
-                            data: @json(array_values($omsetBulanan->toArray())),
-                            borderColor: '#8b5cf6',
-                            backgroundColor: 'rgba(139, 92, 246, 0.08)',
-                            borderWidth: 2.5,
-                            fill: true,
-                            tension: 0.4,
-                            pointRadius: 5,
-                            pointBackgroundColor: '#8b5cf6',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2.5,
-                            pointHoverRadius: 7,
-                        }]
-                    },
-                    options: {
-                        ...chartDefaults,
-                        plugins: {
-                            ...chartDefaults.plugins,
-                            legend: { display: false },
-                            tooltip: {
-                                ...chartDefaults.plugins.tooltip,
-                                callbacks: {
-                                    label: (ctx) => 'Rp ' + ctx.parsed.y.toLocaleString('id-ID')
-                                }
+        // =============================================
+        // CHART 3: Distribusi Stok per Kategori (Horizontal Bar)
+        // =============================================
+        const ctxKategori = document.getElementById('stokKategoriChart');
+        if (ctxKategori) {
+            const kategoriData = @json($stokPerKategori);
+            const kategoriColors = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
+            new Chart(ctxKategori, {
+                type: 'bar',
+                data: {
+                    labels: kategoriData.map(i => i.kategori),
+                    datasets: [{
+                        label: 'Stok (Karton)',
+                        data: kategoriData.map(i => i.total_stok),
+                        backgroundColor: kategoriData.map((_, idx) => kategoriColors[idx % kategoriColors.length] + 'dd'),
+                        borderRadius: 5,
+                        borderSkipped: false,
+                        maxBarThickness: 36,
+                    }]
+                },
+                options: {
+                    ...chartDefaults,
+                    indexAxis: 'y',
+                    plugins: {
+                        ...chartDefaults.plugins,
+                        legend: { display: false },
+                        tooltip: {
+                            ...chartDefaults.plugins.tooltip,
+                            callbacks: {
+                                label: (ctx) => ctx.parsed.x.toLocaleString('id-ID') + ' Karton'
                             }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: '#f1f5f9', drawBorder: false },
+                            ticks: { font: { size: 11 }, color: '#94a3b8' },
+                            border: { display: false }
                         },
-                        scales: {
-                            ...chartDefaults.scales,
-                            y: {
-                                ...chartDefaults.scales.y,
-                                ticks: {
-                                    ...chartDefaults.scales.y.ticks,
-                                    callback: (value) => 'Rp ' + (value / 1000000).toFixed(1) + 'jt'
-                                }
+                        y: {
+                            grid: { display: false },
+                            ticks: { font: { size: 11, weight: '500' }, color: '#374151' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // =============================================
+        // CHART 4: Status Pengiriman (Doughnut)
+        // =============================================
+        const ctxPengiriman = document.getElementById('pengirimanChart');
+        if (ctxPengiriman) {
+            const statusData = @json($statusPengiriman);
+            const statusLabels = Object.keys(statusData);
+            const statusValues = Object.values(statusData);
+            const statusTotal = statusValues.reduce((a, b) => a + b, 0);
+            const statusColorMap = { 'Menunggu': '#f59e0b', 'Dalam Perjalanan': '#3b82f6', 'Terkirim': '#10b981', 'Dibatalkan': '#ef4444' };
+            const statusColors = statusLabels.map(l => statusColorMap[l] || '#94a3b8');
+
+            new Chart(ctxPengiriman, {
+                type: 'doughnut',
+                data: {
+                    labels: statusLabels,
+                    datasets: [{
+                        data: statusValues,
+                        backgroundColor: statusColors,
+                        borderWidth: 0,
+                        cutout: '72%',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { backgroundColor: '#1e293b', cornerRadius: 8, padding: 10 }
+                    }
+                },
+                plugins: [{
+                    id: 'centerTextPengiriman',
+                    afterDraw(chart) {
+                        const { ctx, width, height } = chart;
+                        ctx.save();
+                        ctx.font = 'bold 22px Inter, sans-serif';
+                        ctx.fillStyle = '#1e293b';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(statusTotal, width / 2, height / 2 - 6);
+                        ctx.font = '10px Inter, sans-serif';
+                        ctx.fillStyle = '#94a3b8';
+                        ctx.fillText('Total', width / 2, height / 2 + 12);
+                        ctx.restore();
+                    }
+                }]
+            });
+        }
+
+        // =============================================
+        // CHART 5: Tren Omset Penjualan (Area Line)
+        // =============================================
+        const ctxOmset = document.getElementById('omsetChart');
+        if (ctxOmset) {
+            new Chart(ctxOmset, {
+                type: 'line',
+                data: {
+                    labels: @json(array_keys($omsetBulanan->toArray())).map(m => bulanID[m]),
+                    datasets: [{
+                        label: 'Omset (Rp)',
+                        data: @json(array_values($omsetBulanan->toArray())),
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.08)',
+                        borderWidth: 2.5,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#8b5cf6',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2.5,
+                        pointHoverRadius: 7,
+                    }]
+                },
+                options: {
+                    ...chartDefaults,
+                    plugins: {
+                        ...chartDefaults.plugins,
+                        legend: { display: false },
+                        tooltip: {
+                            ...chartDefaults.plugins.tooltip,
+                            callbacks: {
+                                label: (ctx) => 'Rp ' + ctx.parsed.y.toLocaleString('id-ID')
+                            }
+                        }
+                    },
+                    scales: {
+                        ...chartDefaults.scales,
+                        y: {
+                            ...chartDefaults.scales.y,
+                            ticks: {
+                                ...chartDefaults.scales.y.ticks,
+                                callback: (value) => 'Rp ' + (value / 1000000).toFixed(1) + 'jt'
                             }
                         }
                     }
-                });
-            }
+                }
+            });
+        }
 
-            // =============================================
-            // Stok Donut Chart (Non-Head section)
-            // =============================================
-            const ctxStok = document.getElementById('stokDonutChart');
-            if (ctxStok) {
-                new Chart(ctxStok, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Stok Baik', 'Stok Rusak'],
-                        datasets: [{
-                            data: [{{ $jumlahKarton }}, {{ $jumlahKartonRusak }}],
-                            backgroundColor: ['#10b981', '#ef4444'],
-                            borderWidth: 0,
-                            cutout: '70%',
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: { backgroundColor: '#1e293b', cornerRadius: 8, padding: 10 }
-                        }
+        // =============================================
+        // Stok Donut Chart (Non-Head section)
+        // =============================================
+        const ctxStok = document.getElementById('stokDonutChart');
+        if (ctxStok) {
+            new Chart(ctxStok, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Stok Baik', 'Stok Rusak'],
+                    datasets: [{
+                        data: [{{ $jumlahKarton }}, {{ $jumlahKartonRusak }}],
+                        backgroundColor: ['#10b981', '#ef4444'],
+                        borderWidth: 0,
+                        cutout: '70%',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { backgroundColor: '#1e293b', cornerRadius: 8, padding: 10 }
                     }
-                });
-            }
-        </script>
+                }
+            });
+        }
+    </script>
 @endsection

@@ -7,6 +7,7 @@ use App\Models\StokBarang;
 use App\Models\Barang;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Setting;
 
 class StokBarangController extends Controller
 {
@@ -63,7 +64,7 @@ class StokBarangController extends Controller
         }
 
         // === Hitung kapasitas gudang ===
-        $kapasitasMaks = 500;
+        $kapasitasMaks = floatval(Setting::get('kapasitas_gudang', 1000));
         $totalStok = $group
             ? $stokBarangs->sum('total_karton')
             : $stokBarangs->sum('jumlah_stok');

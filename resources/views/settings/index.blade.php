@@ -37,8 +37,8 @@
                             </svg>
                         </div>
                     </div>
-                    <div class="px-6 sm:px-8 pb-5 -mt-8 relative z-10">
-                        <div class="flex items-end gap-4">
+                    <div class="px-6 sm:px-8 pb-5 -mt-6 relative z-10">
+                        <div class="flex items-end gap-4 mt-4">
                             <div
                                 class="w-16 h-16 bg-white rounded-2xl shadow-lg border-4 border-white flex items-center justify-center text-red-700 text-2xl shrink-0">
                                 <i class="fa-solid fa-gear"></i>
@@ -56,15 +56,15 @@
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-1.5 mb-6">
                 <div class="flex gap-1">
                     <button @click="activeTab = 'profil'" :class="activeTab === 'profil'
-                                ? 'bg-gradient-to-r from-red-700 to-red-800 text-white shadow-lg shadow-red-200'
-                                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'"
+                                            ? 'bg-gradient-to-r from-red-700 to-red-800 text-white shadow-lg shadow-red-200'
+                                            : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'"
                         class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-semibold text-sm transition-all duration-200">
                         <i class="fa-solid fa-building"></i>
                         <span>Profil Perusahaan</span>
                     </button>
                     <button @click="activeTab = 'umum'" :class="activeTab === 'umum'
-                                ? 'bg-gradient-to-r from-red-700 to-red-800 text-white shadow-lg shadow-red-200'
-                                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'"
+                                            ? 'bg-gradient-to-r from-red-700 to-red-800 text-white shadow-lg shadow-red-200'
+                                            : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'"
                         class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-semibold text-sm transition-all duration-200">
                         <i class="fa-solid fa-sliders"></i>
                         <span>Pengaturan Umum</span>
@@ -278,8 +278,9 @@
                                         <i class="fa-solid fa-percent text-emerald-600 text-sm"></i>
                                     </div>
                                     <div>
-                                        <h2 class="text-sm font-semibold text-gray-800">Pajak & Mata Uang</h2>
-                                        <p class="text-[11px] text-gray-400">Konfigurasi pajak dan format mata uang</p>
+                                        <h2 class="text-sm font-semibold text-gray-800">Pajak, Mata Uang & Gudang</h2>
+                                        <p class="text-[11px] text-gray-400">Konfigurasi pajak, format mata uang, dan
+                                            kapasitas gudang</p>
                                     </div>
                                 </div>
 
@@ -329,6 +330,32 @@
                                         @error('mata_uang')
                                             <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
                                         @enderror
+                                    </div>
+
+                                    {{-- Kapasitas Gudang --}}
+                                    <div>
+                                        <label for="kapasitas_gudang"
+                                            class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wider">
+                                            Kapasitas Gudang (Karton)
+                                        </label>
+                                        <div class="relative">
+                                            <div
+                                                class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                                <i class="fa-solid fa-warehouse text-gray-300 text-sm"></i>
+                                            </div>
+                                            <input type="number" step="1" min="1" id="kapasitas_gudang"
+                                                name="kapasitas_gudang"
+                                                value="{{ old('kapasitas_gudang', $settings['kapasitas_gudang'] ?? '1000') }}"
+                                                class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-sm text-gray-800 placeholder-gray-400 focus:border-red-400 focus:ring-2 focus:ring-red-100 focus:bg-white outline-none transition-all duration-200"
+                                                placeholder="1000">
+                                        </div>
+                                        @error('kapasitas_gudang')
+                                            <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                        @enderror
+                                        <p class="text-[11px] text-gray-400 mt-1.5">
+                                            Maksimum kapasitas penyimpanan gudang dalam satuan <strong>karton</strong>.
+                                            Digunakan untuk monitoring di dashboard dan halaman stok.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -386,6 +413,12 @@
                                                 <span class="text-gray-400 text-xs">Mata Uang</span>
                                                 <span
                                                     class="text-gray-700 font-mono text-xs bg-gray-50 px-2 py-0.5 rounded">{{ $settings['mata_uang'] ?? 'Rp' }}</span>
+                                            </div>
+                                            <div class="flex items-center justify-between text-sm">
+                                                <span class="text-gray-400 text-xs">Kapasitas Gudang</span>
+                                                <span
+                                                    class="text-gray-700 font-mono text-xs bg-gray-50 px-2 py-0.5 rounded">{{ number_format($settings['kapasitas_gudang'] ?? 1000, 0, ',', '.') }}
+                                                    Karton</span>
                                             </div>
                                         </div>
                                     </div>

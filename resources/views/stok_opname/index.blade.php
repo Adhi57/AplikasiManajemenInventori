@@ -11,6 +11,31 @@
                 <p class="text-sm text-gray-500 mt-1">Lakukan pengecekan stok, kondisi barang, dan catat alasan perubahan.
                 </p>
             </div>
+            <a href="{{ route('stock.opname.riwayat') }}"
+                class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-colors shadow-sm">
+                <i class="fa-solid fa-clock-rotate-left text-xs text-gray-400"></i> Riwayat Update
+            </a>
+        </div>
+
+        {{-- FILTER --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+            <form method="GET" class="flex flex-col sm:flex-row gap-3 items-end">
+                <div class="flex-1 w-full">
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Cari
+                        Barang</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-magnifying-glass text-gray-400 text-sm"></i>
+                        </div>
+                        <input type="text" name="search" value="{{ $search }}" placeholder="Ketik kode / nama barang..."
+                            class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition shadow-sm">
+                    </div>
+                </div>
+                <button type="submit"
+                    class="inline-flex items-center gap-2 px-5 py-2.5 bg-red-800 text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition-colors shadow-sm">
+                    <i class="fa-solid fa-magnifying-glass text-xs"></i> Cari
+                </button>
+            </form>
         </div>
 
         {{-- TABLE --}}
@@ -40,48 +65,74 @@
                                 Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-50">
-                        @forelse($stok as $item)
-                            <tr class="hover:bg-blue-50/30 transition-colors group">
-                                <form action="{{ route('stock.opname.update') }}" method="POST" class="contents">
-                                    @csrf
-                                    <input type="hidden" name="stok_id" value="{{ $item->id }}">
+                    <tbody>
+                        @php
+                            $grouped = $stok->groupBy(function ($item) {
+                                return $item->barang->nama_barang ?? 'Barang Dihapus';
+                            });
+                        @endphp
 
-                                    <td class="px-4 py-3">
+                        @forelse ($grouped as $namaBarang => $items)
+                            {{-- GROUP HEADER --}}
+                            <tr class="bg-slate-50 border-b border-slate-200">
+                                <td colspan="7" class="px-4 py-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-7 h-7 bg-slate-800 rounded-lg flex items-center justify-center">
+                                            <i class="fa-solid fa-boxes-stacked text-white text-xs"></i>
+                                        </div>
+                                        <span class="font-bold text-gray-800">{{ strtoupper($namaBarang) }}</span>
                                         <span
-                                            class="font-mono text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">{{ $item->kode_barang }}</span>
-                                    </td>
-                                    <td class="px-4 py-3 font-medium text-gray-800">{{ $item->barang->nama_barang ?? '-' }}</td>
-
-                                    <td class="px-4 py-3 text-center">
-                                        <input type="number" name="jumlah_stok" value="{{ $item->jumlah_stok }}" step="any"
-                                            class="w-24 border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm text-center focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition bg-emerald-50 text-emerald-700 font-semibold">
-                                    </td>
-
-                                    <td class="px-4 py-3 text-center">
-                                        <input type="number" name="jumlah_stok_rusak" value="{{ $item->jumlah_stok_rusak }}"
-                                            step="any"
-                                            class="w-24 border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm text-center focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition bg-red-50 text-red-700 font-semibold">
-                                    </td>
-
-                                    <td class="px-4 py-3 text-center">
-                                        <input type="date" name="tgl_kadaluarsa" value="{{ $item->tgl_kadaluarsa }}"
-                                            class="border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition">
-                                    </td>
-
-                                    <td class="px-4 py-3">
-                                        <input type="text" name="alasan" placeholder="Alasan update..." required
-                                            class="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition placeholder-gray-400">
-                                    </td>
-
-                                    <td class="px-4 py-3 text-center">
-                                        <button
-                                            class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-red-800 text-white rounded-lg text-xs font-semibold hover:bg-red-700 transition-colors shadow-sm">
-                                            <i class="fa-solid fa-save text-[10px]"></i> Update
-                                        </button>
-                                    </td>
-                                </form>
+                                            class="px-2 py-0.5 bg-slate-200 text-slate-600 text-xs font-semibold rounded-full">
+                                            {{ $items->count() }} batch
+                                        </span>
+                                    </div>
+                                </td>
                             </tr>
+
+                            {{-- BATCH ROWS --}}
+                            @foreach ($items as $item)
+                                <tr class="border-b border-gray-50 hover:bg-blue-50/30 transition-colors group">
+                                    <form action="{{ route('stock.opname.update') }}" method="POST" class="contents">
+                                        @csrf
+                                        <input type="hidden" name="stok_id" value="{{ $item->id }}">
+
+                                        <td class="px-4 py-3">
+                                            <span
+                                                class="font-mono text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">{{ $item->kode_barang }}</span>
+                                        </td>
+                                        <td class="px-4 py-3 font-medium text-gray-800">{{ $item->barang->nama_barang ?? '-' }}</td>
+
+                                        <td class="px-4 py-3 text-center">
+                                            <input type="number" name="jumlah_stok" value="{{ $item->jumlah_stok }}" step="any"
+                                                class="w-24 border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm text-center focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition bg-emerald-50 text-emerald-700 font-semibold">
+                                        </td>
+
+                                        <td class="px-4 py-3 text-center">
+                                            <input type="number" name="jumlah_stok_rusak" value="{{ $item->jumlah_stok_rusak }}"
+                                                step="any"
+                                                class="w-24 border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm text-center focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition bg-red-50 text-red-700 font-semibold">
+                                        </td>
+
+                                        <td class="px-4 py-3 text-center">
+                                            <input type="date" name="tgl_kadaluarsa" value="{{ $item->tgl_kadaluarsa }}"
+                                                class="border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition">
+                                        </td>
+
+                                        <td class="px-4 py-3">
+                                            <input type="text" name="alasan" placeholder="Alasan update..." required
+                                                class="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition placeholder-gray-400">
+                                        </td>
+
+                                        <td class="px-4 py-3 text-center">
+                                            <button
+                                                class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-red-800 text-white rounded-lg text-xs font-semibold hover:bg-red-700 transition-colors shadow-sm">
+                                                <i class="fa-solid fa-save text-[10px]"></i> Update
+                                            </button>
+                                        </td>
+                                    </form>
+                                </tr>
+                            @endforeach
+
                         @empty
                             <tr>
                                 <td colspan="7" class="px-4 py-12 text-center">
@@ -98,44 +149,5 @@
                 </table>
             </div>
         </div>
-
-        {{-- LOG UPDATE --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-            <div class="flex items-center gap-2 mb-4">
-                <div class="w-2 h-5 bg-violet-500 rounded-full"></div>
-                <h2 class="font-semibold text-gray-800">Riwayat Update Stok</h2>
-            </div>
-
-            @forelse($logs as $log)
-                <div class="flex items-start gap-3 py-3 {{ !$loop->last ? 'border-b border-gray-50' : '' }}">
-                    <div class="w-8 h-8 bg-violet-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <i class="fa-solid fa-pen text-violet-600 text-xs"></i>
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <p class="text-sm text-gray-700">
-                            <span class="font-semibold text-red-700">{{ $log->user->nama_lengkap }}</span>
-                            memperbarui
-                            <span class="font-semibold text-gray-900">{{ $log->stok->barang->nama_barang ?? '-' }}</span>
-                            <span class="text-gray-500">({{ $log->stok->kode_barang ?? 'N/A' }})</span>
-                        </p>
-                        <p class="text-sm text-gray-500 mt-0.5">
-                            <i class="fa-solid fa-quote-left text-[10px] text-gray-300 mr-1"></i>
-                            {{ $log->alasan_update }}
-                        </p>
-                    </div>
-                    <span class="text-xs text-gray-400 whitespace-nowrap flex-shrink-0 mt-1">
-                        {{ $log->created_at->format('d M Y H:i') }}
-                    </span>
-                </div>
-            @empty
-                <div class="flex flex-col items-center py-6 text-center">
-                    <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                        <i class="fa-solid fa-clock-rotate-left text-xl text-gray-400"></i>
-                    </div>
-                    <p class="text-sm text-gray-500">Belum ada riwayat update stok.</p>
-                </div>
-            @endforelse
-        </div>
-
     </div>
 @endsection
