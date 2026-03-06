@@ -129,7 +129,7 @@
                                 $sjSubtotal = $sj->details->sum(fn($d) => $d->quantity * ($d->harga_satuan ?? 0));
                     $sjDiskon = $sjSubtotal * (floatval($sj->diskon_pelanggan ?? 0) / 100);
                     $sjBase = $sjSubtotal + floatval($sj->biaya_pengiriman ?? 0) - $sjDiskon;
-                    $sjTotal = $sjBase + ($sjBase * 0.11);
+                    $sjTotal = $sjBase + ($sjBase * floatval($appSettings['ppn_persen'] ?? 11) / 100);
                                 $statusCfg = match ($sj->status) {
                                     'Pending' => ['bg' => 'bg-amber-100', 'text' => 'text-amber-700', 'icon' => 'fa-clock'],
                                     'Disetujui' => ['bg' => 'bg-emerald-100', 'text' => 'text-emerald-700', 'icon' => 'fa-circle-check'],

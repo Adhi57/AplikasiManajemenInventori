@@ -25,6 +25,7 @@ use App\Http\Controllers\StokOpnameController;
 use App\Http\Controllers\ReorderPointController;
 use App\Http\Controllers\TrackingKadaluarsaController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SettingController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -149,6 +150,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/barang-keluar/cetak', [LapBarangKeluarController::class, 'cetak'])
         ->name('laporan.barang_keluar.cetak');
     
+
+    // Pengaturan (Settings)
+    Route::get('/pengaturan', [SettingController::class, 'index'])->name('pengaturan.index');
+    Route::put('/pengaturan/profil-perusahaan', [SettingController::class, 'updateCompanyProfile'])->name('pengaturan.profil');
+    Route::put('/pengaturan/umum', [SettingController::class, 'updateGeneralSettings'])->name('pengaturan.umum');
 
     // Pastikan ada ->name('profile.index') di akhir
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');

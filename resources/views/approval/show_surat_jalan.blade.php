@@ -42,6 +42,12 @@
             </div>
         </div>
         <div class="flex items-center gap-2">
+            <span
+                class="bg-red-700 hover:bg-red-800 transition duration-300 text-white px-4 py-2 rounded-xl text-sm font-bold">
+                <a href="{{ route('approval.print_sj', $suratJalan->sj_id) }}">
+                    <i class="fa-solid fa-print text-xs mr-1"></i>Print SJ
+                </a>
+            </span>
             <span class="bg-white/20 text-white px-4 py-2 rounded-xl text-sm font-bold">
                 <i class="fa-solid fa-hashtag text-xs mr-1"></i>{{ $suratJalan->sj_id }}
             </span>
@@ -62,16 +68,13 @@
                 </h3>
             </div>
             <div class="p-5 space-y-3">
-                <p class="font-bold text-gray-800">CV. Berkah Jaya Lumintu</p>
-                <p class="text-sm text-gray-600">Wonokerso I RT 02/02, Wonokerso, Tembarak</p>
-                <div>
-                    <p class="text-[10px] uppercase font-bold text-gray-400 tracking-wide">Dibuat Oleh</p>
-                    <p class="text-sm font-semibold text-gray-800 flex items-center gap-2 mt-0.5">
-                        <span class="w-6 h-6 rounded-lg bg-red-100 flex items-center justify-center flex-shrink-0">
-                            <i class="fa-solid fa-user text-red-500 text-[9px]"></i>
-                        </span>
-                        {{ $suratJalan->user->nama_lengkap ?? '-' }}
-                    </p>
+                <p class="font-bold text-gray-800">{{ $appSettings['nama_perusahaan'] ?? 'CV. Berkah Jaya Lumintu' }}</p>
+                <p class="text-sm text-gray-600">{{ $appSettings['alamat_perusahaan'] ?? '-' }}</p>
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <i class="fa-solid fa-phone text-gray-400 text-xs"></i> {{ $appSettings['telepon_perusahaan'] ?? '-' }}
+                </div>
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <i class="fa-solid fa-envelope text-gray-400 text-xs"></i> {{ $appSettings['email_perusahaan'] ?? '-' }}
                 </div>
             </div>
         </div>
@@ -85,65 +88,44 @@
                 </h3>
             </div>
             <div class="p-5 space-y-3">
-                <div>
-                    <p class="text-[10px] uppercase font-bold text-gray-400 tracking-wide">Pelanggan</p>
-                    <p class="text-sm font-bold text-gray-800">{{ $suratJalan->pelanggan->nama_pelanggan ?? '-' }}</p>
+                <p class="font-bold text-gray-800">{{ $suratJalan->pelanggan->nama_pelanggan ?? '-' }}</p>
+                <p class="text-sm text-gray-600">{{ $suratJalan->alamat_penerima ?? '-' }}</p>
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <i class="fa-solid fa-user text-gray-400 text-xs"></i> PIC: {{ $suratJalan->pelanggan->PIC ?? '-' }}
                 </div>
-                <div>
-                    <p class="text-[10px] uppercase font-bold text-gray-400 tracking-wide">Penerima</p>
-                    <p class="text-sm font-semibold text-gray-800">{{ $suratJalan->nama_penerima ?? '-' }}</p>
-                </div>
-                <div>
-                    <p class="text-[10px] uppercase font-bold text-gray-400 tracking-wide">Alamat</p>
-                    <p class="text-sm text-gray-600">{{ $suratJalan->alamat_penerima ?? '-' }}</p>
-                </div>
-                <div>
-                    <p class="text-[10px] uppercase font-bold text-gray-400 tracking-wide">PIC</p>
-                    <p class="text-sm text-gray-600">{{ $suratJalan->pelanggan->PIC ?? '-' }}</p>
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <i class="fa-solid fa-user-check text-gray-400 text-xs"></i> Penerima:
+                    {{ $suratJalan->nama_penerima ?? '-' }}
                 </div>
             </div>
         </div>
 
-        {{-- Info Keuangan Quick Summary --}}
+        {{-- Info SJ --}}
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            <div class="px-5 py-3 border-b border-gray-100 bg-red-800">
-                <h3 class="font-bold text-white text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-calculator"></i>
-                    Ringkasan Nilai
+            <div class="px-5 py-3 border-b border-gray-100 bg-gray-50/50">
+                <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-info-circle text-red-500"></i>
+                    Detail Surat Jalan
                 </h3>
             </div>
-            @php
-                $subtotal = 0;
-                foreach ($suratJalan->details as $d) {
-                    $subtotal += $d->quantity * ($d->harga_satuan ?? 0);
-                }
-                $diskonPersen = floatval($suratJalan->diskon_pelanggan ?? 0);
-                $diskon = $subtotal * ($diskonPersen / 100);
-                $biayaKirim = floatval($suratJalan->biaya_pengiriman ?? 0);
-                $total = $subtotal + $biayaKirim - $diskon;
-                $pajak = $total * 0.11;
-                $grandTotal = $total + $pajak;
-            @endphp
             <div class="p-5 space-y-3">
-                <div class="flex justify-between items-center">
-                    <span class="text-xs text-gray-500">Subtotal</span>
-                    <span class="text-sm font-semibold text-gray-800">Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
+                <div>
+                    <p class="text-[10px] uppercase font-bold text-gray-400 tracking-wide">Dibuat Oleh</p>
+                    <p class="text-sm font-semibold text-gray-800 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-lg bg-red-100 flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-user text-red-500 text-[9px]"></i>
+                        </span>
+                        {{ $suratJalan->user->nama_lengkap ?? '-' }}
+                    </p>
                 </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-xs text-gray-500">Biaya Kirim</span>
-                    <span class="text-sm text-gray-700">Rp {{ number_format($biayaKirim, 0, ',', '.') }}</span>
+                <div>
+                    <p class="text-[10px] uppercase font-bold text-gray-400 tracking-wide">Jumlah Item</p>
+                    <p class="text-sm font-semibold text-gray-800">{{ $suratJalan->details->count() }} Produk</p>
                 </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-xs text-gray-500">Diskon ({{ $diskonPersen }}%)</span>
-                    <span class="text-sm text-gray-700">- Rp {{ number_format($diskon, 0, ',', '.') }}</span>
-                </div>
-                <div class="flex justify-between items-center border-t border-gray-100 pt-2">
-                    <span class="text-xs text-gray-500">Pajak (11%)</span>
-                    <span class="text-sm text-red-600 font-semibold">Rp {{ number_format($pajak, 0, ',', '.') }}</span>
-                </div>
-                <div class="flex justify-between items-center border-t-2 border-gray-200 pt-3">
-                    <span class="text-sm font-bold text-gray-800">Total Akhir</span>
-                    <span class="text-lg font-bold text-emerald-700">Rp {{ number_format($grandTotal, 0, ',', '.') }}</span>
+                <div>
+                    <p class="text-[10px] uppercase font-bold text-gray-400 tracking-wide">Biaya Pengiriman</p>
+                    <p class="text-sm text-gray-600">Rp {{ number_format($suratJalan->biaya_pengiriman ?? 0, 0, ',', '.') }}
+                    </p>
                 </div>
             </div>
         </div>
@@ -171,10 +153,12 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
+                    @php $subtotal = 0; @endphp
                     @foreach($suratJalan->details as $index => $detail)
                         @php
                             $hargaSatuan = $detail->harga_satuan ?? 0;
                             $totalItem = $detail->quantity * $hargaSatuan;
+                            $subtotal += $totalItem;
                         @endphp
                         <tr class="hover:bg-red-50/30 transition">
                             <td class="px-4 py-3 text-gray-500">{{ $index + 1 }}</td>
@@ -189,16 +173,28 @@
                             <td class="px-4 py-3 text-right text-gray-700">Rp {{ number_format($hargaSatuan, 0, ',', '.') }}
                             </td>
                             <td class="px-4 py-3 text-right font-semibold text-gray-800">Rp
-                                {{ number_format($totalItem, 0, ',', '.') }}</td>
+                                {{ number_format($totalItem, 0, ',', '.') }}
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
+
+                @php
+                    $diskonPersen = floatval($suratJalan->diskon_pelanggan ?? 0);
+                    $diskon = $subtotal * ($diskonPersen / 100);
+                    $biayaKirim = floatval($suratJalan->biaya_pengiriman ?? 0);
+                    $total = $subtotal + $biayaKirim - $diskon;
+                    $ppnRate = floatval($appSettings['ppn_persen'] ?? 11) / 100;
+                    $pajak = $total * $ppnRate;
+                    $grandTotal = $total + $pajak;
+                @endphp
 
                 <tfoot class="bg-gray-50">
                     <tr class="border-t border-gray-200">
                         <td colspan="6" class="px-4 py-2.5 text-right font-semibold text-gray-600">Subtotal</td>
                         <td class="px-4 py-2.5 text-right font-semibold text-gray-800">Rp
-                            {{ number_format($subtotal, 0, ',', '.') }}</td>
+                            {{ number_format($subtotal, 0, ',', '.') }}
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="6" class="px-4 py-2.5 text-right font-semibold text-gray-600">Biaya Pengiriman</td>
@@ -213,17 +209,21 @@
                     <tr class="border-t border-gray-200">
                         <td colspan="6" class="px-4 py-2.5 text-right font-bold text-gray-700">Total</td>
                         <td class="px-4 py-2.5 text-right font-bold text-gray-800">Rp
-                            {{ number_format($total, 0, ',', '.') }}</td>
+                            {{ number_format($total, 0, ',', '.') }}
+                        </td>
                     </tr>
                     <tr>
-                        <td colspan="6" class="px-4 py-2.5 text-right font-semibold text-gray-600">Pajak (11%)</td>
+                        <td colspan="6" class="px-4 py-2.5 text-right font-semibold text-gray-600">Pajak
+                            ({{ $appSettings['ppn_persen'] ?? 11 }}%)</td>
                         <td class="px-4 py-2.5 text-right text-red-600 font-semibold">Rp
-                            {{ number_format($pajak, 0, ',', '.') }}</td>
+                            {{ number_format($pajak, 0, ',', '.') }}
+                        </td>
                     </tr>
                     <tr class="border-t-2 border-gray-300">
                         <td colspan="6" class="px-4 py-3 text-right font-bold text-gray-800 text-base">Total Akhir</td>
                         <td class="px-4 py-3 text-right font-bold text-emerald-700 text-base">Rp
-                            {{ number_format($grandTotal, 0, ',', '.') }}</td>
+                            {{ number_format($grandTotal, 0, ',', '.') }}
+                        </td>
                     </tr>
                 </tfoot>
             </table>
@@ -233,11 +233,9 @@
     {{-- Action Buttons --}}
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <button onclick="window.print()"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-600 font-medium text-sm rounded-xl hover:bg-gray-200 transition">
-                    <i class="fa-solid fa-print"></i> Cetak
-                </button>
+            <div class="text-sm text-gray-500">
+                <i class="fa-solid fa-info-circle text-gray-400 mr-1"></i>
+                Pastikan semua barang dan informasi pengiriman sudah benar sebelum memberikan persetujuan.
             </div>
 
             @if(auth()->user()->role === 'Head' || auth()->user()->role === 'SuperAdmin')

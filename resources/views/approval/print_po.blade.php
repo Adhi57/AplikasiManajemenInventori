@@ -277,10 +277,11 @@
                 <img src="{{ public_path('assets/images/Logo.png') }}" alt="Logo">
             </div>
             <div class="kop-text">
-                <h1>CV. Berkah Jaya Lumintu</h1>
+                <h1>{{ $appSettings['nama_perusahaan'] ?? 'CV. Berkah Jaya Lumintu' }}</h1>
                 <h2>Distributor Bahan Pokok & Kebutuhan Sehari-hari</h2>
-                <p>Wonokerso I RT 02/02, Wonokerso, Tembarak, Kab. Temanggung</p>
-                <p>Telp: 08123456789 &bull; Email: berkahjayalumintu@gmail.com</p>
+                <p>{{ $appSettings['alamat_perusahaan'] ?? '-' }}</p>
+                <p>Telp: {{ $appSettings['telepon_perusahaan'] ?? '-' }} &bull; Email:
+                    {{ $appSettings['email_perusahaan'] ?? '-' }}</p>
             </div>
         </div>
 
@@ -389,7 +390,8 @@
 
         {{-- TOTAL --}}
         @php
-            $pajak = $subtotal * 0.11;
+            $ppnRate = floatval($appSettings['ppn_persen'] ?? 11) / 100;
+            $pajak = $subtotal * $ppnRate;
             $grandTotal = $subtotal + $pajak;
         @endphp
         <div class="total-section">
@@ -401,7 +403,7 @@
                         <td class="value">Rp {{ number_format($subtotal, 0, ',', '.') }}</td>
                     </tr>
                     <tr>
-                        <td class="label">Pajak (11%)</td>
+                        <td class="label">Pajak ({{ $appSettings['ppn_persen'] ?? 11 }}%)</td>
                         <td class="value">Rp {{ number_format($pajak, 0, ',', '.') }}</td>
                     </tr>
                     <tr class="grand">

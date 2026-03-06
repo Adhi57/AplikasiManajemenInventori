@@ -54,6 +54,15 @@
             <h2 class="text-xl font-semibold text-gray-700 mb-4 mt-6">Informasi Dasar Barang</h2>
             <hr class="mb-6 border-gray-200">
 
+            {{-- Kode Barang --}}
+            <div class="mb-4">
+                <label for="kode_barang" class="block text-sm font-medium text-gray-700 mb-1">Kode Barang (Barcode)</label>
+                <input type="text" name="kode_barang" id="kode_barang"
+                    value="{{ old('kode_barang', $barang->kode_barang) }}"
+                    class="py-2.5 sm:py-3 px-4 block w-full border border-gray-300 rounded-lg sm:text-sm focus:ring-indigo-500 focus:border-indigo-500"
+                    required>
+            </div>
+
             {{-- Grid 2 Kolom untuk Info Dasar --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 {{-- Nama Barang (Full Width di Mobile) --}}

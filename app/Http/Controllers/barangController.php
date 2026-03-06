@@ -61,6 +61,7 @@ class BarangController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'kode_barang' => 'required|string|max:255|unique:barangs,kode_barang',
             'nama_barang' => 'required|string|max:255',
             'foto_produk' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'kategori_barang_id' => 'required|exists:kategori_barangs,kategori_barang_id',
@@ -84,12 +85,9 @@ class BarangController extends Controller
                 $foto_path = $request->file('foto_produk')->store('images/foto_produk', 'public');
             }
 
-            // 2. Buat Kode Barang Otomatis (contoh sederhana: B-Timestamp)
-            $kode_barang = 'B-' . Carbon::now()->format('ymdHis');
-
             // 3. Simpan data Barang
             $barang = Barang::create([
-                'kode_barang' => $kode_barang,
+                'kode_barang' => $validated['kode_barang'],
                 'nama_barang' => $validated['nama_barang'],
                 'foto_produk' => $foto_path, 
                 'kategori_barang_id' => $validated['kategori_barang_id'],
@@ -137,6 +135,7 @@ class BarangController extends Controller
         $barang = Barang::where('kode_barang', $kode_barang)->firstOrFail();
 
         $validated = $request->validate([
+            'kode_barang' => 'required|string|max:255|unique:barangs,kode_barang,'.$barang->kode_barang.',kode_barang',
             'nama_barang' => 'required|string|max:255',
             'foto_produk' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'kategori_barang_id' => 'required|exists:kategori_barangs,kategori_barang_id',
@@ -169,6 +168,7 @@ class BarangController extends Controller
 
             // 2. Update data Barang
             $barang->update([
+                'kode_barang' => $validated['kode_barang'],
                 'nama_barang' => $validated['nama_barang'],
                 'foto_produk' => $foto_path, // Path relatif terhadap disk 'public'
                 'kategori_barang_id' => $validated['kategori_barang_id'],

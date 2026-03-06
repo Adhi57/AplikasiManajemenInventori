@@ -20,7 +20,7 @@
             $dp = floatval($sj->diskon_pelanggan ?? 0);
             $dk = $tb * ($dp / 100);
             $t = $tb + $bk - $dk;
-            $grandTotalValue += ($t + $t * 0.11);
+            $grandTotalValue += ($t + $t * floatval($appSettings['ppn_persen'] ?? 11) / 100);
         }
     @endphp
 
@@ -168,7 +168,8 @@
                             $diskonPersen = floatval($sj->diskon_pelanggan ?? 0);
                             $diskon = $totalBarang * ($diskonPersen / 100);
                             $total = $totalBarang + $biayaKirim - $diskon;
-                            $pajak = $total * 0.11;
+                            $ppnRate = floatval($appSettings['ppn_persen'] ?? 11) / 100;
+                            $pajak = $total * $ppnRate;
                             $grandTotal = $total + $pajak;
                         @endphp
                         <tfoot class="bg-gray-50">
@@ -194,7 +195,7 @@
                                     {{ number_format($total, 0, ',', '.') }}</td>
                             </tr>
                             <tr>
-                                <td colspan="4" class="px-5 py-2 text-right text-sm text-gray-600">Pajak (11%):</td>
+                                <td colspan="4" class="px-5 py-2 text-right text-sm text-gray-600">Pajak ({{ $appSettings['ppn_persen'] ?? 11 }}%):</td>
                                 <td class="px-5 py-2 text-right text-sm text-red-600">Rp
                                     {{ number_format($pajak, 0, ',', '.') }}</td>
                             </tr>

@@ -32,37 +32,11 @@ class Barang extends Model
     ];
 
 
-    // Prefix Kombinasi untuk kode Barang
     protected static function boot()
     {
         parent::boot();
-        static::creating(function ($barang) {
-            // 1. ambil Prefix
-            $kategoriId = $barang->kategori_barang_id;
-            $supplierId = $barang->id_supplier;
-            
-            // Format ID
-            $prefix = 'K' . str_pad($kategoriId, 2, '0', STR_PAD_LEFT) . 
-                     'S' . str_pad($supplierId, 2, '0', STR_PAD_LEFT);
-
-            // 2. Mencari Nomer Selanjutnya
-            $lastBarang = static::where('kode_barang', 'like', $prefix . '%')
-                                 ->orderBy('kode_barang', 'desc')
-                                 ->first();
-
-            $nextNumber = 1;
-
-            if ($lastBarang) {
-                $lastNumber = (int) substr($lastBarang->kode_barang, strrpos($lastBarang->kode_barang, '-') + 1);
-                $nextNumber = $lastNumber + 1;
-            }
-
-            // Kombinasi
-            $sequentialPart = str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
-            
-            // Final code structure: 
-            $barang->kode_barang = $prefix . '-' . $sequentialPart;
-        });
+        // Removed static::creating that generated kode_barang automatically.
+        // Users will now input the barcode manually.
     }
 
     public function kategori()

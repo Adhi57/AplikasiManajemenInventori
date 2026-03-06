@@ -225,7 +225,7 @@
                                     <span class="font-medium" x-text="formatRupiah(totalHargaPermintaan)">Rp 0</span>
                                 </div>
                                 <div class="flex justify-between text-sm text-gray-600">
-                                    <span>PPN (11%)</span>
+                                    <span>PPN ({{ $appSettings['ppn_persen'] ?? 11 }}%)</span>
                                     <span class="font-medium" x-text="formatRupiah(totalPPN)">Rp 0</span>
                                 </div>
                                 <div class="flex justify-between items-center pt-2 border-t border-gray-200">
@@ -292,7 +292,7 @@
                 },
 
                 get totalPPN() {
-                    return this.totalHargaPermintaan * 0.11;
+                    return this.totalHargaPermintaan * {{ floatval($appSettings['ppn_persen'] ?? 11) / 100 }};
                 },
 
                 get totalHargaPermintaanPPN() {

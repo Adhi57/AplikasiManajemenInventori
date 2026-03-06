@@ -68,13 +68,13 @@
                 </h3>
             </div>
             <div class="p-5 space-y-3">
-                <p class="font-bold text-gray-800">CV. Berkah Jaya Lumintu</p>
-                <p class="text-sm text-gray-600">Wonokerso I RT 02/02, Wonokerso, Tembarak</p>
+                <p class="font-bold text-gray-800">{{ $appSettings['nama_perusahaan'] ?? 'CV. Berkah Jaya Lumintu' }}</p>
+                <p class="text-sm text-gray-600">{{ $appSettings['alamat_perusahaan'] ?? '-' }}</p>
                 <div class="flex items-center gap-2 text-sm text-gray-600">
-                    <i class="fa-solid fa-phone text-gray-400 text-xs"></i> 08123456789
+                    <i class="fa-solid fa-phone text-gray-400 text-xs"></i> {{ $appSettings['telepon_perusahaan'] ?? '-' }}
                 </div>
                 <div class="flex items-center gap-2 text-sm text-gray-600">
-                    <i class="fa-solid fa-envelope text-gray-400 text-xs"></i> berkahjayalumintu@gmail.com
+                    <i class="fa-solid fa-envelope text-gray-400 text-xs"></i> {{ $appSettings['email_perusahaan'] ?? '-' }}
                 </div>
             </div>
         </div>
@@ -177,7 +177,8 @@
                 </tbody>
 
                 @php
-                    $pajak = $subtotal * 0.11;
+                    $ppnRate = floatval($appSettings['ppn_persen'] ?? 11) / 100;
+                    $pajak = $subtotal * $ppnRate;
                     $total = $subtotal + $pajak;
                 @endphp
                 <tfoot class="bg-gray-50">
@@ -187,7 +188,7 @@
                             {{ number_format($subtotal, 0, ',', '.') }}</td>
                     </tr>
                     <tr>
-                        <td colspan="6" class="px-4 py-2.5 text-right font-semibold text-gray-600">Pajak (11%)</td>
+                        <td colspan="6" class="px-4 py-2.5 text-right font-semibold text-gray-600">Pajak ({{ $appSettings['ppn_persen'] ?? 11 }}%)</td>
                         <td class="px-4 py-2.5 text-right text-red-600 font-semibold">Rp
                             {{ number_format($pajak, 0, ',', '.') }}</td>
                     </tr>

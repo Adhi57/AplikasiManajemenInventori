@@ -95,8 +95,8 @@
         {{-- ===== Print Header (only visible on print) ===== --}}
         <div class="hidden print:block text-center mb-6">
             <h2 class="text-xl font-bold mb-1">DETAIL PENGIRIMAN BARANG</h2>
-            <p class="text-sm font-semibold">CV. Berkah Jaya Lumintu</p>
-            <p class="text-xs">Jl. Wonokerso I, Wonokerso, Kecamatan Tembarak, Kabupaten Temanggung</p>
+            <p class="text-sm font-semibold">{{ $appSettings['nama_perusahaan'] ?? 'CV. Berkah Jaya Lumintu' }}</p>
+            <p class="text-xs">{{ $appSettings['alamat_perusahaan'] ?? '-' }}</p>
             <hr class="mt-4 border-gray-400">
         </div>
 
@@ -334,7 +334,8 @@
                             $diskon = $grandSubtotal * ($diskonPersen / 100);
                             $biayaKirim = floatval($pengiriman->suratJalan->biaya_pengiriman ?? 0);
                             $total = $grandSubtotal + $biayaKirim - $diskon;
-                            $pajak = $total * 0.11;
+                            $ppnRate = floatval($appSettings['ppn_persen'] ?? 11) / 100;
+                            $pajak = $total * $ppnRate;
                             $grandTotal = $total + $pajak;
                         @endphp
                         <tfoot class="bg-gray-50">
@@ -362,7 +363,7 @@
                                     {{ number_format($total, 0, ',', '.') }}</td>
                             </tr>
                             <tr>
-                                <td colspan="6" class="py-2 px-4 text-right text-sm font-medium text-gray-500">PPN (11%)</td>
+                                <td colspan="6" class="py-2 px-4 text-right text-sm font-medium text-gray-500">PPN ({{ $appSettings['ppn_persen'] ?? 11 }}%)</td>
                                 <td class="py-2 px-4 text-right text-gray-700">Rp {{ number_format($pajak, 0, ',', '.') }}</td>
                             </tr>
                             <tr class="border-t-2 border-red-300">

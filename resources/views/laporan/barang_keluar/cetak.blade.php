@@ -250,10 +250,10 @@
                 <img src="{{ public_path('assets/images/Logo.png') }}" alt="Logo">
             </div>
             <div class="kop-text">
-                <h1>CV. Berkah Jaya Lumintu</h1>
+                <h1>{{ $appSettings['nama_perusahaan'] ?? 'CV. Berkah Jaya Lumintu' }}</h1>
                 <h2>Distributor Bahan Pokok & Kebutuhan Sehari-hari</h2>
-                <p>Wonokerso I RT 02/02, Wonokerso, Tembarak, Kab. Temanggung</p>
-                <p>Telp: 08123456789 &bull; Email: berkahjayalumintu@gmail.com</p>
+                <p>{{ $appSettings['alamat_perusahaan'] ?? '-' }}</p>
+                <p>Telp: {{ $appSettings['telepon_perusahaan'] ?? '-' }} &bull; Email: {{ $appSettings['email_perusahaan'] ?? '-' }}</p>
             </div>
         </div>
 
@@ -319,7 +319,8 @@
                     $diskonPersen = floatval($sj->diskon_pelanggan ?? 0);
                     $diskon = $totalBarang * ($diskonPersen / 100);
                     $total = $totalBarang + $biayaKirim - $diskon;
-                    $pajak = $total * 0.11;
+                    $ppnRate = floatval($appSettings['ppn_persen'] ?? 11) / 100;
+                    $pajak = $total * $ppnRate;
                     $sjGrandTotal = $total + $pajak;
                     $grandTotal += $sjGrandTotal;
                 @endphp
@@ -337,7 +338,7 @@
                         <td class="text-right">- Rp {{ number_format($diskon, 0, ',', '.') }}</td>
                     </tr>
                     <tr>
-                        <td colspan="5" class="text-right">Pajak (11%):</td>
+                        <td colspan="5" class="text-right">Pajak ({{ $appSettings['ppn_persen'] ?? 11 }}%):</td>
                         <td class="text-right">Rp {{ number_format($pajak, 0, ',', '.') }}</td>
                     </tr>
                     <tr class="total-row">

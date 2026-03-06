@@ -168,6 +168,13 @@
         <h3
             class="text-red-400 uppercase tracking-wider text-xs font-semibold mt-6 pt-4 pb-2 border-t border-red-800/50">
             Settings</h3>
+
+        <a href="{{ route('pengaturan.index') }}" class="flex items-center gap-3 text-sm font-medium w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200
+                {{ request()->is('pengaturan*') ? $activeLinkClasses : $defaultLinkClasses }}">
+            <i class="fa-solid fa-gear text-xl w-6"></i>
+            <span>Pengaturan</span>
+        </a>
+
         {{-- Data Master --}}
         <div>
             <!-- Tombol Dropdown Utama -->
@@ -213,7 +220,7 @@
 
         @if(auth()->user()->role === 'SuperAdmin')
             <a href="/users" class="flex items-center gap-3 text-sm font-medium w-full p-2.5 rounded-xl hover:bg-red-800/70 transition-all duration-200
-                    {{ request()->is('users*') ? $activeLinkClasses : $defaultLinkClasses }}">
+                        {{ request()->is('users*') ? $activeLinkClasses : $defaultLinkClasses }}">
                 <i class="fa-solid fa-users-gear text-xl w-6"></i>
                 <span>Users & Roles</span>
             </a>

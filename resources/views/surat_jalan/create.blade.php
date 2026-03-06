@@ -330,7 +330,7 @@
                                             0</span>
                                     </div>
                                     <div class="flex justify-between text-gray-600">
-                                        <span>PPN (11%)</span>
+                                        <span>PPN ({{ $appSettings['ppn_persen'] ?? 11 }}%)</span>
                                         <span class="font-semibold text-gray-800" x-text="formatRupiah(ppn)">Rp 0</span>
                                     </div>
                                     <div class="flex justify-between text-gray-600">
@@ -357,8 +357,8 @@
                             <button type="submit" :disabled="Object.keys(cart).length === 0"
                                 class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 font-semibold text-sm rounded-xl transition shadow-lg focus:ring-4"
                                 :class="Object.keys(cart).length > 0
-                                    ? 'bg-red-800 text-white hover:bg-red-700 shadow-red-200 focus:ring-red-200'
-                                    : 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none'">
+                                        ? 'bg-red-800 text-white hover:bg-red-700 shadow-red-200 focus:ring-red-200'
+                                        : 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none'">
                                 <i class="fa-solid fa-floppy-disk"></i>
                                 Simpan Surat Jalan
                             </button>
@@ -502,7 +502,7 @@
 
                 get ppn() {
                     const subtotalSetelahDiskon = this.totalHarga;
-                    return subtotalSetelahDiskon * 0.11;
+                    return subtotalSetelahDiskon * {{ floatval($appSettings['ppn_persen'] ?? 11) / 100 }};
                 },
 
                 get totalKeseluruhan() {

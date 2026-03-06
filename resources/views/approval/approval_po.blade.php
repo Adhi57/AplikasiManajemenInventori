@@ -142,7 +142,7 @@
                         @foreach ($PO_List as $index => $PO)
                             @php
                                 $poSubtotal = $PO->details->sum(fn($d) => $d->quantity * $d->harga_satuan);
-                                $poTotal = $poSubtotal + ($poSubtotal * 0.11);
+                                $poTotal = $poSubtotal + ($poSubtotal * floatval($appSettings['ppn_persen'] ?? 11) / 100);
                                 $statusCfg = match ($PO->status_po) {
                                     'Pending' => ['bg' => 'bg-amber-100', 'text' => 'text-amber-700', 'icon' => 'fa-clock'],
                                     'Disetujui' => ['bg' => 'bg-emerald-100', 'text' => 'text-emerald-700', 'icon' => 'fa-circle-check'],
