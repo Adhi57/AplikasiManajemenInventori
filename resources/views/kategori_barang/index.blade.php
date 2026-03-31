@@ -2,108 +2,138 @@
 @section('page-title', 'Data Master / Kategori Barang')
 @section('content')
 
-<!-- Main Container -->
-<div class="p-4 sm:p-6 bg-gray-50 rounded-xl shadow-inner min-h-[80vh]">
+    {{-- Page Header --}}
+    <div class="mb-6">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-red-800 flex items-center justify-center shadow">
+                <i class="fa-solid fa-layer-group text-white text-lg"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Kategori Barang</h1>
+                <p class="text-sm text-gray-500">Kelola kategori untuk pengelompokan barang</p>
+            </div>
+        </div>
+    </div>
 
-    <div class="flex flex-col lg:flex-row gap-6">
+    @if(session('success'))
+        <div class="mb-4 bg-white rounded-2xl border border-emerald-200 shadow-sm overflow-hidden">
+            <div class="px-5 py-3 bg-emerald-50 flex items-center gap-2">
+                <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                <span class="text-sm font-medium text-emerald-700">{{ session('success') }}</span>
+            </div>
+        </div>
+    @endif
 
-        <!-- KIRI: TABEL DAFTAR KATEGORI -->
-        <div class="lg:flex-1 bg-white rounded-xl shadow-xl overflow-hidden border border-gray-200">
-            <div class="p-6">
-                @if(session('success'))
-                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-lg shadow-sm font-medium" role="alert">
-                    {{ session('success') }}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        {{-- LEFT: Table --}}
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="px-5 py-3 border-b border-gray-100 bg-gray-50/50">
+                    <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-table-list text-red-500"></i>
+                        Daftar Kategori Barang
+                    </h3>
                 </div>
-                @endif
-        
-                <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Daftar Kategori Barang</h2>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-gray-700" id="kategori-table">
-                        <thead class="text-xs text-white uppercase bg-red-700 border-b-4 border-red-500">
-                            <tr>
-                                <th class="px-6 py-3 rounded-tl-xl">ID</th>
-                                <th class="px-6 py-3">Nama Kategori</th>
-                                <th class="px-6 py-3 text-center rounded-tr-xl">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($kategori_barang as $kat)
-                            <tr class="text-left text-xs border-b even:bg-red-50 odd:bg-white hover:bg-red-100 transition duration-100">
-                                <td class="px-6 py-3 font-semibold">{{ $kat->kategori_barang_id }}</td>
-                                <td class="px-6 py-3 font-medium">{{ $kat->nama_kategori_barang }}</td>
-                                
-                                <!-- Aksi -->
-                                <td class="px-6 py-3 text-center whitespace-nowrap">
-                                    <!-- EDIT -->
-                                    <a href="{{ route('kategori_barang.edit', $kat->kategori_barang_id) }}" 
-                                      class="inline-block text-gray-500 hover:text-amber-600 transition duration-150 p-1"
-                                      title="Edit Kategori">
-                                      <i class="fa-solid fa-pen-to-square cursor-pointer text-sm"></i>
-                                    </a>
-        
-                                    <!-- Delete -->
-                                    <form action="{{ route('kategori_barang.destroy', $kat->kategori_barang_id) }}" 
-                                      method="POST" 
-                                      class="inline-block ml-2"
-                                      onsubmit="return confirm('Yakin ingin menghapus kategori {{ $kat->nama_kategori_barang }}? Aksi ini tidak dapat dibatalkan.');">
-                                      @csrf
-                                      @method('DELETE')
-                                      <button type="submit" class="text-gray-500 hover:text-red-700 transition duration-150 p-1" title="Hapus Kategori">
-                                        <i class="fa-solid fa-trash-can cursor-pointer text-sm"></i>
-                                      </button>
-                                    </form>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                <div class="p-5">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-700" id="kategori-table">
+                            <thead class="text-xs text-white uppercase bg-red-800">
+                                <tr>
+                                    <th class="px-5 py-3 rounded-tl-xl">ID</th>
+                                    <th class="px-5 py-3">Nama Kategori</th>
+                                    <th class="px-5 py-3 text-center rounded-tr-xl">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($kategori_barang as $kat)
+                                    <tr
+                                        class="text-xs border-b border-gray-100 even:bg-gray-50/50 hover:bg-red-50 transition duration-100">
+                                        <td class="px-5 py-3 font-semibold text-gray-900">{{ $kat->kategori_barang_id }}</td>
+                                        <td class="px-5 py-3 font-medium">{{ $kat->nama_kategori_barang }}</td>
+                                        <td class="px-5 py-3 text-center whitespace-nowrap">
+                                            <a href="{{ route('kategori_barang.edit', $kat->kategori_barang_id) }}"
+                                                class="inline-flex items-center justify-center w-7 h-7 rounded-lg text-gray-400 hover:text-amber-600 hover:bg-amber-50 transition"
+                                                title="Edit">
+                                                <i class="fa-solid fa-pen-to-square text-xs"></i>
+                                            </a>
+                                            <form action="{{ route('kategori_barang.destroy', $kat->kategori_barang_id) }}"
+                                                method="POST" class="inline-block"
+                                                onsubmit="return confirm('Yakin ingin menghapus kategori {{ $kat->nama_kategori_barang }}?');">
+                                                @csrf @method('DELETE')
+                                                <button type="submit"
+                                                    class="inline-flex items-center justify-center w-7 h-7 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition"
+                                                    title="Hapus">
+                                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- KANAN: FORM TAMBAH/EDIT -->
-        <div class="lg:w-96 bg-white p-6 rounded-xl shadow-xl border border-gray-200">
-            @php
-                $isEdit = isset($editKategori);
-                $kategori = $isEdit ? $editKategori : new \App\Models\KategoriBarang(); // Pastikan \App\Models\KategoriBarang
-                $actionRoute = $isEdit 
-                    ? route('kategori_barang.update', $kategori->kategori_barang_id)
-                    : route('kategori_barang.store');
-            @endphp
+        {{-- RIGHT: Inline Form --}}
+        <div class="lg:col-span-1">
+            <div class="sticky top-6">
+                @php
+                    $isEdit = isset($editKategori);
+                    $kategori = $isEdit ? $editKategori : new \App\Models\KategoriBarang();
+                    $actionRoute = $isEdit
+                        ? route('kategori_barang.update', $kategori->kategori_barang_id)
+                        : route('kategori_barang.store');
+                @endphp
 
-            <h2 class="text-xl font-bold mb-6 text-gray-800 border-b pb-2">{{ $isEdit ? 'Edit Kategori Barang' : 'Tambah Kategori Barang' }}</h2>
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-5 py-3 border-b border-gray-100 bg-red-800">
+                        <h3 class="font-bold text-white text-sm flex items-center gap-2">
+                            <i class="fa-solid {{ $isEdit ? 'fa-pen-to-square' : 'fa-plus' }}"></i>
+                            {{ $isEdit ? 'Edit Kategori' : 'Tambah Kategori Baru' }}
+                        </h3>
+                    </div>
+                    <div class="p-5">
+                        <form action="{{ $actionRoute }}" method="POST">
+                            @csrf
+                            @if($isEdit) @method('PUT') @endif
 
-            <form action="{{ $actionRoute }}" method="POST">
-                @csrf
-                @if($isEdit)
-                    @method('PUT')
-                @endif
+                            <div class="mb-5">
+                                <label for="nama_kategori_barang"
+                                    class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+                                    Nama Kategori <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <i
+                                        class="fa-solid fa-tag absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                                    <input type="text" name="nama_kategori_barang" id="nama_kategori_barang"
+                                        value="{{ old('nama_kategori_barang', $kategori->nama_kategori_barang) }}"
+                                        placeholder="Nama kategori"
+                                        class="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                                        required>
+                                </div>
+                            </div>
 
-                <div class="mb-6">
-                    <label for="nama_kategori_barang" class="block mb-2 font-medium text-gray-700">Nama Kategori</label>
-                    <input type="text" name="nama_kategori_barang" id="nama_kategori_barang"
-                           value="{{ old('nama_kategori_barang', $kategori->nama_kategori_barang) }}"
-                           class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-red-500 focus:border-red-500 transition duration-150 shadow-sm" required>
+                            <div class="flex gap-2">
+                                @if($isEdit)
+                                    <a href="{{ route('kategori_barang.index') }}"
+                                        class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 text-gray-600 font-medium text-sm rounded-xl hover:bg-gray-200 transition">
+                                        <i class="fa-solid fa-xmark"></i> Batal
+                                    </a>
+                                @endif
+                                <button type="submit"
+                                    class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-red-800 text-white font-semibold text-sm rounded-xl hover:bg-red-700 transition shadow-lg shadow-red-200">
+                                    <i class="fa-solid {{ $isEdit ? 'fa-floppy-disk' : 'fa-plus' }}"></i>
+                                    {{ $isEdit ? 'Simpan' : 'Tambah' }}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-
-                <div class="flex justify-end gap-3 pt-4 border-t">
-                    <!-- Tombol Batal akan selalu ada, mengarahkan kembali ke index -->
-                    <a href="{{ route('kategori_barang.index') }}" 
-                        class="px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition duration-150">
-                        <i class="fa-solid fa-xmark mr-1"></i> Batal
-                    </a>
-                    
-                    <button type="submit" 
-                        class="px-4 py-2 bg-red-700 text-white font-semibold rounded-lg shadow-md shadow-red-300 hover:bg-red-800 transition duration-150">
-                        <i class="fa-solid {{ $isEdit ? 'fa-save' : 'fa-plus' }} mr-1"></i>
-                        {{ $isEdit ? 'Simpan Perubahan' : 'Tambah Kategori' }}
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
-
     </div>
-</div>
 
 @endsection

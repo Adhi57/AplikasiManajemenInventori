@@ -1,92 +1,172 @@
 @extends('layouts.app')
-
+@section('page-title', 'Sistem / Tambah User')
 @section('content')
-<div class="max-w-2xl mx-auto mt-10">
-    <div class="bg-white shadow-xl rounded-xl overflow-hidden border border-gray-100">
-        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
-            <h2 class="text-xl font-bold text-gray-800">Tambah User Baru</h2>
-            <p class="text-sm text-gray-500">Silakan isi formulir di bawah ini untuk mendaftarkan akun baru.</p>
-        </div>
 
-        <div class="p-8">
-            {{-- Notifikasi Error Global --}}
-            @if ($errors->any())
-                <div class="mb-6 p-4 rounded-lg bg-red-50 border-l-4 border-red-500 text-red-700">
-                    <div class="flex items-center mb-2">
-                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="font-bold">Terjadi kesalahan validasi:</span>
-                    </div>
-                    <ul class="list-disc pl-10 text-sm">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+    {{-- Page Header --}}
+    <div class="mb-6">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-red-800 flex items-center justify-center shadow">
+                    <i class="fa-solid fa-user-plus text-white text-lg"></i>
                 </div>
-            @endif
-
-            <form action="{{ route('users.store') }}" method="POST" class="space-y-6">
-                @csrf
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {{-- Nama Lengkap --}}
-                    <div class="col-span-2">
-                        <label for="nama_lengkap" class="block text-sm font-semibold text-gray-700 mb-1">Nama Lengkap</label>
-                        <input type="text" name="nama_lengkap" id="nama_lengkap" value="{{ old('nama_lengkap') }}"
-                            class="w-full rounded-lg border-gray-300 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 @error('nama_lengkap') border-red-500 @enderror" 
-                            placeholder="Contoh: Budi Santoso" required>
-                    </div>
-
-                    {{-- Username --}}
-                    <div>
-                        <label for="username" class="block text-sm font-semibold text-gray-700 mb-1">Username</label>
-                        <input type="text" name="username" id="username" value="{{ old('username') }}"
-                            class="w-full rounded-lg border-gray-300 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 @error('username') border-red-500 @enderror" 
-                            placeholder="budisantoso123" required>
-                    </div>
-
-                    {{-- Email --}}
-                    <div>
-                        <label for="email" class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
-                        <input type="email" name="email" id="email" value="{{ old('email') }}"
-                            class="w-full rounded-lg border-gray-300 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 @error('email') border-red-500 @enderror" 
-                            placeholder="name@company.com" required>
-                    </div>
-
-                    {{-- Password --}}
-                    <div>
-                        <label for="password" class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
-                        <input type="password" name="password" id="password"
-                            class="w-full rounded-lg border-gray-300 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 @error('password') border-red-500 @enderror" 
-                            placeholder="••••••••" required>
-                    </div>
-
-                    {{-- Role --}}
-                    <div>
-                        <label for="role" class="block text-sm font-semibold text-gray-700 mb-1">Role</label>
-                        <select name="role" id="role"
-                            class="w-full rounded-lg border-gray-300 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 @error('role') border-red-500 @enderror" required>
-                            <option value="">-- Pilih Role --</option>
-                            @foreach(['SuperAdmin', 'Admin', 'Head', 'Staff'] as $role)
-                                <option value="{{ $role }}" {{ old('role') == $role ? 'selected' : '' }}>{{ $role }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Tambah User Baru</h1>
+                    <p class="text-sm text-gray-500">Silakan isi formulir untuk mendaftarkan akun baru</p>
                 </div>
-
-                <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-100">
-                    <a href="{{ route('users.index') }}"
-                        class="px-6 py-2.5 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition duration-200">
-                        Batal
-                    </a>
-                    <button type="submit"
-                        class="px-6 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-200 transition duration-200 shadow-lg shadow-indigo-100">
-                        Simpan User
-                    </button>
-                </div>
-            </form>
+            </div>
+            <a href="{{ route('users.index') }}"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-600 font-medium text-sm rounded-xl hover:bg-gray-200 transition">
+                <i class="fa-solid fa-arrow-left"></i>
+                Kembali
+            </a>
         </div>
     </div>
-</div>
+
+    {{-- Error Alert --}}
+    @if ($errors->any())
+        <div class="mb-6 bg-white rounded-2xl border border-red-200 shadow-sm overflow-hidden">
+            <div class="px-5 py-3 bg-red-50 border-b border-red-200">
+                <h3 class="font-bold text-red-800 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Terdapat Kesalahan
+                </h3>
+            </div>
+            <div class="p-5">
+                <ul class="list-disc list-inside text-sm text-red-600 space-y-1">
+                    @foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach
+                </ul>
+            </div>
+        </div>
+    @endif
+
+    <form action="{{ route('users.store') }}" method="POST" class="space-y-6">
+        @csrf
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+
+                {{-- Section 1: Informasi Akun --}}
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-5 py-3 border-b border-gray-100 bg-gray-50/50">
+                        <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-user-gear text-red-500"></i>
+                            Informasi Akun
+                        </h3>
+                    </div>
+                    <div class="p-5 space-y-5">
+                        {{-- Nama Lengkap --}}
+                        <div>
+                            <label for="nama_lengkap"
+                                class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+                                Nama Lengkap <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <i
+                                    class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                                <input type="text" name="nama_lengkap" id="nama_lengkap" value="{{ old('nama_lengkap') }}"
+                                    placeholder="Contoh: Budi Santoso"
+                                    class="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                                    required>
+                            </div>
+                        </div>
+
+                        {{-- Username & Email --}}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="username"
+                                    class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+                                    Username <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <i
+                                        class="fa-solid fa-at absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                                    <input type="text" name="username" id="username" value="{{ old('username') }}"
+                                        placeholder="budisantoso123"
+                                        class="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                                        required>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="email"
+                                    class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+                                    Email <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <i
+                                        class="fa-solid fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                                    <input type="email" name="email" id="email" value="{{ old('email') }}"
+                                        placeholder="name@company.com"
+                                        class="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                                        required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Section 2: Password & Role --}}
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-5 py-3 border-b border-gray-100 bg-gray-50/50">
+                        <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-shield-halved text-red-500"></i>
+                            Keamanan & Hak Akses
+                        </h3>
+                    </div>
+                    <div class="p-5 space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="password"
+                                    class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+                                    Password <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <i
+                                        class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                                    <input type="password" name="password" id="password" placeholder="••••••••"
+                                        class="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                                        required>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="role"
+                                    class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+                                    Role <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <i
+                                        class="fa-solid fa-user-shield absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                                    <select name="role" id="role"
+                                        class="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition bg-white appearance-none"
+                                        required>
+                                        <option value="">-- Pilih Role --</option>
+                                        @foreach(['SuperAdmin', 'Admin', 'Head', 'Staff'] as $role)
+                                            <option value="{{ $role }}" {{ old('role') == $role ? 'selected' : '' }}>{{ $role }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- ===== RIGHT COLUMN: Actions ===== --}}
+            <div class="lg:col-span-1">
+                <div class="sticky top-6 space-y-6">
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
+                        <button type="submit"
+                            class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-red-800 text-white font-semibold text-sm rounded-xl hover:bg-red-700 transition shadow-lg shadow-red-200 focus:ring-4 focus:ring-red-200">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            Simpan User
+                        </button>
+                        <a href="{{ route('users.index') }}"
+                            class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gray-100 text-gray-600 font-medium text-sm rounded-xl hover:bg-gray-200 transition">
+                            <i class="fa-solid fa-xmark"></i>
+                            Batal
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
 @endsection

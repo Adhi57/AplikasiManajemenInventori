@@ -20,8 +20,10 @@ class ReturBarangController extends Controller
 
         // Filter pencarian berdasarkan kode barang atau po_id
         if ($search) {
-            $query->where('kode_barang', 'like', "%{$search}%")
+            $query->where(function ($q) use ($search) {
+                $q->where('kode_barang', 'like', "%{$search}%")
                   ->orWhere('po_id', 'like', "%{$search}%");
+            });
         }
 
         // Filter berdasarkan status retur
@@ -39,7 +41,17 @@ class ReturBarangController extends Controller
 
         $returs = $query->paginate(10);
 
-        return view('returBarang.index', compact('returs', 'search', 'status'));
+        // Statistik untuk summary cards
+        $totalRetur = ReturBarang::count();
+        $totalPending = ReturBarang::where('status_retur', 'Pending')->count();
+        $totalDisetujui = ReturBarang::where('status_retur', 'Disetujui')->count();
+        $totalDitolak = ReturBarang::where('status_retur', 'Ditolak')->count();
+        $totalQtyRetur = ReturBarang::sum('qty_retur');
+
+        return view('returBarang.index', compact(
+            'returs', 'search', 'status',
+            'totalRetur', 'totalPending', 'totalDisetujui', 'totalDitolak', 'totalQtyRetur'
+        ));
     }
 
     /**

@@ -3,7 +3,7 @@
 @section('content')
 
     {{-- MAIN CONTENT --}}
-    <div class="space-y-6" x-data="purchaseRequest()" x-init="fetchBarangs()">
+    <div class="space-y-6" x-data="purchaseRequest()">
 
         {{-- HEADER --}}
         <div>
@@ -22,9 +22,16 @@
 
                     {{-- Catalog Header + Filters --}}
                     <div class="p-5 border-b border-gray-100">
-                        <div class="flex items-center gap-2 mb-4">
-                            <div class="w-2 h-5 bg-blue-500 rounded-full"></div>
-                            <h2 class="font-semibold text-gray-800">Katalog Barang Master</h2>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-5 bg-blue-500 rounded-full"></div>
+                                <h2 class="font-semibold text-gray-800">Katalog Barang Master</h2>
+                            </div>
+                            <button type="button" onclick="openScannerModal()"
+                                class="inline-flex items-center gap-2 px-4 py-2 bg-red-800 text-white text-xs font-semibold rounded-xl hover:bg-red-700 transition shadow-sm">
+                                <i class="fa-solid fa-barcode"></i>
+                                Scan Barcode
+                            </button>
                         </div>
 
                         <div class="flex flex-col md:flex-row gap-3">
@@ -251,6 +258,9 @@
         </div>
     </div>
 
+    {{-- Scanner Modal --}}
+    @include('components.scanner-modal')
+
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('purchaseRequest', () => ({
@@ -264,6 +274,54 @@
                 barangHtml: @json(view('purchase_orders._barang_list', ['barangs' => $barangs])->render()),
                 paginationHtml: @json((string) $barangs->links()),
                 loading: false,
+
+                init() {
+                    this.fetchBarangs();
+                    // Listen for barcode scans
+                    document.addEventListener('barcode-scanned', (e) => {
+                        this.handleBarcodeScan(e.detail.code);
+                    });
+                },
+
+                async handleBarcodeScan(code) {
+                    try {
+                        const response = await fetch(`{{ route('barcode.lookup') }}?code=${encodeURIComponent(code)}`);
+                        const data = await response.json();
+
+                        if (data.found) {
+                            const b = data.barang;
+                            this.addItem({
+                                kode_barang: b.kode_barang,
+                                nama: b.nama_barang,
+                                harga: parseFloat(b.harga_beli) || 0,
+                                satuan: b.satuan_jual,
+                            });
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Barang Ditemukan!',
+                                html: `<b>${b.nama_barang}</b> telah ditambahkan ke keranjang.`,
+                                timer: 2000,
+                                showConfirmButton: false,
+                                timerProgressBar: true,
+                                customClass: { popup: 'swal-custom-popup swal-success-popup' },
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Barang Tidak Ditemukan',
+                                text: `Kode "${code}" tidak ada di database.`,
+                                customClass: { popup: 'swal-custom-popup' },
+                            });
+                        }
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'Gagal menghubungi server.',
+                            customClass: { popup: 'swal-custom-popup' },
+                        });
+                    }
+                },
 
                 bindPaginationEvents() {
                     this.$nextTick(() => {

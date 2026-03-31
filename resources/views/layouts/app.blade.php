@@ -19,6 +19,9 @@
     {{-- SWEET ALERT --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    {{-- HTML5 QRCODE (Barcode Scanner) --}}
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
     {{-- SWEETALERT2 CUSTOM THEME --}}
     <style>
         /* Popup container */
@@ -50,13 +53,6 @@
         /* Icon sizing */
         .swal2-popup.swal-custom-popup .swal2-icon {
             margin: 0 auto 1rem;
-            width: 3.5rem;
-            height: 3.5rem;
-            border-width: 3px;
-        }
-
-        .swal2-popup.swal-custom-popup .swal2-icon .swal2-icon-content {
-            font-size: 1.75rem;
         }
 
         /* Success icon colors */

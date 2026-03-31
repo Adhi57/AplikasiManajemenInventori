@@ -161,11 +161,16 @@
 
                     {{-- Section 3: Katalog Barang --}}
                     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                        <div class="px-5 py-3 border-b border-gray-100 bg-gray-50/50">
+                        <div class="px-5 py-3 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
                             <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2">
                                 <i class="fa-solid fa-boxes-stacked text-red-500"></i>
                                 Katalog Barang
                             </h3>
+                            <button type="button" onclick="openScannerModal()"
+                                class="inline-flex items-center gap-2 px-4 py-2 bg-red-800 text-white text-xs font-semibold rounded-xl hover:bg-red-700 transition shadow-sm">
+                                <i class="fa-solid fa-barcode"></i>
+                                Scan Barcode
+                            </button>
                         </div>
                         <div class="p-5">
                             {{-- Search --}}
@@ -357,8 +362,8 @@
                             <button type="submit" :disabled="Object.keys(cart).length === 0"
                                 class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 font-semibold text-sm rounded-xl transition shadow-lg focus:ring-4"
                                 :class="Object.keys(cart).length > 0
-                                        ? 'bg-red-800 text-white hover:bg-red-700 shadow-red-200 focus:ring-red-200'
-                                        : 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none'">
+                                            ? 'bg-red-800 text-white hover:bg-red-700 shadow-red-200 focus:ring-red-200'
+                                            : 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none'">
                                 <i class="fa-solid fa-floppy-disk"></i>
                                 Simpan Surat Jalan
                             </button>
@@ -375,6 +380,9 @@
         </form>
     </div>
 
+    {{-- Scanner Modal --}}
+    @include('components.scanner-modal')
+
     {{-- SCRIPT ALPINE.JS --}}
     <script>
         document.addEventListener('alpine:init', () => {
@@ -384,6 +392,55 @@
                 barangHtml: '',
                 paginationHtml: '',
                 loading: false,
+
+                init() {
+                    // Listen for barcode scans
+                    document.addEventListener('barcode-scanned', (e) => {
+                        this.handleBarcodeScan(e.detail.code);
+                    });
+                },
+
+                async handleBarcodeScan(code) {
+                    try {
+                        const response = await fetch(`{{ route('barcode.lookup') }}?code=${encodeURIComponent(code)}`);
+                        const data = await response.json();
+
+                        if (data.found) {
+                            const b = data.barang;
+                            this.addItem({
+                                kode_barang: b.kode_barang,
+                                nama: b.nama_barang,
+                                harga: parseFloat(b.harga_jual) || 0,
+                                satuan: b.satuan_jual,
+                                stok_tersedia: b.stok_tersedia || 0,
+                                jml_barang_per_karton: b.jml_barang_per_karton || 1,
+                            });
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Barang Ditemukan!',
+                                html: `<b>${b.nama_barang}</b> telah ditambahkan ke keranjang.`,
+                                timer: 2000,
+                                showConfirmButton: false,
+                                timerProgressBar: true,
+                                customClass: { popup: 'swal-custom-popup swal-success-popup' },
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Barang Tidak Ditemukan',
+                                text: `Kode "${code}" tidak ada di database.`,
+                                customClass: { popup: 'swal-custom-popup' },
+                            });
+                        }
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'Gagal menghubungi server.',
+                            customClass: { popup: 'swal-custom-popup' },
+                        });
+                    }
+                },
                 biayaPengiriman: 0,
                 diskonPelanggan: 0,
 

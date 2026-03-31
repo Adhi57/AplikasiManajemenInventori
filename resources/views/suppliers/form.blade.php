@@ -1,136 +1,187 @@
 @extends('layouts.app')
 
+@section('page-title', 'Data Master / Supplier')
+
 @section('content')
 
+    @php
+        $isEdit = $supplier->exists;
+        $actionRoute = $isEdit
+            ? route('suppliers.update', $supplier->id_supplier)
+            : route('suppliers.store');
+    @endphp
 
-@php
-    $isEdit = $supplier->exists;
-    $actionRoute = $isEdit 
-        ? route('suppliers.update', $supplier->id_supplier) 
-        : route('suppliers.store');
-
-        $header = $isEdit 
-        ? 'Edit Supplier'
-        : 'Tambah Supplier';
-@endphp
-
-
-<div class="container mx-auto p-4">
-
-    <div class="bg-white rounded-xl shadow-xs p-6 max-w-xl mx-auto">
-        <div class="mb-6">
-            <h1 class="text-2xl text-center font-bold text-gray-800">{{ $header }}</h1>
-        </div>
-
-        <!-- FORM -->
-        <form action="{{$actionRoute }}" method="POST">
-            @csrf
-            @if ($isEdit)
-            @method('PUT')
-            @endif
-
-            <!-- ALERT -->
-            @if (session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-                <span class="block sm:inline">{{ session('success') }}</span>
+    {{-- Page Header --}}
+    <div class="mb-6">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-red-800 flex items-center justify-center shadow">
+                    <i class="fa-solid {{ $isEdit ? 'fa-pen-to-square' : 'fa-truck-field' }} text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">{{ $isEdit ? 'Edit Supplier' : 'Tambah Supplier Baru' }}
+                    </h1>
+                    <p class="text-sm text-gray-500">
+                        {{ $isEdit ? 'Perbarui informasi supplier: ' . $supplier->namaSupplier : 'Lengkapi data untuk mendaftarkan supplier baru' }}
+                    </p>
+                </div>
             </div>
-            @endif
+            <a href="{{ route('suppliers.index') }}"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-600 font-medium text-sm rounded-xl hover:bg-gray-200 transition">
+                <i class="fa-solid fa-arrow-left"></i>
+                Kembali
+            </a>
+        </div>
+    </div>
 
-            @if ($errors->any())
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                <strong class="font-bold">Oops!</strong>
-                <span class="block sm:inline">Ada masalah dengan input Anda.</span>
-                <ul class="mt-3 list-disc list-inside">
+    {{-- Error Alert --}}
+    @if ($errors->any())
+        <div class="mb-6 bg-white rounded-2xl border border-red-200 shadow-sm overflow-hidden">
+            <div class="px-5 py-3 bg-red-50 border-b border-red-200">
+                <h3 class="font-bold text-red-800 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    Terdapat Kesalahan
+                </h3>
+            </div>
+            <div class="p-5">
+                <ul class="list-disc list-inside text-sm text-red-600 space-y-1">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
             </div>
-            @endif
+        </div>
+    @endif
 
-            <!-- INPUTS -->
-            <div class="mb-4">
-                <label for="namaSupplier" class="block text-sm font-medium text-gray-700 mb-1">Nama Supplier</label>
-                <input
-                    type="text"
-                    name="namaSupplier"
-                    id="namaSupplier"
-                    value="{{ old('namaSupplier', $supplier->namaSupplier) }}"
-                    class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm
-                           focus:border-blue-500 focus:ring-blue-500"
-                    required>
-            </div>
+    <form action="{{ $actionRoute }}" method="POST" class="space-y-6">
+        @csrf
+        @if ($isEdit) @method('PUT') @endif
 
-            <div class="mb-4">
-                <label for="alamatSupplier" class="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
-                <textarea
-                    name="alamatSupplier"
-                    id="alamatSupplier"
-                    rows="3"
-                    class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm
-                           focus:border-blue-500 focus:ring-blue-500"
-                    required>{{ old('alamatSupplier', $supplier->alamatSupplier) }}</textarea>
-            </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            <div class="mb-4">
-                <label for="Kota" class="block text-sm font-medium text-gray-700 mb-1">Kota</label>
-                <input
-                    type="text"
-                    name="Kota"
-                    id="Kota"
-                    value="{{ old('Kota', $supplier->Kota) }}"
-                    class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm
-                           focus:border-blue-500 focus:ring-blue-500"
-                    required>
-            </div>
+            {{-- ===== LEFT COLUMN: Main Form ===== --}}
+            <div class="lg:col-span-2 space-y-6">
 
-            <div class="mb-6 flex gap-7">
-                <div>
-                    <label for="noTelepon" class="block text-sm font-medium text-gray-700 mb-1">No. Telepon</label>
-                    <input
-                        type="text"
-                        name="noTelepon"
-                        id="noTelepon"
-                        value="{{ old('noTelepon', $supplier->noTelepon) }}"
-                        class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm
-                               focus:border-blue-500 focus:ring-blue-500"
-                        required>
+                {{-- Section 1: Informasi Supplier --}}
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-5 py-3 border-b border-gray-100 bg-gray-50/50">
+                        <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-building text-red-500"></i>
+                            Informasi Supplier
+                        </h3>
+                    </div>
+                    <div class="p-5 space-y-5">
+                        {{-- Nama Supplier --}}
+                        <div>
+                            <label for="namaSupplier"
+                                class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+                                Nama Supplier <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <i
+                                    class="fa-solid fa-building absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                                <input type="text" name="namaSupplier" id="namaSupplier"
+                                    value="{{ old('namaSupplier', $supplier->namaSupplier) }}" placeholder="Nama supplier"
+                                    class="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                                    required>
+                            </div>
+                        </div>
+
+                        {{-- Alamat --}}
+                        <div>
+                            <label for="alamatSupplier"
+                                class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+                                Alamat <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <i class="fa-solid fa-location-dot absolute left-3 top-3 text-gray-400 text-sm"></i>
+                                <textarea name="alamatSupplier" id="alamatSupplier" rows="3"
+                                    placeholder="Alamat lengkap supplier"
+                                    class="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition resize-none"
+                                    required>{{ old('alamatSupplier', $supplier->alamatSupplier) }}</textarea>
+                            </div>
+                        </div>
+
+                        {{-- Kota --}}
+                        <div>
+                            <label for="Kota" class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+                                Kota <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <i
+                                    class="fa-solid fa-city absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                                <input type="text" name="Kota" id="Kota" value="{{ old('Kota', $supplier->Kota) }}"
+                                    placeholder="Kota"
+                                    class="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                                    required>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div>
-                    <label for="waktuPengiriman" class="block text-sm font-medium text-gray-700 mb-1">
-                        Rata-rata Waktu Pengiriman (hari)
-                    </label>
-                    <input
-                        type="number"
-                        name="waktuPengiriman"
-                        id="waktuPengiriman"
-                        min="1"
-                        value="{{ old('waktuPengiriman', $supplier->waktuPengiriman) }}"
-                        class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm
-                               focus:border-blue-500 focus:ring-blue-500"
-                        required>
+                {{-- Section 2: Kontak & Pengiriman --}}
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-5 py-3 border-b border-gray-100 bg-gray-50/50">
+                        <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-phone text-red-500"></i>
+                            Kontak & Pengiriman
+                        </h3>
+                    </div>
+                    <div class="p-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="noTelepon"
+                                    class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+                                    No. Telepon <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <i
+                                        class="fa-solid fa-phone absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                                    <input type="text" name="noTelepon" id="noTelepon"
+                                        value="{{ old('noTelepon', $supplier->noTelepon) }}" placeholder="08xxxxxxxxxx"
+                                        class="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                                        required>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="waktuPengiriman"
+                                    class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+                                    Rata-rata Waktu Pengiriman <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <i
+                                        class="fa-solid fa-clock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                                    <input type="number" name="waktuPengiriman" id="waktuPengiriman" min="1"
+                                        value="{{ old('waktuPengiriman', $supplier->waktuPengiriman) }}" placeholder="0"
+                                        class="w-full pl-9 pr-16 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                                        required>
+                                    <span
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-semibold">hari</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- BUTTONS -->
-            <div class="flex justify-end space-x-3">
-                <a href="{{ route('suppliers.index') }}"
-                   class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg
-                          hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                    Batal
-                </a>
-
-                <button type="submit"
-                    class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg shadow-md
-                           hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Simpan
-                </button>
+            {{-- ===== RIGHT COLUMN: Actions ===== --}}
+            <div class="lg:col-span-1">
+                <div class="sticky top-6 space-y-6">
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
+                        <button type="submit"
+                            class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-red-800 text-white font-semibold text-sm rounded-xl hover:bg-red-700 transition shadow-lg shadow-red-200 focus:ring-4 focus:ring-red-200">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            {{ $isEdit ? 'Perbarui Supplier' : 'Simpan Supplier' }}
+                        </button>
+                        <a href="{{ route('suppliers.index') }}"
+                            class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gray-100 text-gray-600 font-medium text-sm rounded-xl hover:bg-gray-200 transition">
+                            <i class="fa-solid fa-xmark"></i>
+                            Batal
+                        </a>
+                    </div>
+                </div>
             </div>
-        </form>
-
-    </div>
-
-</div>
+        </div>
+    </form>
 
 @endsection

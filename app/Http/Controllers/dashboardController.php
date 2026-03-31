@@ -89,6 +89,29 @@ class DashboardController extends Controller
                 ])
                 ->sum(DB::raw('dlk.jumlah_keluar / b.jml_barang_per_karton'));
         });
+
+        $pageKeluar = request()->get('page_keluar', 1);
+        $barangKeluarBulanIni = DB::table('lap_barang_keluar as lbk')
+            ->join('detail_lap_barang_keluar as dlk', 'lbk.lap_keluar_id', '=', 'dlk.lap_keluar_id')
+            ->join('barangs as b', 'dlk.kode_barang', '=', 'b.kode_barang')
+            ->leftJoin('pengirimans as p', 'lbk.pengiriman_id', '=', 'p.pengiriman_id')
+            ->leftJoin('surat_jalans as sj', 'p.sj_id', '=', 'sj.sj_id')
+            ->leftJoin('pelanggans as pel', 'sj.pelanggan_id', '=', 'pel.pelanggan_id')
+            ->whereBetween('lbk.tanggal_keluar', [
+                Carbon::now()->startOfMonth(),
+                Carbon::now()->endOfMonth()
+            ])
+            ->select(
+                'lbk.lap_keluar_id',
+                'lbk.sj_id',
+                'lbk.tanggal_keluar',
+                'b.nama_barang',
+                'b.satuan_jual',
+                'dlk.jumlah_keluar',
+                'pel.nama_pelanggan'
+            )
+            ->orderBy('lbk.tanggal_keluar', 'desc')
+            ->paginate(5, ['*'], 'page_keluar');
     
         // =============================
         // 4. BARANG Terlaris
@@ -124,12 +147,17 @@ class DashboardController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(3);
 
+        // Barang sudah kadaluarsa + akan kadaluarsa dalam 60 hari
         $barangExpired = StokBarang::with('barang')
-            ->where('tgl_kadaluarsa', '>=', Carbon::now())
-            ->where('tgl_kadaluarsa', '<=', Carbon::now()->addDays(60))             
+            ->where('tgl_kadaluarsa', '<=', Carbon::now()->addDays(60))
+            ->where('jumlah_stok', '>', 0)
             ->orderBy('tgl_kadaluarsa', 'asc')
-            ->limit(3)
+            ->limit(5)
             ->get();
+
+        $jumlahSudahExpired = StokBarang::where('tgl_kadaluarsa', '<', Carbon::now())
+            ->where('jumlah_stok', '>', 0)
+            ->count();
 
         $startOfWeek = Carbon::now()->startOfWeek();
         $endOfWeek   = Carbon::now()->endOfWeek();
@@ -226,6 +254,8 @@ class DashboardController extends Controller
             'poPending',
             'sjPending',
             'barangExpired',
+            'jumlahSudahExpired',
+            'barangKeluarBulanIni',
             'statusPengiriman',
             'barangMasuk',
             'barangKeluar',

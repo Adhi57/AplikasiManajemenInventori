@@ -397,9 +397,16 @@
 
             {{-- Barang Expired --}}
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-                <div class="flex items-center gap-2 mb-4">
-                    <div class="w-2 h-5 bg-red-500 rounded-full"></div>
-                    <h2 class="font-semibold text-gray-800">Barang Mendekati Expired</h2>
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-5 bg-red-500 rounded-full"></div>
+                        <h2 class="font-semibold text-gray-800">Barang Kadaluarsa</h2>
+                    </div>
+                    @if($jumlahSudahExpired > 0)
+                        <span class="px-2.5 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full animate-pulse">
+                            {{ $jumlahSudahExpired }} Expired
+                        </span>
+                    @endif
                 </div>
 
                 @if ($barangExpired->count() == 0)
@@ -407,32 +414,38 @@
                         <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3">
                             <i class="fa-solid fa-check text-green-600 text-lg"></i>
                         </div>
-                        <p class="text-sm text-gray-500">Tidak ada barang mendekati kadaluarsa.</p>
+                        <p class="text-sm text-gray-500">Tidak ada barang kadaluarsa atau mendekati kadaluarsa.</p>
                     </div>
                 @else
                     <div class="space-y-2.5">
                         @foreach ($barangExpired as $item)
                             @php
-                                $daysLeft = (int) \Carbon\Carbon::now()->diffInDays($item->tgl_kadaluarsa, false);
-                                $isUrgent = $daysLeft <= 30;
+                                $expDate = \Carbon\Carbon::parse($item->tgl_kadaluarsa);
+                                $isExpired = $expDate->isPast();
+                                $daysLeft = $isExpired
+                                    ? (int) Carbon\Carbon::now()->diffInDays($expDate)
+                                    : (int) Carbon\Carbon::now()->diffInDays($expDate, false);
+                                $isUrgent = $isExpired || $daysLeft <= 30;
                             @endphp
                             <div
-                                class="flex items-center justify-between p-3 rounded-xl {{ $isUrgent ? 'bg-red-50 border border-red-100' : 'bg-amber-50 border border-amber-100' }} hover:shadow-sm transition">
+                                class="flex items-center justify-between p-3 rounded-xl {{ $isExpired ? 'bg-red-50 border border-red-200' : ($isUrgent ? 'bg-red-50 border border-red-100' : 'bg-amber-50 border border-amber-100') }} hover:shadow-sm transition">
                                 <div class="flex items-center gap-3">
                                     <div
-                                        class="w-9 h-9 flex items-center justify-center rounded-lg {{ $isUrgent ? 'bg-red-600' : 'bg-amber-500' }} text-white text-sm">
-                                        <i class="fa-solid fa-clock"></i>
+                                        class="w-9 h-9 flex items-center justify-center rounded-lg {{ $isExpired ? 'bg-red-600' : ($isUrgent ? 'bg-red-500' : 'bg-amber-500') }} text-white text-sm">
+                                        <i class="fa-solid {{ $isExpired ? 'fa-skull-crossbones' : 'fa-clock' }}"></i>
                                     </div>
                                     <div>
                                         <p class="font-medium text-gray-800 text-sm">{{ $item->barang->nama_barang }}</p>
-                                        <p class="text-xs text-gray-500">Exp:
-                                            {{ \Carbon\Carbon::parse($item->tgl_kadaluarsa)->format('d M Y') }}
+                                        <p class="text-xs text-gray-500">
+                                            {{ $isExpired ? 'Exp' : 'Exp' }}:
+                                            {{ $expDate->format('d M Y') }}
+                                            · {{ $item->jumlah_stok }} karton
                                         </p>
                                     </div>
                                 </div>
                                 <span
-                                    class="px-2.5 py-1 text-xs font-bold rounded-full {{ $isUrgent ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700' }}">
-                                    {{ $daysLeft }} hari
+                                    class="px-2.5 py-1 text-xs font-bold rounded-full whitespace-nowrap {{ $isExpired ? 'bg-red-600 text-white' : ($isUrgent ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700') }}">
+                                    {{ $isExpired ? 'EXPIRED ' . $daysLeft . ' hari' : $daysLeft . ' hari lagi' }}
                                 </span>
                             </div>
                         @endforeach
@@ -514,7 +527,7 @@
                             @if($loop->iteration <= 3)
                                 <div
                                     class="w-8 h-8 flex items-center justify-center rounded-lg text-sm font-bold
-                                                                                                                                                                {{ $loop->iteration == 1 ? 'bg-amber-100 text-amber-700' : ($loop->iteration == 2 ? 'bg-gray-100 text-gray-600' : 'bg-orange-100 text-orange-600') }}">
+                                                                                                                                                                                                                {{ $loop->iteration == 1 ? 'bg-amber-100 text-amber-700' : ($loop->iteration == 2 ? 'bg-gray-100 text-gray-600' : 'bg-orange-100 text-orange-600') }}">
                                     {{ $loop->iteration }}
                                 </div>
                             @else
@@ -777,6 +790,75 @@
                 </tbody>
             </table>
         </div>
+    </div>
+
+    {{-- ========================================= --}}
+    {{-- SECTION 5.5: Log Barang Keluar Terbaru --}}
+    {{-- ========================================= --}}
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+            <div class="flex items-center gap-2">
+                <div class="w-2 h-5 bg-red-500 rounded-full"></div>
+                <h2 class="font-semibold text-gray-800">Log Barang Keluar Terbaru</h2>
+            </div>
+            <a href="/laporan/barang-keluar"
+                class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-800 border border-gray-200 hover:border-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-all">
+                <span>Lihat Semua</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
+            </a>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-gray-100">
+            <table class="min-w-full text-sm">
+                <thead>
+                    <tr class="bg-gray-50">
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">No. Ref
+                        </th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Nama
+                            Barang</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Qty
+                        </th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Tanggal
+                        </th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            Pelanggan</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    @forelse ($barangKeluarBulanIni as $bk)
+                        <tr class="hover:bg-red-50/30 transition-colors">
+                            <td class="px-4 py-3"><span
+                                    class="font-semibold text-gray-800">{{ $bk->sj_id ?? $bk->lap_keluar_id }}</span></td>
+                            <td class="px-4 py-3 text-gray-600">{{ $bk->nama_barang }}</td>
+                            <td class="px-4 py-3">
+                                <span class="inline-flex items-center gap-1 text-red-600 font-semibold">
+                                    <i class="fa-solid fa-arrow-up text-[10px]"></i>
+                                    {{ rtrim(rtrim(number_format($bk->jumlah_keluar, 2, ',', '.'), '0'), ',') }}
+                                    {{ $bk->satuan_jual }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-3 text-gray-500">
+                                {{ \Carbon\Carbon::parse($bk->tanggal_keluar)->format('d/m/Y') }}
+                            </td>
+                            <td class="px-4 py-3">
+                                <span
+                                    class="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs font-medium rounded-md">{{ $bk->nama_pelanggan ?? '-' }}</span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="px-4 py-8 text-center text-sm text-gray-400">
+                                Tidak ada data barang keluar bulan ini.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        @if($barangKeluarBulanIni->hasPages())
+            <div class="mt-4">
+                {{ $barangKeluarBulanIni->links() }}
+            </div>
+        @endif
     </div>
 
     </div>

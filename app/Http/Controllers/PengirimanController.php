@@ -19,6 +19,9 @@ class PengirimanController extends Controller
     public function index(Request $request)
     {
         $query = Pengiriman::with(['suratJalan.pelanggan'])
+            ->whereHas('suratJalan', function($q) {
+                $q->where('status', 'Disetujui');
+            })
             ->latest();
 
         // Filter by status
@@ -41,7 +44,9 @@ class PengirimanController extends Controller
         $pengirimans = $query->paginate(10);
 
         // Status counts for summary cards
-        $statusCounts = Pengiriman::selectRaw("
+        $statusCounts = Pengiriman::whereHas('suratJalan', function($q) {
+                $q->where('status', 'Disetujui');
+            })->selectRaw("
             COUNT(*) as total,
             SUM(CASE WHEN status_pengiriman = 'Menunggu' THEN 1 ELSE 0 END) as menunggu,
             SUM(CASE WHEN status_pengiriman = 'Dalam Perjalanan' THEN 1 ELSE 0 END) as dalam_perjalanan,
@@ -55,14 +60,14 @@ class PengirimanController extends Controller
     public function create()
     {
         $existing_sj_ids = Pengiriman::pluck('sj_id')->toArray();
-        $surat_jalans = SuratJalan::with('pelanggan')->get();
+        $surat_jalans = SuratJalan::with('pelanggan')->where('status', 'Disetujui')->get();
         return view('pengiriman.form', compact('surat_jalans', 'existing_sj_ids'));
     }
 
     public function edit($id)
     {
         $pengiriman = Pengiriman::findOrFail($id);
-        $surat_jalans = SuratJalan::with('pelanggan')->get();
+        $surat_jalans = SuratJalan::with('pelanggan')->where('status', 'Disetujui')->get();
         return view('pengiriman.form', compact('pengiriman', 'surat_jalans'));
     }
 

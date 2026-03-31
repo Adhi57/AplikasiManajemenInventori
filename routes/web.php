@@ -26,6 +26,7 @@ use App\Http\Controllers\ReorderPointController;
 use App\Http\Controllers\TrackingKadaluarsaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\BarcodeScannerController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -36,6 +37,8 @@ Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name(
 
 
 Route::middleware('auth')->group(function () {
+    // Barcode Scanner Lookup
+    Route::get('/barcode/lookup', [BarcodeScannerController::class, 'lookup'])->name('barcode.lookup');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('barangs', barangController::class);
     Route::resource('pelanggans', PelangganController::class);

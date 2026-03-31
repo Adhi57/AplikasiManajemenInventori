@@ -3,7 +3,9 @@
     $pendingPO = \App\Models\PurchaseOrder::where('status_po', 'Pending')->count();
     $pendingSJ = \App\Models\SuratJalan::where('status', 'Pending')->count();
     $pendingRetur = \App\Models\ReturBarang::where('status_retur', 'Pending')->count();
-    $pengirimanMenunggu = \App\Models\Pengiriman::where('status_pengiriman', 'Menunggu')->count();
+    $pengirimanMenunggu = \App\Models\Pengiriman::where('status_pengiriman', 'Menunggu')
+        ->whereHas('suratJalan', fn($q) => $q->where('status', 'Disetujui'))
+        ->count();
     $recentPO = \App\Models\PurchaseOrder::where('status_po', 'Pending')
         ->with('supplier')
         ->latest()
@@ -17,6 +19,7 @@
         ->get();
 
     $recentPengiriman = \App\Models\Pengiriman::where('status_pengiriman', 'Menunggu')
+        ->whereHas('suratJalan', fn($q) => $q->where('status', 'Disetujui'))
         ->with('suratJalan.pelanggan')
         ->latest()
         ->take(3)
