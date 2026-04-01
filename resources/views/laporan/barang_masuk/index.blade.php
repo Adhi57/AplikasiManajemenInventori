@@ -13,17 +13,15 @@
     <div class="space-y-6">
 
         {{-- HEADER --}}
-        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900">Laporan Barang Masuk</h1>
-                <p class="text-sm text-gray-500 mt-1">Ringkasan penerimaan barang dari supplier berdasarkan Purchase Order.
-                </p>
-            </div>
-            <a href="{{ route('laporan.barang-masuk.cetak', request()->all()) }}" target="_blank"
-                class="inline-flex items-center gap-2 px-5 py-2.5 bg-red-800 text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition-colors shadow-sm">
-                <i class="fa-solid fa-file-pdf text-xs"></i> Export PDF
-            </a>
-        </div>
+        <x-page-header title="Laporan Barang Masuk" description="Ringkasan penerimaan barang dari supplier berdasarkan Purchase Order." icon="fa-file-invoice">
+            <x-slot name="actions">
+                <a href="{{ route('laporan.barang-masuk.cetak', request()->all()) }}" target="_blank"
+                    class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/15 backdrop-blur-sm shadow-sm transition-all text-sm font-medium hover:scale-105 hover:border-amber-400/30 duration-200">
+                    <i class="fa-solid fa-file-pdf text-amber-400"></i>
+                    <span>Export PDF</span>
+                </a>
+            </x-slot>
+        </x-page-header>
 
         {{-- SUMMARY CARDS --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

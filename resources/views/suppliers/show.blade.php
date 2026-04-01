@@ -5,13 +5,15 @@
 <div class="container mx-auto p-6">
 
     <div class="bg-white shadow rounded-xl max-w-2xl mx-auto p-6">
-        <div class="flex justify-between items-center mb-4">
-            <h1 class="text-2xl font-bold text-gray-800">Detail Supplier</h1>
-            <a href="{{ route('suppliers.index') }}" 
-               class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-2 rounded-lg">
-               ← Kembali
-            </a>
-        </div>
+        <x-page-header title="Detail Supplier" description="Detail informasi supplier: {{ $supplier->namaSupplier }}" icon="fa-building">
+            <x-slot name="actions">
+                <a href="{{ route('suppliers.index') }}"
+                    class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/15 backdrop-blur-sm shadow-sm transition-all text-sm font-medium hover:scale-105 hover:border-amber-400/30 duration-200">
+                    <i class="fa-solid fa-arrow-left text-amber-400"></i>
+                    <span>Kembali</span>
+                </a>
+            </x-slot>
+        </x-page-header>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-800">
             <div>

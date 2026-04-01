@@ -17,10 +17,17 @@
 
 <div class="container mx-auto p-4">
 
-    <div class="bg-white rounded-xl shadow-xs p-6 max-w-xl mx-auto">
-        <div class="mb-6">
-            <h1 class="text-2xl text-center font-bold text-gray-800">{{ $header }}</h1>
-        </div>
+    <x-page-header title="{{ $header }}" description="{{ $isEdit ? 'Perbarui informasi kategori barang' : 'Lengkapi data untuk mendaftarkan kategori barang baru' }}" icon="fa-layer-group">
+        <x-slot name="actions">
+            <a href="{{ route('kategori_barang.index') }}"
+                class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/15 backdrop-blur-sm shadow-sm transition-all text-sm font-medium hover:scale-105 hover:border-amber-400/30 duration-200">
+                <i class="fa-solid fa-arrow-left text-amber-400"></i>
+                <span>Batal</span>
+            </a>
+        </x-slot>
+    </x-page-header>
+
+    <div class="bg-white rounded-xl shadow-xs p-6 max-w-xl mx-auto mt-6">
 
         <!-- FORM -->
         <form action="{{$actionRoute }}" method="POST">

@@ -2,24 +2,14 @@
 @section('page-title', 'Detail PO - ' . $purchaseOrder->po_id)
 @section('content')
 
-    {{-- Page Header --}}
-    <div class="mb-6">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-red-800 flex items-center justify-center shadow">
-                    <i class="fa-solid fa-file-lines text-white text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Detail Purchase Order</h1>
-                    <p class="text-sm text-gray-500">Review dokumen PO sebelum memberikan persetujuan</p>
-                </div>
-            </div>
-            <a href="{{ route('approval.approval_po') }}"
-                class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-600 font-medium text-sm rounded-xl hover:bg-gray-200 transition">
-                <i class="fa-solid fa-arrow-left"></i> Kembali
-            </a>
-        </div>
-    </div>
+    <x-page-header title="Detail Purchase Order" description="Review dokumen PO sebelum memberikan persetujuan" icon="fa-file-lines">
+    <x-slot name="actions">
+        <a href="{{ route('approval.approval_po') }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-red-950 shadow-md transition-all text-sm font-bold hover:scale-105 duration-200">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Kembali</span>
+        </a>
+    </x-slot>
+</x-page-header>
 
     {{-- Status Header --}}
     @php

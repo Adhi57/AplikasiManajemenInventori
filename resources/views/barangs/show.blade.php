@@ -11,29 +11,20 @@
     <div class="max-w-7xl mx-auto space-y-6">
 
         {{-- Page Header --}}
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-red-800 flex items-center justify-center shadow">
-                    <i class="fa-solid fa-box text-white text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Detail Barang</h1>
-                    <p class="text-sm font-medium text-gray-500">
-                        Katalog / Data Master / <span class="text-red-700 font-bold">{{ $barang->kode_barang }}</span>
-                    </p>
-                </div>
-            </div>
-            <div class="flex gap-2">
-                <a href="{{ route('barangs.index') }}"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-600 font-medium text-sm rounded-xl border border-gray-200 hover:bg-gray-50 transition shadow-sm">
-                    <i class="fa-solid fa-arrow-left"></i> Kembali
-                </a>
+        <x-page-header title="Detail Barang" description="Katalog / Data Master / {{ $barang->kode_barang }}" icon="fa-box">
+            <x-slot name="actions">
                 <a href="{{ route('barangs.edit', $barang->kode_barang) }}"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-amber-500 text-white font-medium text-sm rounded-xl hover:bg-amber-600 transition shadow-sm shadow-amber-200">
-                    <i class="fa-solid fa-pen-to-square"></i> Edit
+                    class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-amber-500 hover:bg-amber-600 backdrop-blur-sm shadow-sm transition-all text-sm font-medium hover:scale-105 text-white duration-200">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <span>Edit</span>
                 </a>
-            </div>
-        </div>
+                <a href="{{ route('barangs.index') }}"
+                    class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/15 backdrop-blur-sm shadow-sm transition-all text-sm font-medium hover:scale-105 hover:border-amber-400/30 duration-200">
+                    <i class="fa-solid fa-arrow-left text-amber-400"></i>
+                    <span>Kembali</span>
+                </a>
+            </x-slot>
+        </x-page-header>
 
         {{-- Main Profile Card --}}
         <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">

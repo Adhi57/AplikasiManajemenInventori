@@ -6,21 +6,15 @@
         @tambah-barang.window="addItem($event.detail)">
 
         {{-- PAGE HEADER --}}
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-red-800 flex items-center justify-center shadow">
-                    <i class="fa-solid fa-file-invoice text-white text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Buat Surat Jalan Baru</h1>
-                    <p class="text-sm text-gray-500">Buat data pengiriman baru berdasarkan barang yang tersedia.</p>
-                </div>
-            </div>
-            <a href="{{ route('surat_jalan.index') }}"
-                class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-600 font-medium text-sm rounded-xl hover:bg-gray-200 transition">
-                <i class="fa-solid fa-arrow-left"></i> Kembali
-            </a>
-        </div>
+        <x-page-header title="Buat Surat Jalan Baru" description="Buat data pengiriman baru berdasarkan barang yang tersedia." icon="fa-file-invoice">
+            <x-slot name="actions">
+                <a href="{{ route('surat_jalan.index') }}"
+                    class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/15 backdrop-blur-sm shadow-sm transition-all text-sm font-medium hover:scale-105 hover:border-amber-400/30 duration-200">
+                    <i class="fa-solid fa-arrow-left text-amber-400"></i>
+                    <span>Batal</span>
+                </a>
+            </x-slot>
+        </x-page-header>
 
         <form action="{{ route('surat_jalan.store') }}" method="POST">
             @csrf

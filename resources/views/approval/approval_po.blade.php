@@ -3,19 +3,8 @@
 @section('content')
 
     {{-- Page Header --}}
-    <div class="mb-6">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-red-800 flex items-center justify-center shadow">
-                    <i class="fa-solid fa-clipboard-check text-white text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Approval Purchase Order</h1>
-                    <p class="text-sm text-gray-500">Proses permintaan pembelian dari tim procurement</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    <x-page-header title="Approval Purchase Order" description="Proses permintaan pembelian dari tim procurement" icon="fa-clipboard-check">
+    </x-page-header>
 
 
     {{-- Summary Stat Cards --}}

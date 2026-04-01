@@ -20,18 +20,8 @@
     @endif
 
     {{-- Page Header --}}
-    <div class="mb-6">
-        <div class="flex items-center gap-3 mb-1">
-            <div class="w-10 h-10 rounded-xl bg-red-800 flex items-center justify-center shadow">
-                <i class="fa-solid fa-clipboard-check text-white text-lg"></i>
-            </div>
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900">Verifikasi Fisik Barang Masuk</h1>
-                <p class="text-sm text-gray-500">Memastikan dan mengonfirmasi barang yang diterima secara fisik sesuai PO
-                </p>
-            </div>
-        </div>
-    </div>
+    <x-page-header title="Verifikasi Fisik Barang Masuk" description="Memastikan dan mengonfirmasi barang yang diterima secara fisik sesuai PO" icon="fa-clipboard-check">
+    </x-page-header>
 
     {{-- Main Content --}}
     <div x-data="poVerifikasi()" x-init="init()" class="grid grid-cols-1 lg:grid-cols-12 gap-6">

@@ -2,25 +2,14 @@
 @section('page-title', 'Sistem / Manajemen User')
 @section('content')
 
-    {{-- Page Header --}}
-    <div class="mb-6">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-red-800 flex items-center justify-center shadow">
-                    <i class="fa-solid fa-users-gear text-white text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Manajemen User</h1>
-                    <p class="text-sm text-gray-500">Kelola pengguna dan hak akses sistem</p>
-                </div>
-            </div>
-            <a href="{{ route('users.create') }}"
-                class="inline-flex items-center gap-2 px-5 py-2.5 bg-red-800 text-white font-semibold text-sm rounded-xl hover:bg-red-700 transition shadow-lg shadow-red-200">
-                <i class="fa-solid fa-user-plus"></i>
-                Tambah User Baru
-            </a>
-        </div>
-    </div>
+    <x-page-header title="Manajemen User" description="Kelola pengguna dan hak akses sistem" icon="fa-users-gear">
+    <x-slot name="actions">
+        <a href="{{ route('users.create') }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-red-950 shadow-md transition-all text-sm font-bold hover:scale-105 duration-200">
+            <i class="fa-solid fa-user-plus"></i>
+            <span>Tambah User Baru</span>
+        </a>
+    </x-slot>
+</x-page-header>
 
     {{-- Filters --}}
     <div class="mb-6">

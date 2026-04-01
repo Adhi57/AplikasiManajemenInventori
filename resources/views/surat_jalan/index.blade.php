@@ -2,25 +2,14 @@
 @section('page-title', 'Surat Jalan')
 @section('content')
 
-    {{-- Page Header --}}
-    <div class="mb-6">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-red-800 flex items-center justify-center shadow">
-                    <i class="fa-solid fa-file-lines text-white text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Surat Jalan & Pengiriman</h1>
-                    <p class="text-sm text-gray-500">Kelola dokumen surat jalan untuk pengiriman barang ke pelanggan</p>
-                </div>
-            </div>
-            <a href="{{ route('surat_jalan.create') }}"
-                class="inline-flex items-center gap-2 px-5 py-2.5 bg-red-800 text-white font-semibold text-sm rounded-xl shadow-lg shadow-red-200 hover:bg-red-700 transition-all duration-200 focus:ring-4 focus:ring-red-200">
-                <i class="fa-solid fa-plus"></i>
-                Tambah Surat Jalan
-            </a>
-        </div>
-    </div>
+    <x-page-header title="Surat Jalan & Pengiriman" description="Kelola dokumen surat jalan untuk pengiriman barang ke pelanggan" icon="fa-file-lines">
+    <x-slot name="actions">
+        <a href="{{ route('surat_jalan.create') }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-red-950 shadow-md transition-all text-sm font-bold hover:scale-105 duration-200">
+            <i class="fa-solid fa-plus"></i>
+            <span>Tambah Surat Jalan</span>
+        </a>
+    </x-slot>
+</x-page-header>
 
     {{-- Summary Stat Cards --}}
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">

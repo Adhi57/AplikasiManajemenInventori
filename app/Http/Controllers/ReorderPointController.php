@@ -46,9 +46,7 @@ class ReorderPointController extends Controller
             ->get()
             ->keyBy('kode_barang');
 
-        // 3. Hitung Lead Time dari data PO yang sudah diterima (Diterima)
-        //    Lead Time = DATEDIFF(tanggal_masuk, tanggal_po) per kode_barang
-        //    L_avg = rata-rata lead time, L_max = lead time terlama
+        // 3. Hitung Lead Time dari data PO yang sudah diterima
         $leadTimeData = DB::table('detail_lap_barang_masuk as dlm')
             ->join('lap_barang_masuk as lbm', 'dlm.barang_masuk_id', '=', 'lbm.barang_masuk_id')
             ->join('Purchase_Orders as po', 'lbm.po_id', '=', 'po.po_id')
@@ -62,8 +60,29 @@ class ReorderPointController extends Controller
             ->get()
             ->keyBy('kode_barang');
 
-        // 4. Build data array untuk view (sudah siap untuk Alpine.js)
-        $items = $barangs->map(function ($barang) use ($avgUsageData, $periodDays, $leadTimeData) {
+        // 4. Monthly usage trend (last 6 months) per kode_barang
+        $sixMonthsAgo = Carbon::now()->subMonths(6)->startOfMonth();
+        $monthlyUsage = DB::table('detail_lap_barang_keluar as dlk')
+            ->join('lap_barang_keluar as lbk', 'dlk.lap_keluar_id', '=', 'lbk.lap_keluar_id')
+            ->where('lbk.tanggal_keluar', '>=', $sixMonthsAgo)
+            ->groupBy('dlk.kode_barang', 'bulan')
+            ->select(
+                'dlk.kode_barang',
+                DB::raw('DATE_FORMAT(lbk.tanggal_keluar, "%Y-%m") as bulan'),
+                DB::raw('SUM(dlk.jumlah_keluar) as total_keluar')
+            )
+            ->get()
+            ->groupBy('kode_barang');
+
+        // Build 6-month labels
+        $trendLabels = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $trendLabels[] = Carbon::now()->subMonths($i)->format('Y-m');
+        }
+        $trendLabelNames = array_map(fn($l) => Carbon::parse($l . '-01')->translatedFormat('M'), $trendLabels);
+
+        // 5. Build data array for view
+        $items = $barangs->map(function ($barang) use ($avgUsageData, $periodDays, $leadTimeData, $monthlyUsage, $trendLabels) {
             $totalStokKarton = $barang->total_stok ?? 0;
             
             // D_avg
@@ -81,21 +100,48 @@ class ReorderPointController extends Controller
             $lMax = $ltInfo ? (int) $ltInfo->l_max : 0;
             $jumlahPo = $ltInfo ? (int) $ltInfo->jumlah_po : 0;
 
+            // Monthly trend data
+            $itemUsage = $monthlyUsage->get($barang->kode_barang, collect());
+            $usageByMonth = $itemUsage->keyBy('bulan');
+            $trendData = array_map(fn($m) => (float)($usageByMonth[$m]->total_keluar ?? 0), $trendLabels);
+
             return [
                 'kode_barang' => $barang->kode_barang,
                 'nama_barang' => $barang->nama_barang,
                 'kategori' => $barang->kategori->nama_kategori_barang ?? '-',
+                'supplier' => $barang->supplier->namaSupplier ?? '-',
+                'foto_produk' => $barang->foto_produk,
                 'stok_karton' => round($totalStokKarton, 2),
                 'd_avg' => $dAvg,
                 'l_max' => $lMax,
                 'l_avg' => $lAvg,
                 'jumlah_po' => $jumlahPo,
+                'trend' => $trendData,
             ];
         })->values();
 
         // Kategori untuk filter
         $kategoris = \App\Models\KategoriBarang::orderBy('nama_kategori_barang')->get();
 
-        return view('reorder_point.index', compact('items', 'search', 'kategori', 'kategoris'));
+        // Global trend for chart (aggregate masuk vs keluar 6 months)
+        $globalTrendMasuk = DB::table('lap_barang_masuk as lbm')
+            ->join('detail_lap_barang_masuk as dlm', 'lbm.barang_masuk_id', '=', 'dlm.barang_masuk_id')
+            ->where('lbm.tanggal_masuk', '>=', $sixMonthsAgo)
+            ->select(DB::raw('DATE_FORMAT(lbm.tanggal_masuk, "%Y-%m") as bulan'), DB::raw('SUM(dlm.quantity_diterima) as total'))
+            ->groupBy('bulan')->orderBy('bulan')->pluck('total', 'bulan');
+
+        $globalTrendKeluar = DB::table('lap_barang_keluar as lbk')
+            ->join('detail_lap_barang_keluar as dlk', 'lbk.lap_keluar_id', '=', 'dlk.lap_keluar_id')
+            ->where('lbk.tanggal_keluar', '>=', $sixMonthsAgo)
+            ->select(DB::raw('DATE_FORMAT(lbk.tanggal_keluar, "%Y-%m") as bulan'), DB::raw('SUM(dlk.jumlah_keluar) as total'))
+            ->groupBy('bulan')->orderBy('bulan')->pluck('total', 'bulan');
+
+        $globalMasukData = array_map(fn($m) => (float)($globalTrendMasuk[$m] ?? 0), $trendLabels);
+        $globalKeluarData = array_map(fn($m) => (float)($globalTrendKeluar[$m] ?? 0), $trendLabels);
+
+        return view('reorder_point.index', compact(
+            'items', 'search', 'kategori', 'kategoris',
+            'trendLabelNames', 'globalMasukData', 'globalKeluarData'
+        ));
     }
 }

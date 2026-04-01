@@ -5,27 +5,18 @@
     <div class="min-h-screen bg-gray-50/50 py-6 px-2 md:px-6" x-data="konfirmasiRetur()">
 
         {{-- ========================================= --}}
-        {{-- BREADCRUMB & HEADER --}}
         {{-- ========================================= --}}
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-            <div>
-                <div class="flex items-center gap-2 text-sm text-gray-400 mb-2">
-                    <a href="{{ route('retur.index') }}" class="hover:text-red-600 transition-colors">
-                        <i class="fa-solid fa-rotate-left text-xs mr-1"></i>Retur Barang
-                    </a>
-                    <i class="fa-solid fa-chevron-right text-[8px]"></i>
-                    <span class="text-gray-600 font-medium">Detail #{{ $retur->retur_id }}</span>
-                </div>
-                <h1 class="text-2xl font-bold text-gray-900">
-                    Detail Retur Barang
-                </h1>
-            </div>
-
-            <a href="{{ route('retur.index') }}"
-                class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 shadow-sm">
-                <i class="fa-solid fa-arrow-left text-xs"></i> Kembali ke Daftar
-            </a>
-        </div>
+        {{-- HEADER --}}
+        {{-- ========================================= --}}
+        <x-page-header title="Detail Retur Barang" description="Detail #{{ $retur->retur_id }}" icon="fa-rotate-left">
+            <x-slot name="actions">
+                <a href="{{ route('retur.index') }}"
+                    class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/15 backdrop-blur-sm shadow-sm transition-all text-sm font-medium hover:scale-105 hover:border-amber-400/30 duration-200">
+                    <i class="fa-solid fa-arrow-left text-amber-400"></i>
+                    <span>Kembali ke Daftar</span>
+                </a>
+            </x-slot>
+        </x-page-header>
 
         <div class="max-w-4xl mx-auto space-y-5">
 

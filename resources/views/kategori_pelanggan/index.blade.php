@@ -2,18 +2,8 @@
 @section('page-title', 'Data Master / Kategori Pelanggan')
 @section('content')
 
-    {{-- Page Header --}}
-    <div class="mb-6">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-red-800 flex items-center justify-center shadow">
-                <i class="fa-solid fa-users-gear text-white text-lg"></i>
-            </div>
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900">Kategori Pelanggan</h1>
-                <p class="text-sm text-gray-500">Kelola kategori dan diskon pelanggan</p>
-            </div>
-        </div>
-    </div>
+    <x-page-header title="Kategori Pelanggan" description="Kelola kategori dan diskon pelanggan" icon="fa-users-gear">
+</x-page-header>
 
     @if(session('success'))
         <div class="mb-4 bg-white rounded-2xl border border-emerald-200 shadow-sm overflow-hidden">

@@ -8,18 +8,8 @@
     {{-- ========================================= --}}
     {{-- HEADER --}}
     {{-- ========================================= --}}
-    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900">
-                <i class="fa-solid fa-book-open text-red-600 mr-2"></i>Katalog Barang Gudang
-            </h1>
-            <p class="text-sm text-gray-500 mt-1">Lihat daftar produk, ketersediaan stok, harga jual, dan informasi lainnya.</p>
-        </div>
-        <div class="flex items-center gap-2 text-sm text-gray-500 bg-white border border-gray-200 rounded-lg px-3 py-2 shadow-sm">
-            <i class="fa-regular fa-calendar"></i>
-            <span>{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
-        </div>
-    </div>
+    <x-page-header title="Katalog Barang Gudang" description="Lihat daftar produk, ketersediaan stok, harga jual, dan informasi lainnya." icon="fa-book-open">
+    </x-page-header>
 
     {{-- ========================================= --}}
     {{-- STAT CARDS --}}

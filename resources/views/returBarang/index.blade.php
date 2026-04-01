@@ -7,20 +7,8 @@
         {{-- ========================================= --}}
         {{-- HEADER --}}
         {{-- ========================================= --}}
-        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 mb-6">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900">
-                    <i class="fa-solid fa-rotate-left text-red-600 mr-2"></i>Manajemen Retur Barang
-                </h1>
-                <p class="text-sm text-gray-500 mt-1">Memastikan dan mengonfirmasi retur barang yang telah diverifikasi
-                    fisik.</p>
-            </div>
-            <div
-                class="flex items-center gap-2 text-sm text-gray-500 bg-white border border-gray-200 rounded-lg px-3 py-2 shadow-sm">
-                <i class="fa-regular fa-calendar"></i>
-                <span>{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
-            </div>
-        </div>
+        <x-page-header title="Manajemen Retur Barang" description="Memastikan dan mengonfirmasi retur barang yang telah diverifikasi fisik." icon="fa-rotate-left">
+        </x-page-header>
 
         {{-- ========================================= --}}
         {{-- STAT CARDS --}}

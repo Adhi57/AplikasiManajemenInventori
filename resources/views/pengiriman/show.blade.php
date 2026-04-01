@@ -42,29 +42,20 @@
 
     {{-- Action Bar (hidden on print) --}}
     <div class="mb-6 no-print">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-red-800 flex items-center justify-center shadow">
-                    <i class="fa-solid fa-truck-fast text-white text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Detail Pengiriman</h1>
-                    <p class="text-sm text-gray-500">Informasi lengkap pengiriman barang</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-2">
+        <x-page-header title="Detail Pengiriman" description="Informasi lengkap pengiriman barang" icon="fa-truck-fast">
+            <x-slot name="actions">
                 {{-- Print Button --}}
                 <button onclick="window.print()"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 font-medium text-sm rounded-xl hover:bg-gray-50 transition shadow-sm">
-                    <i class="fa-solid fa-print text-gray-500"></i>
-                    Cetak PDF
+                    class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/15 backdrop-blur-sm shadow-sm transition-all text-sm font-medium hover:scale-105 hover:border-amber-400/30 duration-200">
+                    <i class="fa-solid fa-print text-amber-400"></i>
+                    <span>Cetak PDF</span>
                 </button>
                 {{-- Edit Button --}}
                 @if ($pengiriman->status_pengiriman !== 'Terkirim')
                     <a href="{{ route('pengiriman.edit', $pengiriman->pengiriman_id) }}"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 text-amber-700 font-medium text-sm rounded-xl hover:bg-amber-100 transition">
-                        <i class="fa-solid fa-pen"></i>
-                        Edit
+                        class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/15 backdrop-blur-sm shadow-sm transition-all text-sm font-medium hover:scale-105 hover:border-amber-400/30 duration-200">
+                        <i class="fa-solid fa-pen text-amber-400"></i>
+                        <span>Edit</span>
                     </a>
                 @endif
                 {{-- Mark Terkirim Button --}}
@@ -74,20 +65,20 @@
                         @csrf
                         <input type="hidden" name="status_pengiriman" value="Terkirim">
                         <button type="button" onclick="confirmTerkirim()"
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white font-semibold text-sm rounded-xl hover:bg-emerald-700 transition shadow-sm">
+                            class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-emerald-500 hover:bg-emerald-600 transition-all text-sm font-medium hover:scale-105 text-white shadow-sm duration-200">
                             <i class="fa-solid fa-circle-check"></i>
-                            Tandai Terkirim
+                            <span>Tandai Terkirim</span>
                         </button>
                     </form>
                 @endif
                 {{-- Back --}}
                 <a href="{{ route('pengiriman.index') }}"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-600 font-medium text-sm rounded-xl hover:bg-gray-200 transition">
-                    <i class="fa-solid fa-arrow-left"></i>
-                    Kembali
+                    class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/15 backdrop-blur-sm shadow-sm transition-all text-sm font-medium hover:scale-105 duration-200">
+                    <i class="fa-solid fa-arrow-left text-gray-200"></i>
+                    <span>Kembali</span>
                 </a>
-            </div>
-        </div>
+            </x-slot>
+        </x-page-header>
     </div>
 
     <div class="print-container space-y-6">

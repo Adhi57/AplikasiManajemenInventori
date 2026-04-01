@@ -25,16 +25,16 @@
     @endphp
 
     <div class="space-y-6">
-        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900">Laporan Barang Keluar</h1>
-                <p class="text-sm text-gray-500 mt-1">Ringkasan pengiriman barang ke pelanggan berdasarkan Surat Jalan.</p>
-            </div>
-            <a href="{{ route('laporan.barang_keluar.cetak', request()->all()) }}" target="_blank"
-                class="inline-flex items-center gap-2 px-5 py-2.5 bg-red-800 text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition-colors shadow-sm">
-                <i class="fa-solid fa-file-pdf text-xs"></i> Export PDF
-            </a>
-        </div>
+        {{-- HEADER --}}
+        <x-page-header title="Laporan Barang Keluar" description="Ringkasan pengiriman barang ke pelanggan berdasarkan Surat Jalan." icon="fa-boxes-packing">
+            <x-slot name="actions">
+                <a href="{{ route('laporan.barang_keluar.cetak', request()->all()) }}" target="_blank"
+                    class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/15 backdrop-blur-sm shadow-sm transition-all text-sm font-medium hover:scale-105 hover:border-amber-400/30 duration-200">
+                    <i class="fa-solid fa-file-pdf text-amber-400"></i>
+                    <span>Export PDF</span>
+                </a>
+            </x-slot>
+        </x-page-header>
 
         {{-- SUMMARY CARDS --}}
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">

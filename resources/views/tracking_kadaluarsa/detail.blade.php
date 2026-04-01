@@ -10,22 +10,15 @@
             $barang = $stok->first()->barang;
         @endphp
 
-        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-            <div>
-                <div class="flex items-center gap-2 mb-1">
-                    <a href="{{ route('tracking_kadaluarsa.index') }}" class="text-gray-400 hover:text-gray-600 transition">
-                        <i class="fa-solid fa-arrow-left text-sm"></i>
-                    </a>
-                    <span class="text-xs text-gray-400 font-mono">{{ $stok->first()->kode_barang }}</span>
-                </div>
-                <h1 class="text-2xl font-bold text-gray-900">{{ $barang->nama_barang }}</h1>
-                <p class="text-sm text-gray-500 mt-1">Detail batch kadaluarsa untuk produk ini.</p>
-            </div>
-            <a href="{{ route('tracking_kadaluarsa.index') }}"
-                class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200 transition">
-                <i class="fa-solid fa-arrow-left text-xs"></i> Kembali
-            </a>
-        </div>
+        <x-page-header title="{{ $barang->nama_barang }}" description="Detail batch kadaluarsa untuk produk ini. Kode: {{ $stok->first()->kode_barang }}" icon="fa-hourglass-half">
+            <x-slot name="actions">
+                <a href="{{ route('tracking_kadaluarsa.index') }}"
+                    class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/15 backdrop-blur-sm shadow-sm transition-all text-sm font-medium hover:scale-105 hover:border-amber-400/30 duration-200">
+                    <i class="fa-solid fa-arrow-left text-amber-400"></i>
+                    <span>Kembali</span>
+                </a>
+            </x-slot>
+        </x-page-header>
 
         {{-- CHART --}}
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">

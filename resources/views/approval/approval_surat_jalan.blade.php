@@ -3,19 +3,8 @@
 @section('content')
 
     {{-- Page Header --}}
-    <div class="mb-6">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-red-800 flex items-center justify-center shadow">
-                    <i class="fa-solid fa-file-signature text-white text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Approval Surat Jalan</h1>
-                    <p class="text-sm text-gray-500">Proses persetujuan surat jalan pengiriman barang</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    <x-page-header title="Approval Surat Jalan" description="Proses persetujuan surat jalan pengiriman barang" icon="fa-file-signature">
+    </x-page-header>
 
     {{-- Summary Stat Cards --}}
     @php

@@ -6,16 +6,15 @@
     <div class="space-y-6">
 
         {{-- HEADER --}}
-        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900">Riwayat Stock Opname</h1>
-                <p class="text-sm text-gray-500 mt-1">Catatan seluruh perubahan stok dari proses stock opname.</p>
-            </div>
-            <a href="{{ route('stock.opname.index') }}"
-                class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-colors shadow-sm">
-                <i class="fa-solid fa-arrow-left text-xs text-gray-400"></i> Kembali
-            </a>
-        </div>
+        <x-page-header title="Riwayat Stock Opname" description="Catatan seluruh perubahan stok dari proses stock opname." icon="fa-clock-rotate-left">
+            <x-slot name="actions">
+                <a href="{{ route('stock.opname.index') }}"
+                    class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/15 backdrop-blur-sm shadow-sm transition-all text-sm font-medium hover:scale-105 hover:border-amber-400/30 duration-200">
+                    <i class="fa-solid fa-arrow-left text-amber-400"></i>
+                    <span>Kembali</span>
+                </a>
+            </x-slot>
+        </x-page-header>
 
         {{-- FILTER --}}
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">

@@ -2,25 +2,15 @@
 @section('page-title', 'Edit Pelanggan')
 @section('content')
 
-{{-- Page Header --}}
-<div class="mb-6">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-red-800 flex items-center justify-center shadow">
-                <i class="fa-solid fa-pen-to-square text-white text-lg"></i>
-            </div>
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900">Edit Pelanggan</h1>
-                <p class="text-sm text-gray-500">Perbarui informasi pelanggan: {{ $pelanggan->nama_pelanggan }}</p>
-            </div>
-        </div>
+<x-page-header title="Edit Pelanggan" description="Perbarui informasi pelanggan: {{ $pelanggan->nama_pelanggan }}" icon="fa-pen-to-square">
+    <x-slot name="actions">
         <a href="{{ route('pelanggans.index') }}"
-            class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-600 font-medium text-sm rounded-xl hover:bg-gray-200 transition">
-            <i class="fa-solid fa-arrow-left"></i>
-            Kembali
+            class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/15 backdrop-blur-sm shadow-sm transition-all text-sm font-medium hover:scale-105 hover:border-amber-400/30 duration-200">
+            <i class="fa-solid fa-arrow-left text-amber-400"></i>
+            <span>Batal</span>
         </a>
-    </div>
-</div>
+    </x-slot>
+</x-page-header>
 
 {{-- Error Alert --}}
 @if ($errors->any())
