@@ -32,15 +32,38 @@ class StokOpnameController extends Controller
 
     public function update(Request $request)
     {
+        // DEBUG 1: Log semua data yang diterima dari form
+        \Log::info('=== STOCK OPNAME UPDATE START ===');
+        \Log::info('All request data:', $request->all());
+
         $validated = $request->validate([
             'stok_id' => 'required|exists:stok_barangs,id',
-            'jumlah_stok' => 'required|integer|min:0',
-            'jumlah_stok_rusak' => 'required|integer|min:0',
+            'jumlah_stok' => 'required|numeric|min:0',
+            'jumlah_stok_rusak' => 'required|numeric|min:0',
             'tgl_kadaluarsa' => 'nullable|date',
             'alasan' => 'required|string|max:255'
         ]);
 
+        // Cast ke integer untuk disimpan ke database
+        $validated['jumlah_stok'] = (int) $validated['jumlah_stok'];
+        $validated['jumlah_stok_rusak'] = (int) $validated['jumlah_stok_rusak'];
+
+        // DEBUG 2: Log validated data
+        \Log::info('Validated data:', $validated);
+
         $stok = StokBarang::findOrFail($validated['stok_id']);
+
+        // DEBUG 3: Log record yang ditemukan (sebelum update)
+        \Log::info('Stok SEBELUM update:', [
+            'id' => $stok->id,
+            'kode_barang' => $stok->kode_barang,
+            'jumlah_stok' => $stok->jumlah_stok,
+            'jumlah_stok_rusak' => $stok->jumlah_stok_rusak,
+            'tgl_kadaluarsa' => $stok->tgl_kadaluarsa,
+            'incrementing' => $stok->getIncrementing(),
+            'keyType' => $stok->getKeyType(),
+            'key' => $stok->getKey(),
+        ]);
 
         // Data sebelum
         $before = [
@@ -50,10 +73,26 @@ class StokOpnameController extends Controller
         ];
 
         // Update stok
-        $stok->update([
+        $updateResult = $stok->update([
             'jumlah_stok' => $validated['jumlah_stok'],
             'jumlah_stok_rusak' => $validated['jumlah_stok_rusak'],
             'tgl_kadaluarsa' => $validated['tgl_kadaluarsa'],
+        ]);
+
+        // DEBUG 4: Log hasil update
+        \Log::info('Update result:', [
+            'success' => $updateResult,
+            'dirty' => $stok->getDirty(),
+            'changes' => $stok->getChanges(),
+        ]);
+
+        // DEBUG 5: Reload dari database dan cek
+        $stokAfter = StokBarang::find($stok->id);
+        \Log::info('Stok SESUDAH update (reload dari DB):', [
+            'id' => $stokAfter->id,
+            'jumlah_stok' => $stokAfter->jumlah_stok,
+            'jumlah_stok_rusak' => $stokAfter->jumlah_stok_rusak,
+            'tgl_kadaluarsa' => $stokAfter->tgl_kadaluarsa,
         ]);
 
         // Catat log
@@ -68,6 +107,8 @@ class StokOpnameController extends Controller
             'alasan_update' => $validated['alasan'],
             'user_id' => auth()->id(),
         ]);
+
+        \Log::info('=== STOCK OPNAME UPDATE END ===');
 
         return back()->with('success', 'Stock opname berhasil diperbarui & dicatat!');
     }

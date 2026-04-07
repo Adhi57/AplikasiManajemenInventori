@@ -5,7 +5,8 @@
     <div class="space-y-6">
 
         {{-- HEADER --}}
-        <x-page-header title="Stock Opname" description="Lakukan pengecekan stok, kondisi barang, dan catat alasan perubahan." icon="fa-boxes-stacked">
+        <x-page-header title="Stock Opname"
+            description="Lakukan pengecekan stok, kondisi barang, dan catat alasan perubahan." icon="fa-boxes-stacked">
             <x-slot name="actions">
                 <a href="{{ route('stock.opname.riwayat') }}"
                     class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/15 backdrop-blur-sm shadow-sm transition-all text-sm font-medium hover:scale-105 hover:border-amber-400/30 duration-200">
