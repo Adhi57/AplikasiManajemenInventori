@@ -4,6 +4,10 @@
 
     <x-page-header title="Manajemen User" description="Kelola pengguna dan hak akses sistem" icon="fa-users-gear">
     <x-slot name="actions">
+        <a href="{{ route('users.trashed') }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/15 backdrop-blur-sm shadow-sm transition-all text-sm font-medium hover:scale-105 hover:border-amber-400/30 duration-200">
+            <i class="fa-solid fa-clock-rotate-left text-amber-400"></i>
+            <span>Riwayat User</span>
+        </a>
         <a href="{{ route('users.create') }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-red-950 shadow-md transition-all text-sm font-bold hover:scale-105 duration-200">
             <i class="fa-solid fa-user-plus"></i>
             <span>Tambah User Baru</span>

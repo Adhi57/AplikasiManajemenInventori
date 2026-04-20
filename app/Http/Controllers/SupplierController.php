@@ -39,8 +39,8 @@ class SupplierController extends Controller
             'namaSupplier' => 'required|string|max:40',
             'alamatSupplier' => 'required|string|max:100',
             'Kota' => 'required|string|max:30',
-            'noTelepon' => 'required|string|max:12',
-            'waktuPengiriman' => 'required|integer|min:0',
+            'noTelepon' => ['required', 'string', 'max:12', 'regex:/^[0-9]+$/'],
+            'waktuPengiriman' => 'required|integer|min:1',
         ]);
         
         // 2. Simpan data 

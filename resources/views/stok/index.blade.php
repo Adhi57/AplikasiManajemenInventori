@@ -72,7 +72,7 @@
                  @click="statusFilter = 'aman'; $dispatch('filter-changed')">
                 <div class="flex items-center justify-between mb-3">
                     <div class="w-11 h-11 rounded-xl flex items-center justify-center bg-emerald-50 text-emerald-600 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fa-solid fa-shield-check text-lg"></i>
+                        <i class="fa-solid fa-circle-check text-lg"></i>
                     </div>
                     <div class="flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">
                         <i class="fa-solid fa-circle text-[5px]"></i> AMAN
@@ -424,7 +424,7 @@
                             class="w-full py-2.5 px-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-slate-500/20 focus:border-slate-500 transition shadow-sm bg-white">
                             <option value="">Semua</option>
                             @foreach ($kategoris as $kat)
-                                <option value="{{ $kat->id }}" {{ $kat->id == ($kategori ?? null) ? 'selected' : '' }}>
+                                <option value="{{ $kat->kategori_barang_id }}" {{ $kat->kategori_barang_id == ($kategori ?? null) ? 'selected' : '' }}>
                                     {{ $kat->nama_kategori_barang }}
                                 </option>
                             @endforeach

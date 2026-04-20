@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
+use App\Models\BarangAuditLog;
 use App\Models\KategoriBarang;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
@@ -100,6 +101,9 @@ class BarangController extends Controller
                 'berlaku_mulai' => $validated['berlaku_mulai'],
             ]);
 
+            // Catat audit log
+            BarangAuditLog::catat('created', $barang, null, $barang->toArray(), 'Barang baru ditambahkan');
+
             DB::commit();
 
             return redirect()->route('barangs.index')->with('success', 'Barang baru berhasil ditambahkan!');
@@ -152,6 +156,9 @@ class BarangController extends Controller
         DB::beginTransaction();
 
         try {
+            // Simpan data lama sebelum update
+            $dataLama = $barang->toArray();
+
             $old_foto_path = $barang->foto_produk;
             $foto_path = $old_foto_path;
 
@@ -181,6 +188,8 @@ class BarangController extends Controller
                 'berlaku_mulai' => $validated['berlaku_mulai'],
             ]);
 
+            // Catat audit log
+            BarangAuditLog::catat('updated', $barang, $dataLama, $barang->fresh()->toArray(), 'Data barang diperbarui');
 
             DB::commit();
 
@@ -193,7 +202,7 @@ class BarangController extends Controller
     }
 
     /**
-     * Menghapus Barang dari database.
+     * Menghapus Barang dari database (Soft Delete).
      */
     public function destroy($kode_barang)
     {
@@ -206,9 +215,12 @@ class BarangController extends Controller
             
             $barang->delete(); // Ini sekarang akan memicu Soft Deletes
 
+            // Catat audit log
+            BarangAuditLog::catat('deleted', $barang, $barang->toArray(), null, 'Barang dihapus (diarsipkan)');
+
             DB::commit();
 
-            return redirect()->route('barangs.index')->with('success', 'Barang berhasil diarsipkan (Soft Delete).');
+            return redirect()->route('barangs.index')->with('success', 'Barang "' . $barang->nama_barang . '" berhasil diarsipkan.');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -224,5 +236,110 @@ class BarangController extends Controller
         // Mengembalikan view 'barangs.show' dan menyertakan data barang
         return view('barangs.show', compact('barang'));
     }
-    
+
+    /**
+     * Menampilkan daftar barang yang telah dihapus (soft-deleted).
+     */
+    public function trashed(Request $request)
+    {
+        $query = Barang::onlyTrashed()->with(['kategori', 'supplier']);
+
+        if ($request->filled('search')) {
+            $searchTerm = '%' . $request->search . '%';
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('kode_barang', 'like', $searchTerm)
+                  ->orWhere('nama_barang', 'like', $searchTerm);
+            });
+        }
+
+        if ($request->filled('kategori_id')) {
+            $query->where('kategori_barang_id', $request->kategori_id);
+        }
+
+        $trashedBarangs = $query->orderBy('deleted_at', 'desc')->paginate(15);
+        $kategoriBarangs = KategoriBarang::all();
+
+        return view('barangs.riwayat', compact('trashedBarangs', 'kategoriBarangs'));
+    }
+
+    /**
+     * Memulihkan barang yang telah di soft-delete.
+     */
+    public function restore($kode_barang)
+    {
+        $barang = Barang::onlyTrashed()->where('kode_barang', $kode_barang)->firstOrFail();
+        $barang->restore();
+
+        // Catat audit log
+        BarangAuditLog::catat('restored', $barang, null, $barang->toArray(), 'Barang dipulihkan dari arsip');
+
+        return redirect()->route('barangs.trashed')->with('success', 'Barang "' . $barang->nama_barang . '" berhasil dipulihkan.');
+    }
+
+    /**
+     * Menghapus barang secara permanen.
+     */
+    public function forceDelete($kode_barang)
+    {
+        $barang = Barang::onlyTrashed()->where('kode_barang', $kode_barang)->firstOrFail();
+
+        DB::beginTransaction();
+        try {
+            // Cek apakah barang memiliki relasi transaksi
+            $hasTransactions = DB::table('purchase_order_details')->where('kode_barang', $kode_barang)->exists() ||
+                               DB::table('surat_jalan_details')->where('kode_barang', $kode_barang)->exists();
+
+            if ($hasTransactions) {
+                return back()->with('error', 'Barang tidak bisa dihapus permanen karena memiliki riwayat transaksi (PO/Surat Jalan).');
+            }
+
+            // Hapus foto dari storage jika ada
+            if ($barang->foto_produk) {
+                Storage::disk('public')->delete($barang->foto_produk);
+            }
+
+            // Hapus stok terkait
+            DB::table('stok_barangs')->where('kode_barang', $kode_barang)->delete();
+
+            $nama = $barang->nama_barang;
+
+            // Catat audit log sebelum hapus permanen
+            BarangAuditLog::catat('force_deleted', $barang, $barang->toArray(), null, 'Barang dihapus permanen');
+
+            $barang->forceDelete();
+
+            DB::commit();
+
+            return redirect()->route('barangs.trashed')->with('success', 'Barang "' . $nama . '" berhasil dihapus permanen.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withErrors(['error' => 'Gagal menghapus permanen: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Menampilkan riwayat perubahan (audit log) data barang.
+     */
+    public function auditLogs(Request $request)
+    {
+        $query = BarangAuditLog::query();
+
+        if ($request->filled('search')) {
+            $searchTerm = '%' . $request->search . '%';
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('kode_barang', 'like', $searchTerm)
+                  ->orWhere('nama_barang', 'like', $searchTerm)
+                  ->orWhere('user_nama', 'like', $searchTerm);
+            });
+        }
+
+        if ($request->filled('aksi')) {
+            $query->where('aksi', $request->aksi);
+        }
+
+        $logs = $query->orderBy('waktu', 'desc')->paginate(20);
+
+        return view('barangs.audit_log', compact('logs'));
+    }
 }

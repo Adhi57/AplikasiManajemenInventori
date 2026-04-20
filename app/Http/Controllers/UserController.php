@@ -4,25 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-public function index(Request $request)
-{
-    $query = User::query();
+    public function index(Request $request)
+    {
+        $query = User::query();
 
-    if ($request->has('search')) {
-        $query->where('nama_lengkap', 'like', '%' . $request->search . '%')
-              ->orWhere('username', 'like', '%' . $request->search . '%');
+        if ($request->has('search')) {
+            $query->where('nama_lengkap', 'like', '%' . $request->search . '%')
+                  ->orWhere('username', 'like', '%' . $request->search . '%');
+        }
+
+        $users = $query->where('user_id', '!=', auth()->user()->user_id)
+                       ->orderBy('role', 'asc')
+                       ->paginate(10); // Menampilkan 10 data per halaman
+
+        return view('users.index', compact('users'));
     }
 
-    $users = $query->where('user_id', '!=', auth()->user()->user_id)
-                   ->orderBy('role', 'asc')
-                   ->paginate(10); // Menampilkan 10 data per halaman
-
-    return view('users.index', compact('users'));
-}
     public function create()
     {
         return view('users.create');
@@ -86,43 +88,96 @@ public function index(Request $request)
 
     public function destroy($id)
     {
-        // PENCEGAHAN ERROR DATABASE (Foreign Key Constraints)
-        // Cek apakah user memiliki transaksi di surat_jalans atau purchase_orders
-        
+        $user = User::findOrFail($id);
+
+        // Tidak bisa menghapus diri sendiri
+        if ($user->user_id === auth()->user()->user_id) {
+            return back()->with('error', 'Anda tidak bisa menghapus akun sendiri.');
+        }
+
+        $user->delete(); // Soft delete
+
+        return redirect()->route('users.index')->with('success', 'User berhasil dinonaktifkan dan dipindahkan ke riwayat.');
+    }
+
+    public function updateRole(Request $request, $id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            
+            // Validasi
+            $request->validate([
+                'role' => 'required|in:SuperAdmin,Admin,Head,Staff'
+            ]);
+
+            // Proteksi: Jangan biarkan superadmin mengubah role-nya sendiri jika dia admin terakhir
+            if ($user->user_id === auth()->user()->user_id && $request->role !== 'SuperAdmin') {
+                return response()->json(['success' => false, 'message' => 'Anda tidak bisa menurunkan role Anda sendiri demi keamanan akses.'], 403);
+            }
+
+            $user->update(['role' => $request->role]);
+
+            return response()->json([
+                'success' => true, 
+                'message' => 'Role ' . $user->nama_lengkap . ' berhasil diubah menjadi ' . $request->role
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Gagal mengubah role.'], 500);
+        }
+    }
+
+    /**
+     * Display trashed (soft-deleted) users.
+     */
+    public function trashed(Request $request)
+    {
+        $query = User::onlyTrashed();
+
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('nama_lengkap', 'like', '%' . $request->search . '%')
+                  ->orWhere('username', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->filled('role')) {
+            $query->where('role', $request->role);
+        }
+
+        $trashedUsers = $query->orderBy('deleted_at', 'desc')->paginate(10);
+
+        return view('users.riwayat', compact('trashedUsers'));
+    }
+
+    /**
+     * Restore a soft-deleted user.
+     */
+    public function restore($id)
+    {
+        $user = User::onlyTrashed()->where('user_id', $id)->firstOrFail();
+        $user->restore();
+
+        return redirect()->route('users.trashed')->with('success', 'User "' . $user->nama_lengkap . '" berhasil dipulihkan.');
+    }
+
+    /**
+     * Permanently delete a soft-deleted user.
+     */
+    public function forceDelete($id)
+    {
+        $user = User::onlyTrashed()->where('user_id', $id)->firstOrFail();
+
+        // Cek apakah user memiliki transaksi
         $hasTransactions = DB::table('surat_jalans')->where('user_id', $id)->exists() || 
                            DB::table('purchase_orders')->where('user_id', $id)->exists();
 
         if ($hasTransactions) {
-            return back()->with('error', 'User tidak bisa dihapus karena memiliki riwayat transaksi (Surat Jalan/PO). Silakan non-aktifkan user saja (ubah password/email).');
+            return back()->with('error', 'User tidak bisa dihapus permanen karena memiliki riwayat transaksi (Surat Jalan/PO).');
         }
 
-        User::findOrFail($id)->delete();
-        return redirect()->route('users.index')->with('success', 'User berhasil dihapus');
+        $nama = $user->nama_lengkap;
+        $user->forceDelete();
+
+        return redirect()->route('users.trashed')->with('success', 'User "' . $nama . '" berhasil dihapus permanen.');
     }
-
-    public function updateRole(Request $request, $id)
-{
-    try {
-        $user = User::findOrFail($id);
-        
-        // Validasi
-        $request->validate([
-            'role' => 'required|in:SuperAdmin,Admin,Head,Staff'
-        ]);
-
-        // Proteksi: Jangan biarkan superadmin mengubah role-nya sendiri jika dia admin terakhir
-        if ($user->user_id === auth()->user()->user_id && $request->role !== 'SuperAdmin') {
-            return response()->json(['success' => false, 'message' => 'Anda tidak bisa menurunkan role Anda sendiri demi keamanan akses.'], 403);
-        }
-
-        $user->update(['role' => $request->role]);
-
-        return response()->json([
-            'success' => true, 
-            'message' => 'Role ' . $user->nama_lengkap . ' berhasil diubah menjadi ' . $request->role
-        ]);
-    } catch (\Exception $e) {
-        return response()->json(['success' => false, 'message' => 'Gagal mengubah role.'], 500);
-    }
-}
 }

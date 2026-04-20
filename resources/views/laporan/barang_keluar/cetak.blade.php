@@ -6,7 +6,7 @@
     <title>Laporan Barang Keluar</title>
     <style>
         * {
-            margin: 3cm;
+            margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
@@ -23,9 +23,10 @@
         }
 
         .page {
-            padding: 0;
+            padding: 1cm;
         }
 
+        /* === HEADER / KOP SURAT === */
         .kop-surat {
             display: table;
             width: 100%;
@@ -377,7 +378,7 @@
                 <div class="ttd-box">
                     <div class="title">Dibuat Oleh,</div>
                     <div class="name">_________________________</div>
-                    <div class="role">Staff Administrasi</div>
+                    <div class="role">{{ auth()->user()->nama_lengkap }}</div>
                 </div>
             </div>
         </div>

@@ -59,7 +59,7 @@
                     </a>
                 @endif
                 {{-- Mark Terkirim Button --}}
-                @if($pengiriman->status_pengiriman !== 'Terkirim' && $pengiriman->status_pengiriman !== 'Menunggu' && $pengiriman->suratJalan->status == 'Disetujui')
+                @if($pengiriman->status_pengiriman !== 'Terkirim' && $pengiriman->status_pengiriman !== 'Menunggu' && $pengiriman->status_pengiriman !== 'Dibatalkan' && $pengiriman->suratJalan->status == 'Disetujui')
                     <form action="{{ route('pengiriman.updateStatus', $pengiriman->pengiriman_id) }}" method="POST"
                         class="inline" id="form-terkirim">
                         @csrf
@@ -130,8 +130,9 @@
                     @foreach($steps as $idx => $step)
                         <div class="flex items-center {{ $idx < count($steps) - 1 ? 'flex-1' : '' }}">
                             <div class="flex flex-col items-center">
-                                <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold
-                                    {{ $idx <= $currentIdx ? 'bg-emerald-500 text-white' : 'bg-gray-200 text-gray-400' }}">
+                                <div
+                                    class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold
+                                            {{ $idx <= $currentIdx ? 'bg-emerald-500 text-white' : 'bg-gray-200 text-gray-400' }}">
                                     @if($idx < $currentIdx)
                                         <i class="fa-solid fa-check"></i>
                                     @elseif($idx == $currentIdx)
@@ -192,7 +193,8 @@
                         <div>
                             <p class="text-[10px] uppercase font-bold text-gray-400 tracking-wide mb-0.5">Nomor Polisi</p>
                             <p class="text-sm font-bold text-gray-800 font-mono uppercase">
-                                {{ $pengiriman->no_polisi ?? '-' }}</p>
+                                {{ $pengiriman->no_polisi ?? '-' }}
+                            </p>
                         </div>
                     </div>
                     <div>
@@ -311,11 +313,13 @@
                                     </td>
                                     <td class="py-3 px-4 font-medium text-gray-800">{{ $detail->barang->nama_barang ?? '-' }}</td>
                                     <td class="py-3 px-3 text-center font-bold text-gray-700">
-                                        {{ number_format($detail->quantity, 0, ',', '.') }}</td>
+                                        {{ number_format($detail->quantity, 0, ',', '.') }}
+                                    </td>
                                     <td class="py-3 px-3 text-center text-gray-500">{{ $detail->satuan ?? '-' }}</td>
                                     <td class="py-3 px-4 text-right text-gray-700">Rp {{ number_format($harga, 0, ',', '.') }}</td>
                                     <td class="py-3 px-4 text-right font-semibold text-gray-800">Rp
-                                        {{ number_format($subtotal, 0, ',', '.') }}</td>
+                                        {{ number_format($subtotal, 0, ',', '.') }}
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -334,7 +338,8 @@
                                 <td colspan="6" class="py-2.5 px-4 text-right text-sm font-semibold text-gray-600">Subtotal
                                     Barang</td>
                                 <td class="py-2.5 px-4 text-right font-semibold text-gray-800">Rp
-                                    {{ number_format($grandSubtotal, 0, ',', '.') }}</td>
+                                    {{ number_format($grandSubtotal, 0, ',', '.') }}
+                                </td>
                             </tr>
                             <tr>
                                 <td colspan="6" class="py-2 px-4 text-right text-sm font-medium text-gray-500">Biaya Pengiriman
@@ -351,16 +356,19 @@
                             <tr class="border-t border-gray-300">
                                 <td colspan="6" class="py-2.5 px-4 text-right text-sm font-bold text-gray-700">Total</td>
                                 <td class="py-2.5 px-4 text-right font-bold text-gray-900">Rp
-                                    {{ number_format($total, 0, ',', '.') }}</td>
+                                    {{ number_format($total, 0, ',', '.') }}
+                                </td>
                             </tr>
                             <tr>
-                                <td colspan="6" class="py-2 px-4 text-right text-sm font-medium text-gray-500">PPN ({{ $appSettings['ppn_persen'] ?? 11 }}%)</td>
+                                <td colspan="6" class="py-2 px-4 text-right text-sm font-medium text-gray-500">PPN
+                                    ({{ $appSettings['ppn_persen'] ?? 11 }}%)</td>
                                 <td class="py-2 px-4 text-right text-gray-700">Rp {{ number_format($pajak, 0, ',', '.') }}</td>
                             </tr>
                             <tr class="border-t-2 border-red-300">
                                 <td colspan="6" class="py-3 px-4 text-right text-base font-bold text-red-800">Total Akhir</td>
                                 <td class="py-3 px-4 text-right text-base font-bold text-red-800">Rp
-                                    {{ number_format($grandTotal, 0, ',', '.') }}</td>
+                                    {{ number_format($grandTotal, 0, ',', '.') }}
+                                </td>
                             </tr>
                         </tfoot>
                     </table>
@@ -384,7 +392,8 @@
                     <br><br><br>
                     <p>( Ttd )</p>
                     <p class="mt-4 font-semibold">
-                        {{ $pengiriman->suratJalan->nama_penerima ?? '....................................' }}</p>
+                        {{ $pengiriman->suratJalan->nama_penerima ?? '....................................' }}
+                    </p>
                 </div>
             </div>
         </div>

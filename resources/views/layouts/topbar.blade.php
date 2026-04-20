@@ -43,11 +43,14 @@
         'barang-masuk' => 'Barang Masuk',
         'barang-keluar' => 'Barang Keluar',
         'barangs' => 'Data Barang',
+        'barangs-riwayat' => 'Riwayat Barang',
+        'barangs-audit-log' => 'Log Perubahan Barang',
         'pelanggans' => 'Data Pelanggan',
         'suppliers' => 'Data Supplier',
         'kategori_barang' => 'Kategori Barang',
         'kategori_pelanggan' => 'Kategori Pelanggan',
         'users' => 'Users & Roles',
+        'users-riwayat' => 'Riwayat User',
         'profile' => 'Profil',
         'create' => 'Tambah',
         'edit' => 'Edit',
@@ -173,7 +176,7 @@
                         @endif
 
                         @if($pendingRetur > 0)
-                            <a href="{{ route('returBarang.index') }}"
+                            <a href="{{ route('retur.index') }}"
                                 class="flex items-center gap-2 p-2 bg-white/5 rounded-xl hover:bg-white/10 transition group border border-white/5 hover:border-white/20">
                                 <div class="w-8 h-8 bg-orange-500 text-white rounded-lg flex items-center justify-center text-xs font-bold shadow-sm">
                                     {{ $pendingRetur }}</div>

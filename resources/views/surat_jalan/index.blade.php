@@ -213,6 +213,11 @@
                                         Detail
                                     </a>
                                     @if ($sj->status === 'Pending')
+                                        <a href="{{ route('surat_jalan.edit', $sj->sj_id) }}"
+                                            class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-amber-50 text-amber-600 rounded-lg text-xs font-medium hover:bg-amber-100 transition">
+                                            <i class="fa-solid fa-pen text-[10px]"></i>
+                                            Edit
+                                        </a>
                                         <form id="delete-form-{{ $sj->sj_id }}"
                                             action="{{ route('surat_jalan.destroy', $sj->sj_id) }}" method="POST" class="inline">
                                             @csrf

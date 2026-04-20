@@ -41,6 +41,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/barcode/lookup', [BarcodeScannerController::class, 'lookup'])->name('barcode.lookup');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('barangs', barangController::class);
+    
+    // Riwayat Barang (Soft Deleted)
+    Route::get('barangs-riwayat', [barangController::class, 'trashed'])->name('barangs.trashed');
+    Route::patch('barangs/{kode_barang}/restore', [barangController::class, 'restore'])->name('barangs.restore');
+    Route::delete('barangs/{kode_barang}/force-delete', [barangController::class, 'forceDelete'])->name('barangs.forceDelete');
+    Route::get('barangs-audit-log', [barangController::class, 'auditLogs'])->name('barangs.auditLogs');
     Route::resource('pelanggans', PelangganController::class);
     Route::resource('kategori_pelanggan', KategoriPelangganController::class);
     Route::resource('suppliers', SupplierController::class);
@@ -118,6 +124,8 @@ Route::middleware('auth')->group(function () {
     Route::get('surat_jalan/show/{po_id}', [SuratJalanController::class, 'show'])
     ->name('surat_jalan.show')
     ->where('sj_id', '.*');
+    Route::get('surat_jalan/{sj_id}/edit', [SuratJalanController::class, 'edit'])->name('surat_jalan.edit');
+    Route::put('surat_jalan/{sj_id}', [SuratJalanController::class, 'update'])->name('surat_jalan.update');
     
     
     
@@ -173,6 +181,11 @@ Route::middleware(['auth', 'role:SuperAdmin'])->group(function () {
     Route::resource('users', UserController::class);
 
     Route::patch('users/{user}/update-role', [UserController::class, 'updateRole'])->name('users.updateRole');
+    
+    // Riwayat User (Soft Deleted)
+    Route::get('users-riwayat', [UserController::class, 'trashed'])->name('users.trashed');
+    Route::patch('users/{user}/restore', [UserController::class, 'restore'])->name('users.restore');
+    Route::delete('users/{user}/force-delete', [UserController::class, 'forceDelete'])->name('users.forceDelete');
 });
 
 require __DIR__.'/auth.php';

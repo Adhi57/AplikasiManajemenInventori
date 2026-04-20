@@ -281,7 +281,8 @@
                 <h2>Distributor Bahan Pokok & Kebutuhan Sehari-hari</h2>
                 <p>{{ $appSettings['alamat_perusahaan'] ?? '-' }}</p>
                 <p>Telp: {{ $appSettings['telepon_perusahaan'] ?? '-' }} &bull; Email:
-                    {{ $appSettings['email_perusahaan'] ?? '-' }}</p>
+                    {{ $appSettings['email_perusahaan'] ?? '-' }}
+                </p>
             </div>
         </div>
 
@@ -427,11 +428,11 @@
                 <div class="ttd-box">
                     <div class="title">Dibuat Oleh,</div>
                     <div class="name">{{ $purchaseOrder->user->nama_lengkap ?? '-' }}</div>
-                    <div class="role">Procurement</div>
+                    <div class="role">{{ $purchaseOrder->user->role ?? '-' }}</div>
                 </div>
                 <div class="ttd-box">
                     <div class="title">Disetujui Oleh,</div>
-                    <div class="name">{{ Auth::user()->nama_lengkap }}</div>
+                    <div class="name">{{ $purchaseOrder->user->nama_lengkap ?? '-' }}</div>
                     <div class="role">Kepala Gudang</div>
                 </div>
             </div>

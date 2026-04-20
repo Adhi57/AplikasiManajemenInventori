@@ -4,6 +4,14 @@
 
 <x-page-header title="Data Barang" description="Kelola semua data produk dan barang" icon="fa-boxes-stacked">
     <x-slot name="actions">
+        <a href="{{ route('barangs.auditLogs') }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/15 backdrop-blur-sm shadow-sm transition-all text-sm font-medium hover:scale-105 hover:border-amber-400/30 duration-200">
+            <i class="fa-solid fa-timeline text-amber-400"></i>
+            <span>Log Perubahan</span>
+        </a>
+        <a href="{{ route('barangs.trashed') }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/15 backdrop-blur-sm shadow-sm transition-all text-sm font-medium hover:scale-105 hover:border-amber-400/30 duration-200">
+            <i class="fa-solid fa-clock-rotate-left text-amber-400"></i>
+            <span>Riwayat Barang</span>
+        </a>
         <a href="{{ route('barangs.create') }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-red-950 shadow-md transition-all text-sm font-bold hover:scale-105 duration-200">
             <i class="fa-solid fa-plus"></i>
             <span>Tambah Barang Baru</span>
@@ -106,13 +114,14 @@
                                 class="inline-flex items-center justify-center w-7 h-7 rounded-lg text-gray-400 hover:text-amber-600 hover:bg-amber-50 transition" title="Edit">
                                 <i class="fa-solid fa-pen-to-square text-xs"></i>
                             </a>
-                            <form action="{{ route('barangs.destroy', $barang->kode_barang) }}" method="POST" class="inline-block">
+                            <button type="button"
+                                onclick="confirmDelete('{{ $barang->kode_barang }}', '{{ $barang->nama_barang }}')"
+                                class="inline-flex items-center justify-center w-7 h-7 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition" title="Hapus">
+                                <i class="fa-solid fa-trash-can text-xs"></i>
+                            </button>
+                            <form id="delete-form-{{ $barang->kode_barang }}"
+                                action="{{ route('barangs.destroy', $barang->kode_barang) }}" method="POST" class="hidden">
                                 @csrf @method('DELETE')
-                                <button type="submit"
-                                    onclick="return confirm('Yakin ingin menghapus data barang {{ $barang->nama_barang }}?')"
-                                    class="inline-flex items-center justify-center w-7 h-7 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition" title="Hapus">
-                                    <i class="fa-solid fa-trash-can text-xs"></i>
-                                </button>
                             </form>
                         </td>
                     </tr>
@@ -125,5 +134,25 @@
         {{ $barangs->appends(request()->query())->links() }}
     </div>
 </div>
+
+@push('scripts')
+    <script>
+        function confirmDelete(kode, name) {
+            Swal.fire({
+                title: 'Hapus Barang?',
+                text: `Anda yakin ingin menghapus "${name}" (${kode})? Data akan dipindahkan ke riwayat.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                customClass: { popup: 'swal-custom-popup' },
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`delete-form-${kode}`).submit();
+                }
+            });
+        }
+    </script>
+@endpush
 
 @endsection

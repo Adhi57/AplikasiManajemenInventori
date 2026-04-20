@@ -34,10 +34,9 @@ class StokBarangController extends Controller
                           ->orWhere('barangs.nama_barang', 'like', "%{$search}%");
                 })
                 ->when($kategori, function ($query, $kategori) {
-                    $query->where('barangs.kategori_id', $kategori);
+                    $query->where('barangs.kategori_barang_id', $kategori);
                 })
                 ->groupBy('stok_barangs.kode_barang')
-                ->havingRaw('SUM(stok_barangs.jumlah_stok)') 
                 ->orderBy('stok_barangs.kode_barang')
                 ->get();
 
@@ -56,7 +55,7 @@ class StokBarangController extends Controller
                 })
                 ->when($kategori, function ($query, $kategori) {
                     $query->whereHas('barang', function ($q) use ($kategori) {
-                        $q->where('kategori_id', $kategori);
+                        $q->where('kategori_barang_id', $kategori);
                     });
                 })
                 ->orderBy('kode_barang')

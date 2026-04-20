@@ -32,6 +32,7 @@ class BarangMasukController extends Controller
                 'items.*.tgl_kadaluarsa' => [
                     'required',
                     'date',
+                    'after:today',
                     function ($attribute, $value, $fail) use ($request) {
                         $index = explode('.', $attribute)[1];
                         $item = $request->items[$index];

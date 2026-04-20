@@ -25,10 +25,10 @@ class PelangganController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_pelanggan' => 'required|string|max:255',
-            'alamat' => 'required|string',
-            'NPWP' => 'nullable|string|max:50',
-            'PIC' => 'nullable|string|max:100',
+            'nama_pelanggan' => 'required|string|max:100',
+            'alamat' => 'required|string|max:255',
+            'NPWP' => 'nullable|string|max:20',
+            'PIC' => 'nullable|string|max:50',
             'kategori_pelanggan_id' => 'required|exists:kategori_pelanggans,kategori_pelanggan_id',
             'tipe_harga' => 'required|string',
         ]);

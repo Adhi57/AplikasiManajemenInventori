@@ -123,4 +123,13 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | API Key
+    |--------------------------------------------------------------------------
+    | Kunci rahasia untuk mengakses endpoint API publik dari aplikasi lain.
+    | Set nilainya di file .env: APP_API_KEY=<your-secret-key>
+    */
+    'api_key' => env('APP_API_KEY', null),
+
 ];

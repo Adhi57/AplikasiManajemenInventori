@@ -272,7 +272,8 @@
                 <h2>Distributor Bahan Pokok & Kebutuhan Sehari-hari</h2>
                 <p>{{ $appSettings['alamat_perusahaan'] ?? '-' }}</p>
                 <p>Telp: {{ $appSettings['telepon_perusahaan'] ?? '-' }} &bull; Email:
-                    {{ $appSettings['email_perusahaan'] ?? '-' }}</p>
+                    {{ $appSettings['email_perusahaan'] ?? '-' }}
+                </p>
             </div>
         </div>
 
@@ -447,12 +448,12 @@
                 <div class="ttd-box">
                     <div class="title">Pengirim,</div>
                     <div class="name">{{ $suratJalan->user->nama_lengkap ?? '-' }}</div>
-                    <div class="role">Staff Gudang</div>
+                    <div class="role">{{ $suratJalan->user->role ?? '-' }}</div>
                 </div>
                 <div class="ttd-box">
                     <div class="title">Disetujui Oleh,</div>
-                    <div class="name">_________________________</div>
-                    <div class="role">Kepala Gudang</div>
+                    <div class="name">{{ $suratJalan->user->nama_lengkap ?? '-' }}</div>
+                    <div class="role">{{ $suratJalan->user->role ?? '-' }}</div>
                 </div>
                 <div class="ttd-box">
                     <div class="title">Penerima,</div>

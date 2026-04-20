@@ -137,7 +137,7 @@
                             class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2">
                         <i class="fa-solid fa-chart-pie opacity-70"></i> Ikhtisar Stok
                     </button>
-                    @if(auth()->user()->role === 'HeadGudang' || auth()->user()->role === 'Head')
+                    @if(auth()->user()->role === 'HeadGudang' || auth()->user()->role === 'Head' || auth()->user()->role === 'SuperAdmin') 
                     <button @click="activeTab = 'analitik'" 
                             :class="activeTab === 'analitik' ? 'bg-white text-gray-800 shadow shadow-gray-200 border border-gray-100' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50'"
                             class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2">
@@ -271,7 +271,7 @@
                                             ['l' => 'Menunggu', 'k' => 'Menunggu', 'icon' => 'fa-clock', 'col' => 'text-amber-600', 'bg' => 'bg-amber-50', 'bdr' => 'border-amber-100'],
                                             ['l' => 'Dikirim', 'k' => 'Dalam Perjalanan', 'icon' => 'fa-truck-fast', 'col' => 'text-blue-600', 'bg' => 'bg-blue-50', 'bdr' => 'border-blue-100'],
                                             ['l' => 'Selesai', 'k' => 'Terkirim', 'icon' => 'fa-clipboard-check', 'col' => 'text-emerald-600', 'bg' => 'bg-emerald-50', 'bdr' => 'border-emerald-100'],
-                                            ['l' => 'Batal', 'k' => 'Dibatalkan', 'icon' => 'fa-xmark-circle', 'col' => 'text-red-600', 'bg' => 'bg-red-50', 'bdr' => 'border-red-100'],
+                                            ['l' => 'Dibatalkan', 'k' => 'Dibatalkan', 'icon' => 'fa-xmark-circle', 'col' => 'text-red-600', 'bg' => 'bg-red-50', 'bdr' => 'border-red-100'],
                                         ];
                                     @endphp
                                     @foreach($dStats as $ds)
@@ -289,7 +289,7 @@
                 </div>
 
                 {{-- TAB 2: ANALITIK (Khusus Head) --}}
-                @if(auth()->user()->role === 'HeadGudang' || auth()->user()->role === 'Head')
+                @if(auth()->user()->role === 'HeadGudang' || auth()->user()->role === 'Head' || auth()->user()->role === 'SuperAdmin')
                 <div x-show="activeTab === 'analitik'" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6" style="display: none;">
                     
                     {{-- Row 1: Charts --}}
@@ -693,7 +693,7 @@
         });
 
         // Other charts explicitly checking if variables exist (Head role)
-        @if(auth()->user()->role === 'HeadGudang' || auth()->user()->role === 'Head')
+        @if(auth()->user()->role === 'HeadGudang' || auth()->user()->role === 'Head' || auth()->user()->role === 'SuperAdmin')
             setTimeout(() => {
                 // Pergerakan Barang
                 const masukData = @json($barangMasuk->toArray());
