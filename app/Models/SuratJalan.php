@@ -24,12 +24,19 @@ class SuratJalan extends Model
         'biaya_pengiriman',   
         'diskon_pelanggan',   
         'subtotal', 
+        'approved_by',
     ];
 
-    // Relasi ke User
+    // Relasi ke User (Pembuat)
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'user_id');
+    }
+
+    // Relasi ke Approver (Penyetuju)
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'approved_by', 'user_id');
     }
 
     // Relasi ke Pelanggan

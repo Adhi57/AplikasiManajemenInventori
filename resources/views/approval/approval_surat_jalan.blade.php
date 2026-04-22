@@ -108,6 +108,7 @@
                             <th class="px-4 py-3 text-left">Penerima</th>
                             <th class="px-4 py-3 text-center">Jumlah Item</th>
                             <th class="px-4 py-3 text-right">Total</th>
+                            <th class="px-4 py-3 text-left">Dibuat Oleh</th>
                             <th class="px-4 py-3 text-center">Status</th>
                             <th class="px-4 py-3 text-center">Aksi</th>
                         </tr>
@@ -152,6 +153,9 @@
                                 <td class="px-4 py-3 text-center font-semibold text-gray-700">{{ $sj->details->count() }}</td>
                                 <td class="px-4 py-3 text-right font-semibold text-gray-800">Rp
                                     {{ number_format($sjTotal, 0, ',', '.') }}</td>
+                                <td class="px-4 py-3 text-left text-gray-600 text-sm">
+                                    {{ $sj->user->nama_lengkap ?? '-' }}
+                                </td>
                                 <td class="px-4 py-3 text-center">
                                     <span
                                         class="inline-flex items-center gap-1 px-2.5 py-1 {{ $statusCfg['bg'] }} {{ $statusCfg['text'] }} rounded-full text-[11px] font-bold">

@@ -452,8 +452,8 @@
                 </div>
                 <div class="ttd-box">
                     <div class="title">Disetujui Oleh,</div>
-                    <div class="name">{{ $suratJalan->user->nama_lengkap ?? '-' }}</div>
-                    <div class="role">{{ $suratJalan->user->role ?? '-' }}</div>
+                    <div class="name">{{ $suratJalan->approver->nama_lengkap ?? '-' }}</div>
+                    <div class="role">{{ $suratJalan->approver->role ?? '-' }}</div>
                 </div>
                 <div class="ttd-box">
                     <div class="title">Penerima,</div>

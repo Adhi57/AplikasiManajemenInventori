@@ -64,6 +64,7 @@ class SJ_ApprovalController extends Controller
         try {
             $suratJalan = SuratJalan::findOrFail($sj_id);
             $suratJalan->status = 'Disetujui';
+            $suratJalan->approved_by = \Illuminate\Support\Facades\Auth::user()->user_id ?? \Illuminate\Support\Facades\Auth::id();
             $suratJalan->save();
 
             DB::commit();
@@ -96,7 +97,7 @@ class SJ_ApprovalController extends Controller
 
     public function print_sj($sj_id)
     {
-        $suratJalan = SuratJalan::with(['details.barang', 'pelanggan', 'user'])
+        $suratJalan = SuratJalan::with(['details.barang', 'pelanggan', 'user', 'approver'])
             ->where('sj_id', $sj_id)
             ->firstOrFail();
 

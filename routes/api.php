@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\BarangApiController;
+use App\Http\Controllers\Api\SuratJalanApiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -9,9 +10,8 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 | Semua route di sini dilindungi oleh API Key.
 | Sertakan header: X-API-KEY: <your-key>
-| Atau query string: ?api_key=<your-key>
 |
-| Base URL: http://127.0.0.1:8000/api/v1/...
+| Base URL: https://<ngrok-url>/api/v1/...
 |--------------------------------------------------------------------------
 */
 
@@ -26,5 +26,18 @@ Route::prefix('v1')->middleware('api.key')->group(function () {
 
     // --- KATEGORI ---
     Route::get('/kategori',      [BarangApiController::class, 'kategori']); // Daftar kategori
+
+    // --- SURAT JALAN ---
+    Route::get('/surat-jalan',         [SuratJalanApiController::class, 'index']);  // Daftar surat jalan
+    Route::get('/surat-jalan/{sj_id}', [SuratJalanApiController::class, 'show']);   // Detail surat jalan
+    Route::post('/surat-jalan',        [SuratJalanApiController::class, 'store']);  // Buat surat jalan baru
+
+    // --- PENGIRIMAN ---
+    Route::get('/pengiriman',          [\App\Http\Controllers\Api\PengirimanApiController::class, 'index']);
+    Route::get('/pengiriman/{sj_id}',  [\App\Http\Controllers\Api\PengirimanApiController::class, 'show']);
+    Route::post('/pengiriman/{sj_id}/terkirim', [\App\Http\Controllers\Api\PengirimanApiController::class, 'markTerkirim']);
+
+    // --- PELANGGAN ---
+    Route::get('/pelanggan',           [SuratJalanApiController::class, 'pelanggan']); // Daftar pelanggan
 
 });

@@ -33,7 +33,7 @@ class BarangApiController extends Controller
             $query->where('kategori_barang_id', $request->kategori_id);
         }
 
-        $perPage = min((int) $request->get('per_page', 20), 100);
+        $perPage = min((int) $request->get('per_page', 50), 500);
         $barangs = $query->paginate($perPage);
 
         return response()->json([
