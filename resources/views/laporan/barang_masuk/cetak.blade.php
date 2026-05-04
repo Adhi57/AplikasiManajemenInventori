@@ -253,7 +253,7 @@
         {{-- KOP SURAT --}}
         <div class="kop-surat">
             <div class="kop-logo">
-                <img src="{{ public_path('assets/images/Logo.png') }}" alt="Logo">
+                <img src="{{ public_path('assets/images/logo.png') }}" alt="Logo">
             </div>
             <div class="kop-text">
                 <h1>{{ $appSettings['nama_perusahaan'] ?? 'CV. Berkah Jaya Lumintu' }}</h1>

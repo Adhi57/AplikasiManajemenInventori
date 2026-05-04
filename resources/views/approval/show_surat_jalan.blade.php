@@ -15,6 +15,7 @@
     @php
         $statusCfg = match ($suratJalan->status) {
             'Pending' => ['bg' => 'from-amber-500 to-amber-600', 'icon' => 'fa-clock', 'label' => 'Menunggu Persetujuan'],
+            'Pengajuan Batal' => ['bg' => 'from-rose-500 to-rose-600', 'icon' => 'fa-rotate-left', 'label' => 'Pengajuan Pengembalian dari E-Commerce'],
             'Disetujui' => ['bg' => 'from-emerald-500 to-emerald-600', 'icon' => 'fa-circle-check', 'label' => 'Disetujui'],
             'Ditolak' => ['bg' => 'from-red-500 to-red-600', 'icon' => 'fa-circle-xmark', 'label' => 'Ditolak'],
             default => ['bg' => 'from-gray-500 to-gray-600', 'icon' => 'fa-question', 'label' => $suratJalan->status],
@@ -229,7 +230,7 @@
             </div>
 
             @if(auth()->user()->role === 'Head' || auth()->user()->role === 'SuperAdmin')
-                @if ($suratJalan->status === 'Pending')
+                @if (in_array($suratJalan->status, ['Pending', 'Pengajuan Batal']))
                     <div class="flex items-center gap-3">
                         <form id="rejectForm" action="{{ route('sj.reject', $suratJalan->sj_id) }}" method="POST">
                             @csrf @method('PUT')

@@ -95,13 +95,13 @@
                                     @endphp
                                     <div class="flex flex-col items-center gap-0.5">
                                         <div class="flex items-center gap-1 text-xs">
-                                            <span class="text-gray-400">{{ number_format($log->stok_baik_sebelum, 0, ',', '.') }}</span>
+                                            <span class="text-gray-400">{{ number_format($log->stok_baik_sebelum, 2, ',', '.') }}</span>
                                             <i class="fa-solid fa-arrow-right text-[8px] text-gray-300"></i>
-                                            <span class="font-bold text-gray-800">{{ number_format($log->stok_baik_sesudah, 0, ',', '.') }}</span>
+                                            <span class="font-bold text-gray-800">{{ number_format($log->stok_baik_sesudah, 2, ',', '.') }}</span>
                                         </div>
                                         @if($baikDiff != 0)
                                             <span class="text-[10px] font-bold {{ $baikDiff > 0 ? 'text-emerald-600' : 'text-red-600' }}">
-                                                {{ $baikDiff > 0 ? '+' : '' }}{{ number_format($baikDiff, 0, ',', '.') }}
+                                                {{ $baikDiff > 0 ? '+' : '' }}{{ number_format($baikDiff, 2, ',', '.') }}
                                             </span>
                                         @else
                                             <span class="text-[10px] text-gray-400">—</span>
@@ -116,13 +116,13 @@
                                     @endphp
                                     <div class="flex flex-col items-center gap-0.5">
                                         <div class="flex items-center gap-1 text-xs">
-                                            <span class="text-gray-400">{{ number_format($log->stok_rusak_sebelum, 0, ',', '.') }}</span>
+                                            <span class="text-gray-400">{{ number_format($log->stok_rusak_sebelum, 2, ',', '.') }}</span>
                                             <i class="fa-solid fa-arrow-right text-[8px] text-gray-300"></i>
-                                            <span class="font-bold text-gray-800">{{ number_format($log->stok_rusak_sesudah, 0, ',', '.') }}</span>
+                                            <span class="font-bold text-gray-800">{{ number_format($log->stok_rusak_sesudah, 2, ',', '.') }}</span>
                                         </div>
                                         @if($rusakDiff != 0)
                                             <span class="text-[10px] font-bold {{ $rusakDiff > 0 ? 'text-red-600' : 'text-emerald-600' }}">
-                                                {{ $rusakDiff > 0 ? '+' : '' }}{{ number_format($rusakDiff, 0, ',', '.') }}
+                                                {{ $rusakDiff > 0 ? '+' : '' }}{{ number_format($rusakDiff, 2, ',', '.') }}
                                             </span>
                                         @else
                                             <span class="text-[10px] text-gray-400">—</span>

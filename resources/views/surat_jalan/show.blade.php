@@ -32,6 +32,12 @@
             </div>
         </div>
         <div class="flex items-center gap-2">
+            <span
+                class="bg-red-700 hover:bg-red-800 transition duration-300 text-white px-4 py-2 rounded-xl text-sm font-bold">
+                <a href="{{ route('surat_jalan.print_sj', $suratJalan->sj_id) }}">
+                    <i class="fa-solid fa-print text-xs mr-1"></i>Print SJ
+                </a>
+            </span>
             <span class="bg-white/20 text-white px-4 py-2 rounded-xl text-sm font-bold">
                 <i class="fa-solid fa-hashtag text-xs mr-1"></i>{{ $suratJalan->sj_id }}
             </span>

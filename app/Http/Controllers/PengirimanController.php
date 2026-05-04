@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\StokKeluarLog;
 
 class PengirimanController extends Controller
 {
@@ -189,6 +190,18 @@ class PengirimanController extends Controller
                 $ambil = min($stok->jumlah_stok, $sisa);
                 $stok->jumlah_stok -= $ambil;
                 $stok->save();
+                
+                StokKeluarLog::create([
+                    'kode_barang' => $barang->kode_barang,
+                    'po_id' => $stok->po_id,
+                    'jumlah' => $ambil,
+                    'tgl_kadaluarsa' => $stok->tgl_kadaluarsa,
+                    'sumber' => 'Pengiriman (SJ: ' . $pengiriman->sj_id . ')',
+                    'dieksekusi_oleh' => auth()->user()->name ?? 'Sistem',
+                ]);
+                
+                Log::info("STOK KELUAR (FEFO): SJ {$pengiriman->sj_id} | Barang {$barang->kode_barang} | PO: {$stok->po_id} | Diambil: {$ambil} Karton | Sisa Stok Ini: {$stok->jumlah_stok} Karton | Exp: {$stok->tgl_kadaluarsa}");
+
                 $sisa -= $ambil;
             }
 

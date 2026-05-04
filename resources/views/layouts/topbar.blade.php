@@ -2,6 +2,7 @@
     // Notification queries
     $pendingPO = \App\Models\PurchaseOrder::where('status_po', 'Pending')->count();
     $pendingSJ = \App\Models\SuratJalan::where('status', 'Pending')->count();
+    $pengajuanBatalSJ = \App\Models\SuratJalan::where('status', 'Pengajuan Batal')->count();
     $pendingRetur = \App\Models\ReturBarang::where('status_retur', 'Pending')->count();
     $pengirimanMenunggu = \App\Models\Pengiriman::where('status_pengiriman', 'Menunggu')
         ->whereHas('suratJalan', fn($q) => $q->where('status', 'Disetujui'))
@@ -10,6 +11,8 @@
     $recentPO = \App\Models\PurchaseOrder::where('status_po', 'Pending')
         ->with('supplier')->latest()->take(3)->get();
     $recentSJ = \App\Models\SuratJalan::where('status', 'Pending')
+        ->with('pelanggan')->latest()->take(3)->get();
+    $recentBatalSJ = \App\Models\SuratJalan::where('status', 'Pengajuan Batal')
         ->with('pelanggan')->latest()->take(3)->get();
     $recentPengiriman = \App\Models\Pengiriman::where('status_pengiriman', 'Menunggu')
         ->whereHas('suratJalan', fn($q) => $q->where('status', 'Disetujui'))
@@ -21,7 +24,7 @@
     $needReorderCount = $needReorderItems->count();
     $recentReorder = $needReorderItems->take(3);
 
-    $totalNotif = $pendingPO + $pendingSJ + $pendingRetur + $pengirimanMenunggu + $needReorderCount;
+    $totalNotif = $pendingPO + $pendingSJ + $pengajuanBatalSJ + $pendingRetur + $pengirimanMenunggu + $needReorderCount;
 
     $segments = request()->segments();
     $breadcrumbLabels = [
@@ -195,6 +198,18 @@
                                 <div>
                                     <p class="text-[11px] font-bold text-white group-hover:text-emerald-300">Pengiriman</p>
                                     <p class="text-[9px] text-red-200">Menunggu dikirim</p>
+                                </div>
+                            </a>
+                        @endif
+
+                        @if($pengajuanBatalSJ > 0)
+                            <a href="{{ route('approval.approval_surat_jalan', ['status' => 'Pengajuan Batal']) }}"
+                                class="flex items-center gap-2 p-2 bg-white/5 rounded-xl hover:bg-white/10 transition group border border-rose-500/30 hover:border-rose-400/50 animate-pulse">
+                                <div class="w-8 h-8 bg-rose-500 text-white rounded-lg flex items-center justify-center text-xs font-bold shadow-sm">
+                                    {{ $pengajuanBatalSJ }}</div>
+                                <div>
+                                    <p class="text-[11px] font-bold text-white group-hover:text-rose-300">Pengembalian</p>
+                                    <p class="text-[9px] text-red-200">Perlu ditolak</p>
                                 </div>
                             </a>
                         @endif

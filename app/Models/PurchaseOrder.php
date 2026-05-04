@@ -9,7 +9,7 @@ class PurchaseOrder extends Model
 {
     use HasFactory;
 
-    protected $table = 'Purchase_Orders';
+    protected $table = 'purchase_orders';
     
     protected $primaryKey = 'po_id';
     public $incrementing = false;

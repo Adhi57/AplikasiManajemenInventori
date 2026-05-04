@@ -41,7 +41,7 @@ class ReorderPointController extends Controller
             ->select(
                 'dlk.kode_barang',
                 DB::raw('SUM(dlk.jumlah_keluar) as total_keluar'),
-                DB::raw('ANY_VALUE(b.jml_barang_per_karton) as jml_per_karton')
+                DB::raw('MAX(b.jml_barang_per_karton) as jml_per_karton')
             )
             ->get()
             ->keyBy('kode_barang');
@@ -49,7 +49,7 @@ class ReorderPointController extends Controller
         // 3. Hitung Lead Time dari data PO yang sudah diterima
         $leadTimeData = DB::table('detail_lap_barang_masuk as dlm')
             ->join('lap_barang_masuk as lbm', 'dlm.barang_masuk_id', '=', 'lbm.barang_masuk_id')
-            ->join('Purchase_Orders as po', 'lbm.po_id', '=', 'po.po_id')
+            ->join('purchase_orders as po', 'lbm.po_id', '=', 'po.po_id')
             ->select(
                 'dlm.kode_barang',
                 DB::raw('ROUND(AVG(DATEDIFF(lbm.tanggal_masuk, po.tanggal_po)), 0) as l_avg'),

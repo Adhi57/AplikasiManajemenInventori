@@ -12,6 +12,7 @@ use App\Models\DetailLapBarangKeluar;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
+use App\Models\StokKeluarLog;
 
 class PengirimanApiController extends Controller
 {
@@ -142,6 +143,18 @@ class PengirimanApiController extends Controller
                 $ambil = min($stok->jumlah_stok, $sisa);
                 $stok->jumlah_stok -= $ambil;
                 $stok->save();
+                
+                StokKeluarLog::create([
+                    'kode_barang' => $barang->kode_barang,
+                    'po_id' => $stok->po_id,
+                    'jumlah' => $ambil,
+                    'tgl_kadaluarsa' => $stok->tgl_kadaluarsa,
+                    'sumber' => 'Pengiriman API (SJ: ' . $pengiriman->sj_id . ')',
+                    'dieksekusi_oleh' => 'Sistem / API',
+                ]);
+                
+                Log::info("[API] STOK KELUAR (FEFO): SJ {$pengiriman->sj_id} | Barang {$barang->kode_barang} | PO: {$stok->po_id} | Diambil: {$ambil} Karton | Sisa Stok Ini: {$stok->jumlah_stok} Karton | Exp: {$stok->tgl_kadaluarsa}");
+
                 $sisa -= $ambil;
             }
 

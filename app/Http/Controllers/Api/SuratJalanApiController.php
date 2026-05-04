@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Events\TransactionUpdated;
 
 class SuratJalanApiController extends Controller
 {
@@ -188,6 +189,9 @@ class SuratJalanApiController extends Controller
             // Load relasi untuk response
             $sj->load(['pelanggan', 'details.barang']);
 
+            // Broadcast Event
+            broadcast(new TransactionUpdated('Surat Jalan baru ('.$sj_id.') masuk dari Ecommerce!', 'success'));
+
             return response()->json([
                 'success' => true,
                 'message' => 'Surat Jalan berhasil dibuat.',
@@ -269,5 +273,34 @@ class SuratJalanApiController extends Controller
                 'subtotal_item'=> (float) $d->quantity * (float) $d->harga_satuan,
             ]),
         ];
+    }
+    // =====================================================
+    // POST /api/v1/surat-jalan/{sj_id}/cancel-request
+    // Terima notifikasi pengajuan pembatalan dari E-Commerce
+    // =====================================================
+    public function cancelRequest($sj_id)
+    {
+        $sj = SuratJalan::where('sj_id', $sj_id)->first();
+
+        if (!$sj) {
+            return response()->json([
+                'success' => false,
+                'message' => "Surat Jalan '{$sj_id}' tidak ditemukan.",
+            ], 404);
+        }
+
+        // Ubah status ke Pengajuan Batal
+        $sj->status = 'Pengajuan Batal';
+        $sj->save();
+
+        Log::info('[API] Permintaan Batal untuk Surat Jalan', ['sj_id' => $sj_id]);
+
+        // Broadcast Event
+        broadcast(new TransactionUpdated('Pengajuan batal untuk Surat Jalan ('.$sj_id.') dari Ecommerce!', 'warning'));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status berhasil diubah menjadi Pengajuan Batal',
+        ]);
     }
 }

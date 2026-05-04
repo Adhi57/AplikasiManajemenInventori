@@ -178,6 +178,7 @@
         {{-- Group 5: Settings & Management --}}
         <h3 class="text-red-400/70 uppercase tracking-widest text-[10px] font-bold mt-8 mb-2 px-3">System & Data</h3>
 
+        @if(!in_array(auth()->user()->role, ['Staff']))
         {{-- Data Master Dropdown --}}
         <div>
             <!-- Tombol Dropdown Utama -->
@@ -251,6 +252,7 @@
                     Barang</a>
             </div>
         </div>
+        @endif
 
         <a href="{{ route('pengaturan.index') }}" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl transition-all duration-200
                 {{ request()->is('pengaturan*') ? $activeLinkClasses : $defaultLinkClasses }}">

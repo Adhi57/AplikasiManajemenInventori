@@ -54,7 +54,7 @@ class Barang extends Model
     // Relasi ke stok barang
     public function stok()
     {
-        return $this->hasOne(stokBarang::class, 'kode_barang', 'kode_barang');
+        return $this->hasOne(StokBarang::class, 'kode_barang', 'kode_barang');
     }
 
     public function stoks()

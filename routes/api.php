@@ -31,6 +31,7 @@ Route::prefix('v1')->middleware('api.key')->group(function () {
     Route::get('/surat-jalan',         [SuratJalanApiController::class, 'index']);  // Daftar surat jalan
     Route::get('/surat-jalan/{sj_id}', [SuratJalanApiController::class, 'show']);   // Detail surat jalan
     Route::post('/surat-jalan',        [SuratJalanApiController::class, 'store']);  // Buat surat jalan baru
+    Route::post('/surat-jalan/{sj_id}/cancel-request', [SuratJalanApiController::class, 'cancelRequest']);
 
     // --- PENGIRIMAN ---
     Route::get('/pengiriman',          [\App\Http\Controllers\Api\PengirimanApiController::class, 'index']);

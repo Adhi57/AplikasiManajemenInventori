@@ -9,7 +9,7 @@ class PurchaseOrderDetail extends Model
 {
     use HasFactory;
 
-    protected $table = 'Purchase_Order_Detail';
+    protected $table = 'purchase_order_detail';
     
     // Primary Key non-incrementing
     protected $primaryKey = 'detail_po_id';

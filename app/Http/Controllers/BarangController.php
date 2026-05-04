@@ -1,0 +1,345 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Barang;
+use App\Models\BarangAuditLog;
+use App\Models\KategoriBarang;
+use App\Models\Supplier;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
+
+class BarangController extends Controller
+{
+    /**
+     * Menampilkan daftar semua Barang.
+     */
+    public function index(Request $request)
+    {
+        $query = Barang::with(['kategori', 'supplier', 'stok']);
+    
+        // 1. FILTER BERDASARKAN KATEGORI
+        if ($request->filled('kategori_id')) {
+            $query->where('kategori_barang_id', $request->kategori_id);
+        }
+    
+        // 2. SEARCH (PENCARIAN BERDASARKAN KODE atau NAMA)
+        if ($request->filled('search')) {
+            $searchTerm = '%' . $request->search . '%';
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('kode_barang', 'like', $searchTerm)
+                  ->orWhere('nama_barang', 'like', $searchTerm);
+            });
+        }
+    
+        // Ambil data barang yang sudah difilter dan paginasi
+        $barangs = $query->paginate(15);
+        
+        // Ambil data kategori untuk dropdown filter di view
+        $kategoriBarangs = KategoriBarang::all(); 
+    
+        return view('barangs.index', compact('barangs', 'kategoriBarangs'));
+    }
+
+    /**
+     * Menampilkan form untuk membuat Barang baru.
+     */
+    public function create()
+    {
+        // Variabel $barang diinisialisasi sebagai model kosong untuk digunakan di form.blade.php (mode CREATE)
+        $barang = new Barang();
+        $kategoriBarangs = KategoriBarang::all();
+        $suppliers = Supplier::all();
+
+        return view('barangs.form', compact('barang', 'kategoriBarangs', 'suppliers'));
+    }
+
+    /**
+     * Menyimpan Barang yang baru dibuat ke database.
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'kode_barang' => 'required|string|max:255|unique:barangs,kode_barang',
+            'nama_barang' => 'required|string|max:255',
+            'foto_produk' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'kategori_barang_id' => 'required|exists:kategori_barangs,kategori_barang_id',
+            'id_supplier' => 'required|exists:suppliers,id_supplier',
+            'harga_beli' => 'required|numeric|min:0',
+            'harga_jual' => 'required|numeric|min:0',
+            'tipe_harga_barang' => 'required|in:Eceran,Grosir,Diskon', 
+            'satuan_jual' => 'required|string|max:50',
+            'jml_barang_per_karton' => 'required|integer|min:1',
+            'berlaku_mulai' => 'required|date',
+            
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            // 1. Handle File Upload (menggunakan disk 'public' secara eksplisit)
+            $foto_path = null;
+            if ($request->hasFile('foto_produk')) {
+                // Simpan file ke folder 'images/foto_produk' di dalam disk 'public'
+                $foto_path = $request->file('foto_produk')->store('images/foto_produk', 'public');
+            }
+
+            // 3. Simpan data Barang
+            $barang = Barang::create([
+                'kode_barang' => $validated['kode_barang'],
+                'nama_barang' => $validated['nama_barang'],
+                'foto_produk' => $foto_path, 
+                'kategori_barang_id' => $validated['kategori_barang_id'],
+                'id_supplier' => $validated['id_supplier'],
+                'harga_beli' => $validated['harga_beli'],
+                'harga_jual' => $validated['harga_jual'],
+                'tipe_harga_barang' => $validated['tipe_harga_barang'],
+                'satuan_jual' => $validated['satuan_jual'],
+                'jml_barang_per_karton' => $validated['jml_barang_per_karton'],
+                'berlaku_mulai' => $validated['berlaku_mulai'],
+            ]);
+
+            // Catat audit log
+            BarangAuditLog::catat('created', $barang, null, $barang->toArray(), 'Barang baru ditambahkan');
+
+            DB::commit();
+
+            return redirect()->route('barangs.index')->with('success', 'Barang baru berhasil ditambahkan!');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Hapus file jika terjadi error setelah upload (menggunakan disk 'public')
+            if ($foto_path) {
+                Storage::disk('public')->delete($foto_path);
+            }
+            return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menyimpan barang: ' . $e->getMessage()]);
+        }
+        
+    }
+
+    /**
+     * Menampilkan form untuk mengedit Barang.
+     */
+    public function edit($kode_barang)
+    {
+        $barang = Barang::with(['kategori', 'supplier', 'stok'])->where('kode_barang', $kode_barang)->firstOrFail();
+        $kategoriBarangs = KategoriBarang::all();
+        $suppliers = Supplier::all();
+
+        return view('barangs.form', compact('barang', 'kategoriBarangs', 'suppliers'));
+    }
+
+    /**
+     * Memperbarui Barang di database.
+     */
+    public function update(Request $request, $kode_barang)
+    {
+        $barang = Barang::where('kode_barang', $kode_barang)->firstOrFail();
+
+        $validated = $request->validate([
+            'kode_barang' => 'required|string|max:255|unique:barangs,kode_barang,'.$barang->kode_barang.',kode_barang',
+            'nama_barang' => 'required|string|max:255',
+            'foto_produk' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'kategori_barang_id' => 'required|exists:kategori_barangs,kategori_barang_id',
+            'id_supplier' => 'required|exists:suppliers,id_supplier',
+            'harga_beli' => 'required|numeric|min:0',
+            'harga_jual' => 'required|numeric|min:0',
+            'tipe_harga_barang' => 'required|in:Eceran,Grosir,Diskon', // Perbaiki spasi
+            'satuan_jual' => 'required|string|max:50',
+            'jml_barang_per_karton' => 'required|integer|min:1',
+            'berlaku_mulai' => 'required|date',
+            'tgl_kadaluarsa' => 'nullable|date',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            // Simpan data lama sebelum update
+            $dataLama = $barang->toArray();
+
+            $old_foto_path = $barang->foto_produk;
+            $foto_path = $old_foto_path;
+
+            // 1. Handle File Upload (jika ada file baru)
+            if ($request->hasFile('foto_produk')) {
+                // Hapus foto lama jika ada, menggunakan disk 'public'
+                if ($old_foto_path) {
+                    Storage::disk('public')->delete($old_foto_path);
+                }
+                
+                // Simpan file baru ke disk 'public' di folder 'images/foto_produk' (konsisten dengan store)
+                $foto_path = $request->file('foto_produk')->store('images/foto_produk', 'public');
+            }
+
+            // 2. Update data Barang
+            $barang->update([
+                'kode_barang' => $validated['kode_barang'],
+                'nama_barang' => $validated['nama_barang'],
+                'foto_produk' => $foto_path, // Path relatif terhadap disk 'public'
+                'kategori_barang_id' => $validated['kategori_barang_id'],
+                'id_supplier' => $validated['id_supplier'],
+                'harga_beli' => $validated['harga_beli'],
+                'harga_jual' => $validated['harga_jual'],
+                'tipe_harga_barang' => $validated['tipe_harga_barang'],
+                'satuan_jual' => $validated['satuan_jual'],
+                'jml_barang_per_karton' => $validated['jml_barang_per_karton'],
+                'berlaku_mulai' => $validated['berlaku_mulai'],
+            ]);
+
+            // Catat audit log
+            BarangAuditLog::catat('updated', $barang, $dataLama, $barang->fresh()->toArray(), 'Data barang diperbarui');
+
+            DB::commit();
+
+            return redirect()->route('barangs.index')->with('success', 'Barang berhasil diperbarui!');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withInput()->withErrors(['error' => 'Gagal memperbarui barang: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Menghapus Barang dari database (Soft Delete).
+     */
+    public function destroy($kode_barang)
+    {
+        $barang = Barang::where('kode_barang', $kode_barang)->firstOrFail();
+
+        DB::beginTransaction();
+        try {
+            // Karena menggunakan soft delete, kita tidak perlu hapus foto fisiknya di storage.
+            // Biarkan data stok tetap utuh (soft delete secara implisit kalau perlu, tapi saat ini cukup Barang-nya)
+            
+            $barang->delete(); // Ini sekarang akan memicu Soft Deletes
+
+            // Catat audit log
+            BarangAuditLog::catat('deleted', $barang, $barang->toArray(), null, 'Barang dihapus (diarsipkan)');
+
+            DB::commit();
+
+            return redirect()->route('barangs.index')->with('success', 'Barang "' . $barang->nama_barang . '" berhasil diarsipkan.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withErrors(['error' => 'Gagal menghapus barang: ' . $e->getMessage()]);
+        }
+    }
+
+    
+    public function show(Barang $barang)
+    {
+        $barang->load(['kategori', 'supplier','stok']);
+
+        // Mengembalikan view 'barangs.show' dan menyertakan data barang
+        return view('barangs.show', compact('barang'));
+    }
+
+    /**
+     * Menampilkan daftar barang yang telah dihapus (soft-deleted).
+     */
+    public function trashed(Request $request)
+    {
+        $query = Barang::onlyTrashed()->with(['kategori', 'supplier']);
+
+        if ($request->filled('search')) {
+            $searchTerm = '%' . $request->search . '%';
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('kode_barang', 'like', $searchTerm)
+                  ->orWhere('nama_barang', 'like', $searchTerm);
+            });
+        }
+
+        if ($request->filled('kategori_id')) {
+            $query->where('kategori_barang_id', $request->kategori_id);
+        }
+
+        $trashedBarangs = $query->orderBy('deleted_at', 'desc')->paginate(15);
+        $kategoriBarangs = KategoriBarang::all();
+
+        return view('barangs.riwayat', compact('trashedBarangs', 'kategoriBarangs'));
+    }
+
+    /**
+     * Memulihkan barang yang telah di soft-delete.
+     */
+    public function restore($kode_barang)
+    {
+        $barang = Barang::onlyTrashed()->where('kode_barang', $kode_barang)->firstOrFail();
+        $barang->restore();
+
+        // Catat audit log
+        BarangAuditLog::catat('restored', $barang, null, $barang->toArray(), 'Barang dipulihkan dari arsip');
+
+        return redirect()->route('barangs.trashed')->with('success', 'Barang "' . $barang->nama_barang . '" berhasil dipulihkan.');
+    }
+
+    /**
+     * Menghapus barang secara permanen.
+     */
+    public function forceDelete($kode_barang)
+    {
+        $barang = Barang::onlyTrashed()->where('kode_barang', $kode_barang)->firstOrFail();
+
+        DB::beginTransaction();
+        try {
+            // Cek apakah barang memiliki relasi transaksi
+            $hasTransactions = DB::table('purchase_order_details')->where('kode_barang', $kode_barang)->exists() ||
+                               DB::table('surat_jalan_details')->where('kode_barang', $kode_barang)->exists();
+
+            if ($hasTransactions) {
+                return back()->with('error', 'Barang tidak bisa dihapus permanen karena memiliki riwayat transaksi (PO/Surat Jalan).');
+            }
+
+            // Hapus foto dari storage jika ada
+            if ($barang->foto_produk) {
+                Storage::disk('public')->delete($barang->foto_produk);
+            }
+
+            // Hapus stok terkait
+            DB::table('stok_barangs')->where('kode_barang', $kode_barang)->delete();
+
+            $nama = $barang->nama_barang;
+
+            // Catat audit log sebelum hapus permanen
+            BarangAuditLog::catat('force_deleted', $barang, $barang->toArray(), null, 'Barang dihapus permanen');
+
+            $barang->forceDelete();
+
+            DB::commit();
+
+            return redirect()->route('barangs.trashed')->with('success', 'Barang "' . $nama . '" berhasil dihapus permanen.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withErrors(['error' => 'Gagal menghapus permanen: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Menampilkan riwayat perubahan (audit log) data barang.
+     */
+    public function auditLogs(Request $request)
+    {
+        $query = BarangAuditLog::query();
+
+        if ($request->filled('search')) {
+            $searchTerm = '%' . $request->search . '%';
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('kode_barang', 'like', $searchTerm)
+                  ->orWhere('nama_barang', 'like', $searchTerm)
+                  ->orWhere('user_nama', 'like', $searchTerm);
+            });
+        }
+
+        if ($request->filled('aksi')) {
+            $query->where('aksi', $request->aksi);
+        }
+
+        $logs = $query->orderBy('waktu', 'desc')->paginate(20);
+
+        return view('barangs.audit_log', compact('logs'));
+    }
+}

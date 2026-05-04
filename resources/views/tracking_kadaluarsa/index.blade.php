@@ -60,8 +60,10 @@
                                 Sisa Hari</th>
                             <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                 Stok (Karton)</th>
+                            @if(auth()->user()->role !== 'Staff')
                             <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                 Aksi</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -74,7 +76,7 @@
                         @forelse ($grouped as $namaBarang => $items)
                             {{-- GROUP HEADER --}}
                             <tr class="bg-slate-50 border-b border-slate-200">
-                                <td colspan="7" class="px-4 py-3">
+                                <td colspan="{{ auth()->user()->role !== 'Staff' ? 7 : 6 }}" class="px-4 py-3">
                                     <div class="flex items-center gap-2">
                                         <div class="w-7 h-7 bg-slate-800 rounded-lg flex items-center justify-center">
                                             <i class="fa-solid fa-boxes-stacked text-white text-xs"></i>
@@ -140,6 +142,7 @@
                                     </td>
 
                                     <td class="px-4 py-3 text-center">
+                                        @if(auth()->user()->role !== 'Staff')
                                         <form action="{{ route('tracking_kadaluarsa.destroy', $s->id) }}" method="POST"
                                             class="inline-block deleteForm">
                                             @csrf
@@ -149,6 +152,9 @@
                                                 <i class="fa-solid fa-trash text-[10px]"></i> Hapus dari Stok
                                             </button>
                                         </form>
+                                        @else
+                                        <span class="text-xs text-gray-400">—</span>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

@@ -31,6 +31,7 @@
                     @php
                         $quickActions = [
                             ['label' => 'Stok Opname', 'icon' => 'fa-clipboard-list', 'route' => route('stock.opname.index')],
+                            ['label' => 'Riwayat Stok Keluar', 'icon' => 'fa-arrow-right-from-bracket', 'route' => route('stok.log_keluar')],
                             ['label' => 'Reorder Point', 'icon' => 'fa-arrow-trend-up', 'route' => route('reorder_point.index')],
                             ['label' => 'Kadaluarsa', 'icon' => 'fa-clock', 'route' => '/tracking-kadaluarsa'],
                             ['label' => 'Katalog', 'icon' => 'fa-book-open', 'route' => '/katalog_barang'],

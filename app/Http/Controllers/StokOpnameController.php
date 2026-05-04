@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\stokOpnameLogs;
+use App\Models\StokOpnameLogs;
 use Illuminate\Http\Request;
 use App\Models\StokBarang;
 
@@ -22,7 +22,7 @@ class StokOpnameController extends Controller
             ->orderBy('kode_barang')
             ->get();
 
-        $logs = stokOpnameLogs::with(['stok.barang', 'user'])
+        $logs = StokOpnameLogs::with(['stok.barang', 'user'])
                     ->latest()
                     ->take(5)
                     ->get();
@@ -44,9 +44,9 @@ class StokOpnameController extends Controller
             'alasan' => 'required|string|max:255'
         ]);
 
-        // Cast ke integer untuk disimpan ke database
-        $validated['jumlah_stok'] = (int) $validated['jumlah_stok'];
-        $validated['jumlah_stok_rusak'] = (int) $validated['jumlah_stok_rusak'];
+        // Cast ke float untuk menerima angka desimal
+        $validated['jumlah_stok'] = (float) $validated['jumlah_stok'];
+        $validated['jumlah_stok_rusak'] = (float) $validated['jumlah_stok_rusak'];
 
         // DEBUG 2: Log validated data
         \Log::info('Validated data:', $validated);
@@ -96,7 +96,7 @@ class StokOpnameController extends Controller
         ]);
 
         // Catat log
-        stokOpnameLogs::create([
+        StokOpnameLogs::create([
             'stok_id' => $stok->id,
             'stok_baik_sebelum' => $before['baik'],
             'stok_rusak_sebelum' => $before['rusak'],
@@ -117,7 +117,7 @@ class StokOpnameController extends Controller
     {
         $search = $request->input('search');
 
-        $logs = stokOpnameLogs::with(['stok.barang', 'user'])
+        $logs = StokOpnameLogs::with(['stok.barang', 'user'])
             ->when($search, function ($query, $search) {
                 $query->where('alasan_update', 'like', "%{$search}%")
                     ->orWhereHas('stok', function ($q) use ($search) {

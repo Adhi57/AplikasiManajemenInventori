@@ -33,12 +33,13 @@ class SJ_ApprovalController extends Controller
             })
             ->orderByRaw("
                 CASE 
-                    WHEN status = 'Pending' THEN 1
-                    WHEN status = 'Disetujui' THEN 2
-                    WHEN status = 'Ditolak' THEN 3
-                    WHEN status = 'Dikirim' THEN 4
-                    WHEN status = 'Selesai' THEN 5
-                    ELSE 6
+                    WHEN status = 'Pengajuan Batal' THEN 1
+                    WHEN status = 'Pending' THEN 2
+                    WHEN status = 'Disetujui' THEN 3
+                    WHEN status = 'Ditolak' THEN 4
+                    WHEN status = 'Dikirim' THEN 5
+                    WHEN status = 'Selesai' THEN 6
+                    ELSE 7
                 END
             ")
             ->orderBy('created_at', 'desc')

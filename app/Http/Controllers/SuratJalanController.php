@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SuratJalanController extends Controller
 {
@@ -346,6 +347,20 @@ public function destroy($sj_id)
             Log::error('Gagal mengupdate surat jalan', ['error' => $e->getMessage()]);
             return back()->with('error', 'Gagal mengupdate surat jalan: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Print Surat Jalan as PDF
+     */
+    public function print_sj($sj_id)
+    {
+        $suratJalan = SuratJalan::with(['details.barang', 'pelanggan', 'user', 'approver'])
+            ->where('sj_id', $sj_id)
+            ->firstOrFail();
+
+        return Pdf::loadView('approval.print_sj', compact('suratJalan'))
+            ->setPaper('a4', 'portrait')
+            ->stream('SuratJalan_' . $sj_id . '.pdf');
     }
 }
 

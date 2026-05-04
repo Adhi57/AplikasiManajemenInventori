@@ -10,6 +10,7 @@
     @php
         $totalSJ = $suratJalans->count();
         $pending = $suratJalans->where('status', 'Pending')->count();
+        $pengajuanBatal = $suratJalans->where('status', 'Pengajuan Batal')->count();
         $disetujui = $suratJalans->where('status', 'Disetujui')->count();
         $ditolak = $suratJalans->where('status', 'Ditolak')->count();
     @endphp
@@ -60,6 +61,19 @@
         </div>
     </div>
 
+    {{-- Alert Pengajuan Pengembalian --}}
+    @if($pengajuanBatal > 0)
+    <div class="bg-rose-50 border border-rose-200 rounded-2xl p-4 mb-6 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-rose-500 flex items-center justify-center flex-shrink-0">
+            <i class="fa-solid fa-rotate-left text-white text-sm"></i>
+        </div>
+        <div class="flex-1">
+            <p class="font-bold text-rose-800 text-sm">{{ $pengajuanBatal }} Pengajuan Pengembalian dari E-Commerce</p>
+            <p class="text-rose-600 text-xs">Pelanggan mengajukan pengembalian barang. Silakan review dan tolak surat jalan untuk memproses refund otomatis.</p>
+        </div>
+    </div>
+    @endif
+
     {{-- Filter Bar --}}
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-6">
         <form method="GET" action="{{ route('approval.approval_surat_jalan') }}" class="flex flex-wrap items-end gap-3">
@@ -79,6 +93,7 @@
                     class="w-full border border-gray-300 rounded-xl py-2 px-3 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
                     <option value="">Semua Status</option>
                     <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="Pengajuan Batal" {{ request('status') == 'Pengajuan Batal' ? 'selected' : '' }}>Pengajuan Batal</option>
                     <option value="Disetujui" {{ request('status') == 'Disetujui' ? 'selected' : '' }}>Disetujui</option>
                     <option value="Ditolak" {{ request('status') == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
                 </select>
@@ -122,6 +137,7 @@
                     $sjTotal = $sjBase + ($sjBase * floatval($appSettings['ppn_persen'] ?? 11) / 100);
                                 $statusCfg = match ($sj->status) {
                                     'Pending' => ['bg' => 'bg-amber-100', 'text' => 'text-amber-700', 'icon' => 'fa-clock'],
+                                    'Pengajuan Batal' => ['bg' => 'bg-rose-100', 'text' => 'text-rose-700', 'icon' => 'fa-rotate-left'],
                                     'Disetujui' => ['bg' => 'bg-emerald-100', 'text' => 'text-emerald-700', 'icon' => 'fa-circle-check'],
                                     'Ditolak' => ['bg' => 'bg-red-100', 'text' => 'text-red-700', 'icon' => 'fa-circle-xmark'],
                                     default => ['bg' => 'bg-gray-100', 'text' => 'text-gray-700', 'icon' => 'fa-question'],

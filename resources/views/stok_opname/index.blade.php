@@ -58,10 +58,12 @@
                                 Stok Rusak</th>
                             <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                 Kadaluarsa</th>
+                            @if(auth()->user()->role !== 'Staff')
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                 Alasan Update</th>
                             <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                 Aksi</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -74,7 +76,7 @@
                         @forelse ($grouped as $namaBarang => $items)
                             {{-- GROUP HEADER --}}
                             <tr class="bg-slate-50 border-b border-slate-200">
-                                <td colspan="7" class="px-4 py-3">
+                                <td colspan="{{ auth()->user()->role !== 'Staff' ? 7 : 5 }}" class="px-4 py-3">
                                     <div class="flex items-center gap-2">
                                         <div class="w-7 h-7 bg-slate-800 rounded-lg flex items-center justify-center">
                                             <i class="fa-solid fa-boxes-stacked text-white text-xs"></i>
@@ -91,9 +93,11 @@
                             {{-- BATCH ROWS --}}
                             @foreach ($items as $item)
                                 <tr class="border-b border-gray-50 hover:bg-blue-50/30 transition-colors group">
+                                    @if(auth()->user()->role !== 'Staff')
                                     <form action="{{ route('stock.opname.update') }}" method="POST" class="contents">
                                         @csrf
                                         <input type="hidden" name="stok_id" value="{{ $item->id }}">
+                                    @endif
 
                                         <td class="px-4 py-3">
                                             <span
@@ -102,21 +106,34 @@
                                         <td class="px-4 py-3 font-medium text-gray-800">{{ $item->barang->nama_barang ?? '-' }}</td>
 
                                         <td class="px-4 py-3 text-center">
+                                            @if(auth()->user()->role !== 'Staff')
                                             <input type="number" name="jumlah_stok" value="{{ $item->jumlah_stok }}" step="any"
                                                 class="w-24 border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm text-center focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition bg-emerald-50 text-emerald-700 font-semibold">
+                                            @else
+                                            <span class="inline-flex items-center px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold text-sm rounded-lg">{{ $item->jumlah_stok }}</span>
+                                            @endif
                                         </td>
 
                                         <td class="px-4 py-3 text-center">
+                                            @if(auth()->user()->role !== 'Staff')
                                             <input type="number" name="jumlah_stok_rusak" value="{{ $item->jumlah_stok_rusak }}"
                                                 step="any"
                                                 class="w-24 border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm text-center focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition bg-red-50 text-red-700 font-semibold">
+                                            @else
+                                            <span class="inline-flex items-center px-2.5 py-1 bg-red-50 text-red-700 font-semibold text-sm rounded-lg">{{ $item->jumlah_stok_rusak }}</span>
+                                            @endif
                                         </td>
 
                                         <td class="px-4 py-3 text-center">
+                                            @if(auth()->user()->role !== 'Staff')
                                             <input type="date" name="tgl_kadaluarsa" value="{{ $item->tgl_kadaluarsa }}"
                                                 class="border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition">
+                                            @else
+                                            <span class="text-sm text-gray-700">{{ \Carbon\Carbon::parse($item->tgl_kadaluarsa)->format('d M Y') }}</span>
+                                            @endif
                                         </td>
 
+                                        @if(auth()->user()->role !== 'Staff')
                                         <td class="px-4 py-3">
                                             <input type="text" name="alasan" placeholder="Alasan update..." required
                                                 class="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition placeholder-gray-400">
@@ -129,6 +146,7 @@
                                             </button>
                                         </td>
                                     </form>
+                                    @endif
                                 </tr>
                             @endforeach
 

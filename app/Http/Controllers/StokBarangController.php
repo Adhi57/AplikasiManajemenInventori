@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\KategoriBarang;
 use App\Models\StokBarang;
 use App\Models\Barang;
+use App\Models\StokKeluarLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Setting;
@@ -206,5 +207,24 @@ class StokBarangController extends Controller
             'alertStokMenipis',
             'alertNearExpiry'
         ));
+    }
+
+    public function logStokKeluar(Request $request)
+    {
+        $search = $request->input('search');
+        
+        $logs = StokKeluarLog::with('barang')
+            ->when($search, function ($query, $search) {
+                $query->where('kode_barang', 'like', "%{$search}%")
+                      ->orWhere('po_id', 'like', "%{$search}%")
+                      ->orWhere('sumber', 'like', "%{$search}%")
+                      ->orWhereHas('barang', function($q) use ($search) {
+                          $q->where('nama_barang', 'like', "%{$search}%");
+                      });
+            })
+            ->orderBy('waktu', 'desc')
+            ->paginate(15);
+            
+        return view('stok.log_keluar', compact('logs', 'search'));
     }
 }

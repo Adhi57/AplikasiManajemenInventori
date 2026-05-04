@@ -3,7 +3,10 @@
 
 <head>
     <meta charset="utf-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Aplikasi Gudang BJL') }}</title>
+    {{-- FAVICON --}}
+    <link rel="icon" type="image/png" href="{{ asset('assets/images/logo.png') }}">
 
     {{-- VITE ASSET INCLUSION (WAJIB untuk JS/CSS utama) --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -257,6 +260,56 @@
         </script>
     @endif
 
+    {{-- LARAVEL ECHO LISTENER --}}
+    @auth
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof window.Echo !== 'undefined') {
+                window.Echo.private('transactions')
+                    .listen('.transaction.updated', (e) => {
+                        console.log('Transaction Event:', e);
+                        // Show toast
+                        Swal.fire({
+                            icon: e.type === 'error' ? 'error' : (e.type === 'warning' ? 'warning' : 'success'),
+                            title: 'Pemberitahuan',
+                            text: e.message,
+                            toast: true,
+                            position: 'top-end',
+                            timer: 5000,
+                            showConfirmButton: false,
+                            timerProgressBar: true,
+                            customClass: { popup: 'swal-toast-popup' }
+                        });
+
+                        // DOM Update tanpa full page reload
+                        fetch(window.location.href, {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                        .then(response => response.text())
+                        .then(html => {
+                            // Parse the incoming HTML
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+                            
+                            // Find the updated #app content (topbar & main content)
+                            const newAppContent = doc.querySelector('#app');
+                            if (newAppContent) {
+                                document.querySelector('#app').innerHTML = newAppContent.innerHTML;
+                                
+                                // Re-initialize Alpine JS components on the new DOM if Alpine is used
+                                if (typeof Alpine !== 'undefined') {
+                                    Alpine.initTree(document.querySelector('#app'));
+                                }
+                            }
+                        })
+                        .catch(err => console.error('Failed to update DOM:', err));
+                    });
+            }
+        });
+    </script>
+    @endauth
 
 </body>
 

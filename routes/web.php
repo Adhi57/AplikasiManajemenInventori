@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\barangController;
+use App\Http\Controllers\BarangController;
 use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KatalogController;
@@ -40,30 +40,36 @@ Route::middleware('auth')->group(function () {
     // Barcode Scanner Lookup
     Route::get('/barcode/lookup', [BarcodeScannerController::class, 'lookup'])->name('barcode.lookup');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::resource('barangs', barangController::class);
+    Route::resource('barangs', BarangController::class)->middleware('role:SuperAdmin,Head,Admin');
     
     // Riwayat Barang (Soft Deleted)
-    Route::get('barangs-riwayat', [barangController::class, 'trashed'])->name('barangs.trashed');
-    Route::patch('barangs/{kode_barang}/restore', [barangController::class, 'restore'])->name('barangs.restore');
-    Route::delete('barangs/{kode_barang}/force-delete', [barangController::class, 'forceDelete'])->name('barangs.forceDelete');
-    Route::get('barangs-audit-log', [barangController::class, 'auditLogs'])->name('barangs.auditLogs');
-    Route::resource('pelanggans', PelangganController::class);
-    Route::resource('kategori_pelanggan', KategoriPelangganController::class);
-    Route::resource('suppliers', SupplierController::class);
-    Route::resource('kategori_barang', KategoriBarangController::class);
+    Route::middleware('role:SuperAdmin,Head,Admin')->group(function () {
+        Route::get('barangs-riwayat', [BarangController::class, 'trashed'])->name('barangs.trashed');
+        Route::patch('barangs/{kode_barang}/restore', [BarangController::class, 'restore'])->name('barangs.restore');
+        Route::delete('barangs/{kode_barang}/force-delete', [BarangController::class, 'forceDelete'])->name('barangs.forceDelete');
+        Route::get('barangs-audit-log', [BarangController::class, 'auditLogs'])->name('barangs.auditLogs');
+        Route::resource('pelanggans', PelangganController::class);
+        Route::resource('kategori_pelanggan', KategoriPelangganController::class);
+        Route::resource('suppliers', SupplierController::class);
+        Route::resource('kategori_barang', KategoriBarangController::class);
+    });
     Route::resource('katalog_barang', KatalogController::class);
     
     // Stok Barang
     Route::get('/stok-barang', [StokBarangController::class, 'index'])->name('stok.index');
+    Route::get('/stok-barang/log-keluar', [StokBarangController::class, 'logStokKeluar'])->name('stok.log_keluar');
     
     // Reorder Point
     Route::get('/reorder-point', [ReorderPointController::class, 'index'])->name('reorder_point.index');
     
     //stok opname
-    // Stock opname index & update
+    // Stock opname index & riwayat (semua role bisa lihat)
     Route::get('/stock_opname', [StokOpnameController::class, 'index'])->name('stock.opname.index');
-    Route::post('/stock_opname/update', [StokOpnameController::class, 'update'])->name('stock.opname.update');
     Route::get('/stock_opname/riwayat', [StokOpnameController::class, 'riwayat'])->name('stock.opname.riwayat');
+    // Stock opname update (hanya non-Staff)
+    Route::post('/stock_opname/update', [StokOpnameController::class, 'update'])
+        ->name('stock.opname.update')
+        ->middleware('role:SuperAdmin,Head,Admin');
     
     
     
@@ -76,8 +82,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/tracking-kadaluarsa/{kode_barang}', [TrackingKadaluarsaController::class, 'detail'])
     ->name('tracking_kadaluarsa.detail');
     
+    // Hapus stok kadaluarsa (hanya non-Staff)
     Route::delete('/tracking-kadaluarsa/delete/{id}', [TrackingKadaluarsaController::class, 'destroy'])
-    ->name('tracking_kadaluarsa.destroy');
+    ->name('tracking_kadaluarsa.destroy')
+    ->middleware('role:SuperAdmin,Head,Admin');
     
     // Approval PO
     Route::get('approval/approval_po', [PO_ApprovalController::class, 'index'])->name('approval.approval_po');
@@ -126,6 +134,9 @@ Route::middleware('auth')->group(function () {
     ->where('sj_id', '.*');
     Route::get('surat_jalan/{sj_id}/edit', [SuratJalanController::class, 'edit'])->name('surat_jalan.edit');
     Route::put('surat_jalan/{sj_id}', [SuratJalanController::class, 'update'])->name('surat_jalan.update');
+    Route::get('surat_jalan/{sj_id}/print', [SuratJalanController::class, 'print_sj'])
+    ->name('surat_jalan.print_sj')
+    ->where('sj_id', '.*');
     
     
     
@@ -142,10 +153,13 @@ Route::middleware('auth')->group(function () {
     Route::patch('/retur-barang/{id}/update-tanggal', [ReturBarangController::class, 'updateTanggal'])
     ->name('retur.updateTanggal');
     
+    // Konfirmasi & Tolak Retur (hanya non-Staff)
     Route::patch('/retur-barang/{retur_id}/konfirmasi', [ReturBarangController::class, 'konfirmasiSesuai'])
-    ->name('retur.konfirmasi');
+    ->name('retur.konfirmasi')
+    ->middleware('role:SuperAdmin,Head,Admin');
     Route::patch('/retur-barang/{retur_id}/batal', [ReturBarangController::class, 'batalkanRetur'])
-    ->name('retur.batal');
+    ->name('retur.batal')
+    ->middleware('role:SuperAdmin,Head,Admin');
     
     
     // Pengiriman Barang
@@ -189,3 +203,23 @@ Route::middleware(['auth', 'role:SuperAdmin'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+// Helper Route untuk membuat Symlink di Hosting (cPanel)
+Route::get('/create-storage-link', function () {
+    try {
+        $target = storage_path('app/public');
+        $link = public_path('storage'); // Menggunakan public_path() agar mendeteksi folder public yang aktif
+        
+        // Hapus symlink atau folder lama jika ada (karena hasil upload dari lokal biasanya berupa folder biasa)
+        if (is_link($link)) {
+            unlink($link);
+        } elseif (is_dir($link)) {
+            \Illuminate\Support\Facades\File::deleteDirectory($link);
+        }
+
+        symlink($target, $link);
+        return 'Berhasil mereset dan membuat symlink storage baru! Silakan refresh gambar produk Anda.';
+    } catch (\Exception $e) {
+        return 'Gagal membuat symlink: ' . $e->getMessage();
+    }
+});

@@ -388,6 +388,7 @@
                                 {{-- Tombol Aksi --}}
                                 <td class="py-3.5 px-4 text-center">
                                     @if ($retur->status_retur === 'Pending')
+                                        @if(auth()->user()->role !== 'Staff')
                                         <div class="flex gap-2 justify-center">
                                             {{-- SETUJUI --}}
                                             <button @click="konfirmasiSesuai('{{ $retur->retur_id }}')"
@@ -403,6 +404,13 @@
                                                 <i class="fa-solid fa-xmark text-[10px]"></i> Tolak
                                             </button>
                                         </div>
+                                        @else
+                                        <div class="flex items-center justify-center gap-2">
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-600 rounded-xl text-xs font-medium border border-amber-200">
+                                                <i class="fa-solid fa-clock text-[10px]"></i> Menunggu
+                                            </span>
+                                        </div>
+                                        @endif
                                     @else
                                         <div class="flex items-center justify-center gap-2">
                                             <a href="{{ route('retur.show', $retur->retur_id) }}"

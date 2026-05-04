@@ -52,8 +52,10 @@
                                 Stok (Karton)</th>
                             <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                 Total (PCS)</th>
+                            @if(auth()->user()->role !== 'Staff')
                             <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                 Aksi</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-50">
@@ -103,6 +105,7 @@
                                 </td>
 
                                 <td class="px-4 py-3 text-center">
+                                    @if(auth()->user()->role !== 'Staff')
                                     <form action="{{ route('tracking_kadaluarsa.destroy', $s->id) }}" method="POST"
                                         onsubmit="return confirm('Hapus batch stok ini? Data tidak dapat dipulihkan.')">
                                         @csrf
@@ -112,6 +115,7 @@
                                             <i class="fa-solid fa-trash text-[10px]"></i> Hapus
                                         </button>
                                     </form>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
